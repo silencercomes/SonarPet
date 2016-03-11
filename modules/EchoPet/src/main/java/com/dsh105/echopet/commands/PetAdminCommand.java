@@ -309,7 +309,7 @@ public class PetAdminCommand implements CommandExecutor {
                         Lang.sendTo(sender, Lang.ADMIN_NO_PET.toString().replace("%player%", target.getName()));
                         return true;
                     }
-                    sender.sendMessage(ChatColor.RED + "------------ EchoPet Pet Info ------------");
+                    sender.sendMessage(ChatColor.RED + "------------ SonarPet Pet Info ------------");
                     for (String s : PetUtil.generatePetInfo(pet)) {
                         sender.sendMessage(s);
                     }
@@ -320,14 +320,14 @@ public class PetAdminCommand implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("help")) {
                 if (Perm.ADMIN.hasPerm(sender, true, true)) {
                     if (GeneralUtil.isInt(args[1])) {
-                        sender.sendMessage(ChatColor.RED + "------------ EchoPet Admin Help " + args[1] + "/6 ------------");
+                        sender.sendMessage(ChatColor.RED + "------------ SonarPet Admin Help " + args[1] + "/6 ------------");
                         sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                         for (String s : AdminHelpPage.getHelpPage(Integer.parseInt(args[1]))) {
                             sender.sendMessage(s);
                         }
                         return true;
                     }
-                    sender.sendMessage(ChatColor.RED + "------------ EchoPet Admin Help 1/6 ------------");
+                    sender.sendMessage(ChatColor.RED + "------------ SonarPet Admin Help 1/6 ------------");
                     sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                     for (String s : AdminHelpPage.getHelpPage(1)) {
                         sender.sendMessage(s);

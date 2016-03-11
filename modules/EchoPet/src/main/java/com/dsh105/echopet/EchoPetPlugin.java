@@ -66,7 +66,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     private static SqlPetManager SQL_MANAGER;
     private static ConfigOptions OPTIONS;
 
-    public static final ModuleLogger LOGGER = new ModuleLogger("EchoPet");
+    public static final ModuleLogger LOGGER = new ModuleLogger("SonarPet");
     public static final ModuleLogger LOGGER_REFLECTION = LOGGER.getModule("Reflection");
 
     private PetRegistry petRegistry;
@@ -81,7 +81,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     private VanishProvider vanishProvider;
     private WorldGuardProvider worldGuardProvider;
 
-    public String prefix = "" + ChatColor.DARK_RED + "[" + ChatColor.RED + "EchoPet" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
+    public String prefix = "" + ChatColor.DARK_RED + "[" + ChatColor.RED + "SonarPet" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
 
     public String cmdString = "pet";
     public String adminCmdString = "petadmin";
@@ -106,14 +106,14 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
         try {
             Class.forName(ReflectionUtil.COMPAT_NMS_PATH + ".SpawnUtil");
         } catch (ClassNotFoundException e) {
-            EchoPet.LOG.log(ChatColor.RED + "EchoPet " + ChatColor.GOLD
+            EchoPet.LOG.log(ChatColor.RED + "SonarPet " + ChatColor.GOLD
                     + this.getDescription().getVersion() + ChatColor.RED
                     + " is not compatible with this version of CraftBukkit");
             EchoPet.LOG.log(ChatColor.RED + "Initialisation failed. Please update the plugin.");
 
             DynamicPluginCommand cmd = new DynamicPluginCommand(this.cmdString, new String[0], "", "",
                     new VersionIncompatibleCommand(this.cmdString, prefix, ChatColor.YELLOW +
-                            "EchoPet " + ChatColor.GOLD + this.getDescription().getVersion() + ChatColor.YELLOW + " is not compatible with this version of CraftBukkit. Please update the plugin.",
+                            "SonarPet " + ChatColor.GOLD + this.getDescription().getVersion() + ChatColor.YELLOW + " is not compatible with this version of CraftBukkit. Please update the plugin.",
                             "echopet.pet", ChatColor.YELLOW + "You are not allowed to do that."),
                     null, this);
             COMMAND_MANAGER.register(cmd);
@@ -184,9 +184,12 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     }
 
     private void loadConfiguration() {
-        String[] header = {"EchoPet By DSH105", "---------------------",
-                "Configuration for EchoPet 2",
-                "See the EchoPet Wiki before editing this file"};
+        String[] header = {
+                "SonarPet By DSH105 and Techcable",
+                "---------------------",
+                "Configuration for SonarPet",
+                "See the SonarPet Wiki before editing this file"
+        };
         try {
             mainConfig = this.configManager.getNewConfig("config.yml", header);
         } catch (Exception e) {
@@ -212,8 +215,10 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
             mainConfig.saveConfig();
         }
 
-        String[] langHeader = {"EchoPet By DSH105", "---------------------",
-                "Language Configuration File"};
+        String[] langHeader = {
+                "SonarPet By DSH105", "---------------------",
+                "Language Configuration File"
+        };
         try {
             langConfig = this.configManager.getNewConfig("language.yml", langHeader);
             try {
@@ -231,8 +236,8 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
         }
         langConfig.reloadConfig();
 
-        if (Lang.PREFIX.toString_().equals("&4[&cEchoPet&4]&r")) {
-            langConfig.set(Lang.PREFIX.getPath(), "&4[&cEchoPet&4]&r ", Lang.PREFIX.getDescription());
+        if (Lang.PREFIX.toString_().equals("&4[&cSonarPet&4]&r")) {
+            langConfig.set(Lang.PREFIX.getPath(), "&4[&cSonarPet&4]&r ", Lang.PREFIX.getDescription());
         }
         this.prefix = Lang.PREFIX.toString();
     }
@@ -352,7 +357,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
         } else if (commandLabel.equalsIgnoreCase("echopet")) {
             if (sender.hasPermission("echopet.petadmin")) {
                 PluginDescriptionFile pdFile = this.getDescription();
-                sender.sendMessage(ChatColor.RED + "-------- EchoPet --------");
+                sender.sendMessage(ChatColor.RED + "-------- SonarPet --------");
                 sender.sendMessage(ChatColor.GOLD + "Author: " + ChatColor.YELLOW + "DSH105");
                 sender.sendMessage(ChatColor.GOLD + "Version: " + ChatColor.YELLOW + pdFile.getVersion());
                 sender.sendMessage(ChatColor.GOLD + "Website: " + ChatColor.YELLOW + pdFile.getWebsite());

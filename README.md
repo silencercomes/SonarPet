@@ -1,12 +1,25 @@
-# [EchoPet is permanently discontinued.](https://twitter.com/_DSH105_/status/694102156392005633)
+SonarPet
+========
+A fork of [EchoPet](https://github.com/DSH105/EchoPet) updated to 1.9
 
-If you wish to maintain your own fork, I recommend you take a peek at the [version 3 branch](https://github.com/DSH105/EchoPet/tree/3.x). I'd prefer if you refrain from branding/redistributing it under the same name as I will **not** be endorsing any unofficial continuations.
+## Features
+- All mobs can be pets (even enderdragons)
+- An awesome donator perk that is _EULA compliant_
+- Pets are greatly customisable, through the extensive Command Base and PetMenu
+- A Custom AI makes all Pets focused on specific goals, handled closely by the core of the Plugin
+  - Make your pets attack your enemies
+- Supports minecraft 1.6.4-1.9
 
-https://github.com/DSH105/EchoPet/issues/605#issuecomment-192543587
+## Changes
+I've made some changes to EchoPet in SonarPet, which are listed below.
+- I've renamed references from 'EchoPet' to 'SonarPet'
+  - Permissions and class names remain, to retain backwards compatibility and to avoid the need to change permissions
+- I've added 1.9 support
 
-![Logo](http://dev.bukkit.org/media/images/52/979/Title.png)
-## [EchoPet](https://dev.bukkit.org/bukkit-plugins/echopet/) adds pets to your Minecraft server! Perfect for donation perks
-### [Download Now](https://github.com/DSH105/EchoPet/releases)
-----
+## Requirements
+- Java 8
 
-### Need help? Visit the [Wiki](https://github.com/DSH105/EchoPet/wiki)!
+## Credits
+- Dsh105 - Creating EchoPet
+- CaptainBern - Helping out with EchoPet
+- Techcable - 1.9 update and maintinaing SonarPet

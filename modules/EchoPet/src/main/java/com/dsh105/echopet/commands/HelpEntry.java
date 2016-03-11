@@ -29,10 +29,10 @@ public enum HelpEntry {
 
     PET("<type>:[data],[data];[name]", false, new String[]{"echopet.pet.type.<type>"}, "Changes your current pet", "Each data value is separated by a comma", "Pet names can be entered using a semi-colon"),
     WITH_MOUNT("<type>:[data],[data];[name]", false, new String[]{"echopet.pet.type.<type>", "echopet.pet.type.<rider_type>"}, "Changes your current pet and adds a rider", "Each data value is separated by a comma", "Pet names can be entered using a semi-colon"),
-    NAME("name [name]", true, new String[]{"echopet.pet.name"}, "Set the name of your pet", "If no arguments are provided, EchoPet will ask for one separately", "Names can be more than one word but no longer than 64 characters"),
+    NAME("name [name]", true, new String[]{"echopet.pet.name"}, "Set the name of your pet", "If no arguments are provided, SonarPet will ask for one separately", "Names can be more than one word but no longer than 64 characters"),
     REMOVE("remove", true, new String[]{"echopet.pet.remove"}, "Removes your current pet"),
     RIDER("rider <type>:[data],[data];name", false, new String[]{"echopet.pet.type.<rider_type>"}, "Changes the rider of your pet", "Each data value is separated by a comma", "Pet names can be entered using a semi-colon"),
-    RIDER_NAME("name rider [name]", true, new String[]{"echopet.pet.name"}, "Set the name of your pet's rider", "If no arguments are provided, EchoPet will ask for one separately", "Names can be more than one word but no longer than 64 characters"),
+    RIDER_NAME("name rider [name]", true, new String[]{"echopet.pet.name"}, "Set the name of your pet's rider", "If no arguments are provided, SonarPet will ask for one separately", "Names can be more than one word but no longer than 64 characters"),
     RIDER_REMOVE("rider remove", true, new String[]{"echopet.pet.remove"}, "Remove your pet's rider"),
     LIST("list", true, new String[]{"echopet.pet.list"}, "View available pet types"),
     INFO("info", true, new String[]{"echopet.pet.info"}, "View information on your pet"),

@@ -140,25 +140,25 @@ public enum HelpPage {
 
     public static boolean sendRelevantHelpMessage(CommandSender sender, String[] args) {
         if (args[0].equalsIgnoreCase("default")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Help ------------");
             for (String s : HelpPage.DEFAULT.getLines()) {
                 sender.sendMessage(s);
             }
             return true;
         } else if (args[0].equalsIgnoreCase("name")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Help ------------");
             for (String s : HelpPage.GENERAL.getLines()) {
                 sender.sendMessage(s);
             }
             return true;
         } else if (args[0].equalsIgnoreCase("rider")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Help ------------");
             for (String s : HelpPage.RIDER.getLines()) {
                 sender.sendMessage(s);
             }
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Help ------------");
             for (String s : HelpPage.GENERAL.getLines()) {
                 sender.sendMessage(s);
             }

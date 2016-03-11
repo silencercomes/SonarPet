@@ -286,12 +286,12 @@ public class PetCommand implements CommandExecutor {
                 if (Perm.BASE.hasPerm(sender, true, true)) {
                     if (sender instanceof Player && EchoPet.isUsingNetty()) {
                         Paginator<PowerMessage> paginator = this.getHelp(sender);
-                        sender.sendMessage(ChatColor.RED + "------------ EchoPet Help 1/" + paginator.getPages() + " ------------");
+                        sender.sendMessage(ChatColor.RED + "------------ SonarPet Help 1/" + paginator.getPages() + " ------------");
                         sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                         paginator.sendPage(sender, 1);
                         sender.sendMessage(Lang.TIP_HOVER_PREVIEW.toString());
                     } else {
-                        sender.sendMessage(ChatColor.RED + "------------ EchoPet Help 1/6 ------------");
+                        sender.sendMessage(ChatColor.RED + "------------ SonarPet Help 1/6 ------------");
                         sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                         for (String s : HelpPage.getHelpPage(1)) {
                             sender.sendMessage(s);
@@ -366,7 +366,7 @@ public class PetCommand implements CommandExecutor {
                         Lang.sendTo(sender, Lang.NO_PET.toString());
                         return true;
                     }
-                    sender.sendMessage(ChatColor.RED + "------------ EchoPet Pet Info ------------");
+                    sender.sendMessage(ChatColor.RED + "------------ SonarPet Pet Info ------------");
                     for (String s : PetUtil.generatePetInfo(pi)) {
                         sender.sendMessage(s);
                     }
@@ -520,7 +520,7 @@ public class PetCommand implements CommandExecutor {
                     if (GeneralUtil.isInt(args[1])) {
                         if (sender instanceof Player && EchoPet.isUsingNetty()) {
                             Paginator<PowerMessage> paginator = this.getHelp(sender);
-                            sender.sendMessage(ChatColor.RED + "------------ EchoPet Help " + args[1] + "/" + paginator.getPages() + " ------------");
+                            sender.sendMessage(ChatColor.RED + "------------ SonarPet Help " + args[1] + "/" + paginator.getPages() + " ------------");
                             sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                             if (Integer.parseInt(args[1]) > paginator.getPages()) {
                                 Lang.sendTo(sender, Lang.HELP_INDEX_TOO_BIG.toString().replace("%index%", args[1]));
@@ -529,7 +529,7 @@ public class PetCommand implements CommandExecutor {
                             paginator.sendPage(sender, Integer.parseInt(args[1]));
                             sender.sendMessage(Lang.TIP_HOVER_PREVIEW.toString());
                         } else {
-                            sender.sendMessage(ChatColor.RED + "------------ EchoPet Help " + args[1] + "/6 ------------");
+                            sender.sendMessage(ChatColor.RED + "------------ SonarPet Help " + args[1] + "/6 ------------");
                             sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                             for (String s : HelpPage.getHelpPage(Integer.parseInt(args[1]))) {
                                 sender.sendMessage(s);
@@ -539,12 +539,12 @@ public class PetCommand implements CommandExecutor {
                     }
                     if (sender instanceof Player && EchoPet.isUsingNetty()) {
                         Paginator<PowerMessage> paginator = this.getHelp(sender);
-                        sender.sendMessage(ChatColor.RED + "------------ EchoPet Help 1/" + paginator.getPages() + " ------------");
+                        sender.sendMessage(ChatColor.RED + "------------ SonarPet Help 1/" + paginator.getPages() + " ------------");
                         sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                         paginator.sendPage(sender, 1);
                         sender.sendMessage(Lang.TIP_HOVER_PREVIEW.toString());
                     } else {
-                        sender.sendMessage(ChatColor.RED + "------------ EchoPet Help 1/6 ------------");
+                        sender.sendMessage(ChatColor.RED + "------------ SonarPet Help 1/6 ------------");
                         sender.sendMessage(ChatColor.RED + "Key: <> = Required      [] = Optional");
                         for (String s : HelpPage.getHelpPage(1)) {
                             sender.sendMessage(s);

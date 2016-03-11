@@ -20,12 +20,18 @@ package com.dsh105.echopet.compat.api.util.wrapper;
 import com.dsh105.echopet.compat.api.reflection.ReflectionConstants;
 import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
+
+import net.techcable.sonarpet.utils.UUIDUtils;
 
 public class WrappedGameProfile extends AbstractWrapper {
 
-    private WrappedGameProfile(Object ident, String name) {
+    private static final Class<?> GAME_PROFILE_CLASS;
+    private static final Constructor STRING_CONSTURCTOR, UUID_CONSTRUCTOR;
+    static {
         Class<?> gameProfileClass = null;
         try {
             gameProfileClass = Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile");
@@ -33,48 +39,61 @@ public class WrappedGameProfile extends AbstractWrapper {
             try {
                 gameProfileClass = Class.forName("com.mojang.authlib.GameProfile");
             } catch (ClassNotFoundException e1) {
-                e1.printStackTrace();
+                throw new RuntimeException("Unable to find GameProfile");
             }
         }
-
+        GAME_PROFILE_CLASS = gameProfileClass;
+        Constructor stringConstructor, uuidConstructor;
         try {
-            if (ident instanceof UUID) {
-                super.setHandle(gameProfileClass.getConstructor(ident.getClass(), String.class).newInstance(ident, name));
-            } else if (ident instanceof String) {
-                super.setHandle(gameProfileClass.getConstructor(String.class, String.class).newInstance(ident, name));
-            }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            uuidConstructor = gameProfileClass.getConstructor(UUID.class, String.class);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            uuidConstructor = null;
         }
+        try {
+            stringConstructor = gameProfileClass.getConstructor(String.class, String.class);
+        } catch (NoSuchMethodException e) {
+            stringConstructor = null;
+        }
+        STRING_CONSTURCTOR = stringConstructor;
+        UUID_CONSTRUCTOR = uuidConstructor;
     }
 
-    public WrappedGameProfile(UUID uuid, String name) {
-        this((Object) uuid, name);
+    public WrappedGameProfile(UUID id, String name) {
+        final Object handle;
+        try {
+            if (UUID_CONSTRUCTOR != null) {
+                handle = UUID_CONSTRUCTOR.newInstance(id, name);
+            } else if (STRING_CONSTURCTOR != null) {
+                handle = STRING_CONSTURCTOR.newInstance(id.toString(), name);
+            } else {
+                throw new RuntimeException("Unable to find GameProfile constructor");
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Unable to call gameprofile constructor", e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("GameProfile constructor throw exception", e.getCause());
+        }
+        setHandle(handle);
     }
 
     public WrappedGameProfile(String ident, String name) {
-        this((Object) ident, name);
+        this(UUIDUtils.fromString(ident), name);
     }
 
     public static WrappedGameProfile getNewProfile(WrappedGameProfile old, String newName) {
-        return new WrappedGameProfile(old.getId(), newName);
+        return new WrappedGameProfile(old.getUniqueId(), newName);
     }
+
+    private static final Method UNIQUE_ID_METHOD = ReflectionUtil.getMethod(GAME_PROFILE_CLASS, ReflectionConstants.GAMEPROFILE_FUNC_ID.getName());
 
     public UUID getUniqueId() {
-        return getId();
-    }
-
-    public String getIdent() {
-        return getId();
-    }
-
-    private <T> T getId() {
-        return ReflectionUtil.invokeMethod(ReflectionUtil.getMethod(getHandle().getClass(), ReflectionConstants.GAMEPROFILE_FUNC_ID.getName()), getHandle());
+        Object o = ReflectionUtil.invokeMethod(UNIQUE_ID_METHOD, getHandle());
+        if (o instanceof UUID) {
+            return (UUID) o;
+        } else if (o instanceof String) {
+            return UUIDUtils.fromString((String) o);
+        } else {
+            throw new RuntimeException("Unable to parse unique id returned by gameprofile");
+        }
     }
 }

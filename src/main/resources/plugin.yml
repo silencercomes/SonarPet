@@ -1,7 +1,7 @@
-name: EchoPet
-version: ${project.version}-bjenkins-build-number
+name: SonarPet
+version: ${project.version}
 description: >
-  EchoPet is an advanced, easy to use plugin, designed to handle custom-tailored pets with more unique behaviours than vanilla Minecraft entities. Perfect for donation perks.
+  SonarPet is an advanced, easy to use plugin, designed to handle custom-tailored pets with more unique behaviours than vanilla Minecraft entities. Perfect for donation perks.
 
 author: DSH105
 website: ${project.url}
@@ -10,7 +10,7 @@ softdepend: [WorldGuard, VanishNoPacket, ProtocolLib]
 
 commands:
     ecupdate:
-        description: Update the EchoPet plugin
+        description: Update the SonarPet plugin
         permission: echopet.update
     echopet:
         description: View plugin information and general help

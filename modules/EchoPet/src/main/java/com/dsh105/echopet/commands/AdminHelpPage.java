@@ -141,25 +141,25 @@ public enum AdminHelpPage {
 
     public static boolean sendRelevantHelpMessage(CommandSender sender, String[] args) {
         if (args[0].equalsIgnoreCase("default")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Admin Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Admin Help ------------");
             for (String s : AdminHelpPage.DEFAULT.getLines()) {
                 sender.sendMessage(s);
             }
             return true;
         } else if (args[0].equalsIgnoreCase("name")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Admin Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Admin Help ------------");
             for (String s : AdminHelpPage.GENERAL.getLines()) {
                 sender.sendMessage(s);
             }
             return true;
         } else if (args[0].equalsIgnoreCase("rider")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Admin Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Admin Help ------------");
             for (String s : AdminHelpPage.RIDER.getLines()) {
                 sender.sendMessage(s);
             }
             return true;
         } else if (args[0].equalsIgnoreCase("remove")) {
-            sender.sendMessage(ChatColor.RED + "------------ EchoPet Admin Help ------------");
+            sender.sendMessage(ChatColor.RED + "------------ SonarPet Admin Help ------------");
             for (String s : AdminHelpPage.GENERAL.getLines()) {
                 sender.sendMessage(s);
             }
