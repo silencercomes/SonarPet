@@ -1,4 +1,4 @@
-SonarPet
+SonarPet [![Build Status](https://travis-ci.org/TechzoneMC/SonarPet.svg?branch=master)](https://travis-ci.org/TechzoneMC/SonarPet)
 ========
 A fork of [EchoPet](https://github.com/DSH105/EchoPet) updated to 1.9
 
