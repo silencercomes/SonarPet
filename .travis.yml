@@ -1,8 +1,13 @@
 language: java
+jdk:
+  - oraclejdk8
+sudo: false
 notifications:
   email: false
-install: true
-matrix:
-  include:
-  - jdk: oraclejdk7
-    script: mvn clean package
+  irc:
+    channels:
+      - "irc.spi.gt#techcable"
+script: mvn clean package
+cache:
+  directories:
+    - '$HOME/.m2/repository'
