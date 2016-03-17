@@ -40,11 +40,22 @@ public enum HorseVariant {
     }
 
     public static HorseVariant getForBukkitColour(Horse.Color colour) {
-        for (HorseVariant v : values()) {
-            if (v.getBukkitColour().equals(colour)) {
-                return v;
+        return BY_BUKKIT[colour.ordinal()];
+    }
+
+    private static final HorseVariant[] BY_BUKKIT = new HorseVariant[Horse.Color.values().length];
+    static {
+        for (Horse.Color bukkitColor : Horse.Color.values()) {
+            HorseVariant matchingVariant = null;
+            for (HorseVariant variant : HorseVariant.values()) {
+                if (variant.getBukkitColour().equals(bukkitColor)) {
+                    matchingVariant = variant;
+                }
             }
+            if (matchingVariant == null) {
+                throw new AssertionError("No horse marking for bukkit color: " + bukkitColor);
+            }
+            BY_BUKKIT[bukkitColor.ordinal()] = matchingVariant;
         }
-        return null;
     }
 }

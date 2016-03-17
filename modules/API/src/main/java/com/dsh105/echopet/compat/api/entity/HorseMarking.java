@@ -20,40 +20,50 @@ package com.dsh105.echopet.compat.api.entity;
 import org.bukkit.entity.Horse;
 
 public enum HorseMarking {
-    NONE(Horse.Style.NONE, 0, 1, 2, 3, 4, 5, 6),
-    SOCKS(Horse.Style.WHITE, 256, 257, 258, 259, 260, 261, 262),
-    WHITE_PATCH(Horse.Style.WHITEFIELD, 512, 513, 514, 515, 516, 517, 518),
-    WHITE_SPOTS(Horse.Style.WHITE_DOTS, 768, 769, 770, 771, 772, 773, 774),
-    BLACK_SPOTS(Horse.Style.BLACK_DOTS, 1024, 1025, 1026, 1027, 1028, 1029, 1030);
+    NONE(Horse.Style.NONE),
+    SOCKS(Horse.Style.WHITE),
+    WHITE_PATCH(Horse.Style.WHITEFIELD),
+    WHITE_SPOTS(Horse.Style.WHITE_DOTS),
+    BLACK_SPOTS(Horse.Style.BLACK_DOTS);
 
-    private HorseVariant[] a = {HorseVariant.WHITE, HorseVariant.CREAMY, HorseVariant.CHESTNUT, HorseVariant.BROWN, HorseVariant.BLACK, HorseVariant.GRAY, HorseVariant.DARKBROWN};
-    private Integer[] b;
-    private Horse.Style bukkitStyle;
+    private final Horse.Style bukkitStyle;
 
-    HorseMarking(Horse.Style bukkitStyle, Integer... i) {
+    HorseMarking(Horse.Style bukkitStyle) {
         this.bukkitStyle = bukkitStyle;
-        this.b = i;
     }
 
+    /**
+     * Get the internal id
+     * @param v the variant associated with the id
+     * @return the internal id
+     * @deprecated use version specific code
+     */
+    @Deprecated
     public int getId(HorseVariant v) {
-        for (int i = 0; i < HorseVariant.values().length; i++) {
-            if (a[i] == v) {
-                return b[i];
-            }
-        }
-        return -1;
+        return (v.getBukkitColour().ordinal() & 255) | (getBukkitStyle().ordinal() << 8);
     }
 
     public Horse.Style getBukkitStyle() {
         return bukkitStyle;
     }
 
-    public static HorseMarking getForBukkitStyle(Horse.Style style) {
-        for (HorseMarking v : values()) {
-            if (v.getBukkitStyle().equals(style)) {
-                return v;
+    private static final HorseMarking[] BY_BUKKIT = new HorseMarking[Horse.Style.values().length];
+    static {
+        for (Horse.Style bukkitStyle : Horse.Style.values()) {
+            HorseMarking matchingMarking = null;
+            for (HorseMarking marking : HorseMarking.values()) {
+                if (marking.getBukkitStyle().equals(bukkitStyle)) {
+                    matchingMarking = marking;
+                }
             }
+            if (matchingMarking == null) {
+                throw new AssertionError("No horse marking for bukkit style: " + bukkitStyle);
+            }
+            BY_BUKKIT[bukkitStyle.ordinal()] = matchingMarking;
         }
-        return null;
+    }
+
+    public static HorseMarking getForBukkitStyle(Horse.Style style) {
+        return BY_BUKKIT[style.ordinal()];
     }
 }

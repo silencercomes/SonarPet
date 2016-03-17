@@ -15,29 +15,23 @@
  * along with EchoPet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.dsh105.echopet.compat.api.entity;
+package com.dsh105.echopet.compat.nms.v1_9_R1.entity;
 
-public enum HorseArmour {
+import com.dsh105.echopet.compat.api.entity.IPet;
+import net.minecraft.server.v1_9_R1.World;
 
-    NONE(Integer.MIN_VALUE),
-    IRON(1),
-    GOLD(2),
-    DIAMOND(3);
 
-    private int id;
+public abstract class EntityNoClipPet extends EntityPet {
 
-    HorseArmour(int id) {
-        this.id = id;
+    public EntityNoClipPet(World world, IPet pet) {
+        super(world, pet);
     }
 
-    /**
-     * Get the internal id of the armor
-     *
-     * @return
-     * @deprecated please use version specific code for this
-     */
-    @Deprecated
-    public int getId() {
-        return this.id;
+    protected EntityNoClipPet(World world) {
+        super(world);
+    }
+
+    public void noClip(boolean flag) {
+        this.noclip = flag;
     }
 }

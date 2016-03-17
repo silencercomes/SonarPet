@@ -22,34 +22,51 @@ import org.bukkit.entity.Horse;
 
 public enum HorseType {
 
-    NORMAL(Horse.Variant.HORSE, 0),
-    DONKEY(Horse.Variant.DONKEY, 1),
-    MULE(Horse.Variant.MULE, 2),
-    ZOMBIE(Horse.Variant.UNDEAD_HORSE, 3),
-    SKELETON(Horse.Variant.SKELETON_HORSE, 4);
+    NORMAL(Horse.Variant.HORSE),
+    DONKEY(Horse.Variant.DONKEY),
+    MULE(Horse.Variant.MULE),
+    ZOMBIE(Horse.Variant.UNDEAD_HORSE),
+    SKELETON(Horse.Variant.SKELETON_HORSE);
 
     private Horse.Variant bukkitVariant;
-    private int id;
 
-    HorseType(Horse.Variant bukkitVariant, int id) {
+    HorseType(Horse.Variant bukkitVariant) {
         this.bukkitVariant = bukkitVariant;
-        this.id = id;
     }
 
+    /**
+     * Get the internal id of the horse type
+     *
+     * @return the internal id
+     * @deprecated use version specific code
+     */
+    @Deprecated
     public int getId() {
-        return this.id;
+        return getBukkitVariant().ordinal();
     }
 
     public Horse.Variant getBukkitVariant() {
         return bukkitVariant;
     }
 
-    public static HorseType getForBukkitVariant(Horse.Variant variant) {
-        for (HorseType v : values()) {
-            if (v.getBukkitVariant().equals(variant)) {
-                return v;
+
+    private static final HorseType[] BY_BUKKIT = new HorseType[Horse.Style.values().length];
+    static {
+        for (Horse.Variant bukkitVariant : Horse.Variant.values()) {
+            HorseType matchingMarking = null;
+            for (HorseType marking : HorseType.values()) {
+                if (marking.getBukkitVariant().equals(bukkitVariant)) {
+                    matchingMarking = marking;
+                }
             }
+            if (matchingMarking == null) {
+                throw new AssertionError("No horse marking for bukkit style: " + bukkitVariant);
+            }
+            BY_BUKKIT[bukkitVariant.ordinal()] = matchingMarking;
         }
-        return null;
+    }
+
+    public static HorseType getForBukkitVariant(Horse.Variant variant) {
+        return BY_BUKKIT[variant.ordinal()];
     }
 }
