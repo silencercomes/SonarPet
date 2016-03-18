@@ -141,6 +141,18 @@
             </exclusions>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>net.techcable.sonarpet</groupId>
+            <artifactId>nms-v1_9_R1</artifactId>
+            <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>craftbukkit</artifactId>
+                </exclusion>
+            </exclusions>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
@@ -191,24 +203,13 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
-                                    <artifact>com.dsh105:EchoPet*</artifact>
+                                    <artifact>net.techcable.sonarpet:*</artifact>
                                     <includes>
+                                        <!-- put it all in -->
                                         <include>**</include>
                                     </includes>
                                 </filter>
                             </filters>
-                            <artifactSet>
-                                <includes>
-                                    <artifact>com.dsh105:EchoPet*</artifact>
-                                    <include>com.jolbox:bonecp</include>
-                                    <include>org.slf4j:slf4j-api</include>
-                                    <include>org.slf4j:slf4j-jdk14</include>
-                                    <include>com.dsh105:Commodus</include>
-                                    <include>com.dsh105:PowerMessage</include>
-                                    <include>com.captainbern:Minecraft-Reflection</include>
-                                    <include>com.comphenix.packetwrapper:PacketWrapper</include>
-                                </includes>
-                            </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>com.jolbox</pattern>
