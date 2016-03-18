@@ -49,6 +49,8 @@ public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPe
 
     public EntityOcelotPet(World world, IPet pet) {
         super(world, pet);
+        datawatcher.set(OCELOT_FLAGS_METADATA, (byte) 0x04); // set tame
+        datawatcher.set(OCELOT_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
     }
 
     public int getCatType() {
@@ -64,7 +66,7 @@ public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPe
     protected void initDatawatcher() {
         super.initDatawatcher();
         datawatcher.register(OCELOT_FLAGS_METADATA, (byte) 0);
-        datawatcher.register(OCELOT_OWNER_METADATA, Optional.of(getOwner().getUniqueID()));
+        datawatcher.register(OCELOT_OWNER_METADATA, Optional.empty());
         datawatcher.register(OCELOT_TYPE_METADATA, Ocelot.Type.BLACK_CAT.getId());
     }
 

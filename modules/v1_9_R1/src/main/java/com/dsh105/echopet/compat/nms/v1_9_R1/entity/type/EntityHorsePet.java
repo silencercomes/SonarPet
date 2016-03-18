@@ -52,7 +52,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
     public static final DataWatcherObject<Byte> HORSE_FLAGS_METADATA = NMS.createMetadata(12, NMS.MetadataType.BYTE);
     public static final DataWatcherObject<Integer> HORSE_TYPE_METADATA = NMS.createMetadata(13, NMS.MetadataType.VAR_INT);
     public static final DataWatcherObject<Integer> HORSE_COLOR_AND_STYLE_METADATA = NMS.createMetadata(14, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<UUID> HORSE_OWNER_METADATA = NMS.createMetadata(15, NMS.MetadataType.OPTIONAL_UUID);
+    public static final DataWatcherObject<Optional<UUID>> HORSE_OWNER_METADATA = NMS.createMetadata(15, NMS.MetadataType.OPTIONAL_UUID);
     public static final DataWatcherObject<Integer> HORSE_ARMOR_METADATA = NMS.createMetadata(16, NMS.MetadataType.VAR_INT);
 
     private int rearingCounter = 0;
@@ -64,6 +64,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     public EntityHorsePet(World world, IPet pet) {
         super(world, pet);
+        datawatcher.set(HORSE_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
     }
 
     @Override
@@ -144,7 +145,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
         datawatcher.register(HORSE_FLAGS_METADATA, 0);
         datawatcher.register(HORSE_TYPE_METADATA, NMS.getId(Horse.Variant.HORSE));
         datawatcher.register(HORSE_COLOR_AND_STYLE_METADATA, NMS.getId(Horse.Color.WHITE, Horse.Style.NONE));
-        datawatcher.register(HORSE_OWNER_METADATA, Optional.of(getOwner().getUniqueID()));
+        datawatcher.register(HORSE_OWNER_METADATA, Optional.empty());
         datawatcher.register(HORSE_ARMOR_METADATA, NMS.getId(HorseArmour.NONE));
     }
 

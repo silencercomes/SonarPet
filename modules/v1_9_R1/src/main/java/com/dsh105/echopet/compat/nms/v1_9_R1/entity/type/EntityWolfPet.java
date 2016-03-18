@@ -50,8 +50,8 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(WOLF_FLAGS_METADATA, 0x04); // Default to tamed
-        this.datawatcher.register(WOLF_OWNER_METADATA, Optional.of(getOwner().getUniqueID()));
+        this.datawatcher.register(WOLF_FLAGS_METADATA, 0); // Default to not tamed
+        this.datawatcher.register(WOLF_OWNER_METADATA, Optional.empty());
         this.datawatcher.register(WOLF_DAMAGE_TAKEN_METADATA, 0);
         this.datawatcher.register(WOLF_IS_BEGGING_METADATA, fallDistance);
         this.datawatcher.register(WOLF_COLLAR_COLOR_METADATA, 0); // White colar
@@ -67,6 +67,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
 
     public EntityWolfPet(World world, IPet pet) {
         super(world, pet);
+        setTamed(true); // Tame
     }
 
     public boolean isTamed() {
@@ -78,6 +79,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
         byte b = this.datawatcher.get(WOLF_FLAGS_METADATA);
 
         datawatcher.set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x04) : (b & ~0x04)));
+        datawatcher.set(WOLF_OWNER_METADATA, flag ? Optional.of(getPlayerOwner().getUniqueId()) : Optional.empty());
 
         if (!flag) {
             getPet().getPetData().remove(PetData.TAMED);
