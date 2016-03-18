@@ -5,6 +5,8 @@ import lombok.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
 import com.dsh105.echopet.compat.api.entity.HorseMarking;
@@ -87,10 +89,15 @@ public class NMS {
     }
 
 
-    private static MethodHandle getSoundEffectType;
+    private static final MethodHandle getSoundEffectType;
     static {
         try {
-            getSoundEffectType = MethodHandles.lookup().findGetter(Block.class, "stepSound", SoundEffectType.class);
+            Field f = Block.class.getDeclaredField("stepSound");
+            if (f.getType() != SoundEffectType.class) {
+                throw new AssertionError("stepSound of unexpected type: " + f.getType());
+            }
+            f.setAccessible(true);
+            getSoundEffectType = MethodHandles.lookup().unreflectGetter(f);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new AssertionError("Unable to access sound effect type", e);
         }
@@ -100,7 +107,12 @@ public class NMS {
 
     static {
         try {
-            getVolumeMethod = MethodHandles.lookup().findVirtual(EntityLiving.class, "cd", MethodType.methodType(float.class));
+            Method m = EntityLiving.class.getDeclaredMethod("cd");
+            if (m.getReturnType() != float.class) {
+                throw new AssertionError("getVolume method " + m.getName() + " has unexpected return type: " + m.getReturnType());
+            }
+            m.setAccessible(true);
+            getVolumeMethod = MethodHandles.lookup().unreflect(m);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new AssertionError("Unable to access/find get volume method", e);
         }
