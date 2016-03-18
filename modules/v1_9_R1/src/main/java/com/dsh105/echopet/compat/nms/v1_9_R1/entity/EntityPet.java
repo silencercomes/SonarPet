@@ -490,7 +490,7 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
     // EntityLiving
     @Override
     protected void i() { // initialize entity
-        super.h();
+        super.i();
         initDatawatcher();
     }
 
