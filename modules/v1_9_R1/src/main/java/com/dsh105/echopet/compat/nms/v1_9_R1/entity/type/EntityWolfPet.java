@@ -17,19 +17,20 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import java.util.Optional;
 import java.util.UUID;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetData;
+import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWolfPet;
-import com.dsh105.echopet.compat.api.entity.type.pet.IWolfPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
+import com.google.common.base.Optional;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
-import net.minecraft.server.v1_9_R1.EnumColor;
 import net.minecraft.server.v1_9_R1.EnumParticle;
 import net.minecraft.server.v1_9_R1.MathHelper;
 import net.minecraft.server.v1_9_R1.World;
@@ -53,7 +54,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
     protected void initDatawatcher() {
         super.initDatawatcher();
         getDatawatcher().register(WOLF_FLAGS_METADATA, (byte) 0); // Default to not tamed
-        getDatawatcher().register(WOLF_OWNER_METADATA, Optional.empty());
+        getDatawatcher().register(WOLF_OWNER_METADATA, Optional.absent());
         getDatawatcher().register(WOLF_DAMAGE_TAKEN_METADATA, 0F);
         getDatawatcher().register(WOLF_IS_BEGGING_METADATA, false);
         getDatawatcher().register(WOLF_COLLAR_COLOR_METADATA, 0); // White colar
@@ -81,7 +82,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
         byte b = getDatawatcher().get(WOLF_FLAGS_METADATA);
 
         getDatawatcher().set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x04) : (b & ~0x04)));
-        getDatawatcher().set(WOLF_OWNER_METADATA, flag ? Optional.of(getPlayerOwner().getUniqueId()) : Optional.empty());
+        getDatawatcher().set(WOLF_OWNER_METADATA, flag ? Optional.of(getPlayerOwner().getUniqueId()) : Optional.absent());
 
         if (!flag) {
             getPet().getPetData().remove(PetData.TAMED);

@@ -17,7 +17,6 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
@@ -28,6 +27,7 @@ import com.dsh105.echopet.compat.api.entity.type.nms.IEntityOcelotPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
+import com.google.common.base.Optional;
 
 import net.minecraft.server.v1_9_R1.World;
 
@@ -65,7 +65,7 @@ public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPe
     protected void initDatawatcher() {
         super.initDatawatcher();
         getDatawatcher().register(OCELOT_FLAGS_METADATA, (byte) 0);
-        getDatawatcher().register(OCELOT_OWNER_METADATA, Optional.empty());
+        getDatawatcher().register(OCELOT_OWNER_METADATA, Optional.absent());
         getDatawatcher().register(OCELOT_TYPE_METADATA, Ocelot.Type.BLACK_CAT.getId());
     }
 

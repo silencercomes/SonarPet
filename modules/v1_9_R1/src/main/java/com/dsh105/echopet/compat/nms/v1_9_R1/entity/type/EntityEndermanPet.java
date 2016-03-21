@@ -17,14 +17,13 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import java.util.Optional;
-
 import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEndermanPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
+import com.google.common.base.Optional;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.IBlockData;
@@ -55,7 +54,7 @@ public class EntityEndermanPet extends EntityPet implements IEntityEndermanPet {
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        getDatawatcher().register(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.empty());
+        getDatawatcher().register(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.absent());
         getDatawatcher().register(ENDERMAN_IS_SCREAMING_METADATA, false);
     }
 
@@ -69,7 +68,7 @@ public class EntityEndermanPet extends EntityPet implements IEntityEndermanPet {
     }
 
     public void clearCarried() {
-        getDatawatcher().set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.empty());
+        getDatawatcher().set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.absent());
     }
 
     public void setCarried(IBlockData blockData) {

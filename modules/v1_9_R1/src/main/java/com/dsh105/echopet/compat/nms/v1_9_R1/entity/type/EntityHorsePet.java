@@ -19,7 +19,6 @@ package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
 import lombok.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
@@ -36,6 +35,7 @@ import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
+import com.google.common.base.Optional;
 
 import net.minecraft.server.v1_9_R1.Block;
 import net.minecraft.server.v1_9_R1.BlockPosition;
@@ -146,7 +146,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
         getDatawatcher().register(HORSE_FLAGS_METADATA, (byte) 0);
         getDatawatcher().register(HORSE_TYPE_METADATA, NMS.getId(Horse.Variant.HORSE));
         getDatawatcher().register(HORSE_COLOR_AND_STYLE_METADATA, NMS.getId(Horse.Color.WHITE, Horse.Style.NONE));
-        getDatawatcher().register(HORSE_OWNER_METADATA, Optional.empty());
+        getDatawatcher().register(HORSE_OWNER_METADATA, Optional.absent());
         getDatawatcher().register(HORSE_ARMOR_METADATA, NMS.getId(HorseArmour.NONE));
     }
 

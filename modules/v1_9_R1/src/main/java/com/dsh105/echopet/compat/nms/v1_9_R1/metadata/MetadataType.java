@@ -2,10 +2,10 @@ package com.dsh105.echopet.compat.nms.v1_9_R1.metadata;
 
 import lombok.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import com.dsh105.powermessage.libs.com.google.gson.internal.Primitives;
+import com.google.common.base.Optional;
 
 import net.minecraft.server.v1_9_R1.IBlockData;
 
@@ -44,11 +44,10 @@ public enum MetadataType {
 
     private static void checkOptionalCast(Object obj, Class<?> optionalType) {
         if (obj instanceof Optional) {
-            ((Optional<?>) obj).ifPresent((o) -> {
-                if (!optionalType.isInstance(o)) {
-                    throw new ClassCastException("The value in the optional must be " + optionalType + " not a " + o.getClass());
-                }
-            });
+            if (((Optional<?>) obj).isPresent() && !optionalType.isInstance(((Optional<?>) obj).get())) {
+                throw new ClassCastException("The value in the optional must be " + optionalType + " not a " + obj.getClass());
+            }
+            ;
         } else {
             throw new ClassCastException("Must be a java.util.Optional not a " + obj.getClass());
         }
