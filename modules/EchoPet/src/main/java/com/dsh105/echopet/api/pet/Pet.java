@@ -17,24 +17,35 @@
 
 package com.dsh105.echopet.api.pet;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import com.dsh105.commodus.StringUtil;
-import com.dsh105.commodus.particle.Particle;
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.IEntityNoClipPet;
+import com.dsh105.echopet.compat.api.entity.IEntityPet;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetData;
+import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.event.PetTeleportEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.reflection.ReflectionConstants;
 import com.dsh105.echopet.compat.api.reflection.SafeMethod;
-import com.dsh105.echopet.compat.api.util.*;
+import com.dsh105.echopet.compat.api.util.Lang;
+import com.dsh105.echopet.compat.api.util.PetNames;
+import com.dsh105.echopet.compat.api.util.PlayerUtil;
+import com.dsh105.echopet.compat.api.util.ReflectionUtil;
+import com.dsh105.echopet.compat.api.util.StringSimplifier;
+
+import net.techcable.sonarpet.particles.Particle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 public abstract class Pet implements IPet {
 
@@ -211,8 +222,8 @@ public abstract class Pet implements IPet {
     @Override
     public void removePet(boolean makeSound) {
         if (this.getCraftPet() != null) {
-            Particle.CLOUD.builder().at(getLocation()).show();
-            Particle.LAVA_SPARK.builder().at(getLocation()).show();
+            Particle.CLOUD.show(getLocation());
+            Particle.LAVA_SPARK.show(getLocation());
         }
         removeRider();
         if (this.getEntityPet() != null) {
@@ -310,7 +321,7 @@ public abstract class Pet implements IPet {
         this.teleportToOwner();
         this.getEntityPet().resizeBoundingBox(flag);
         this.ownerRiding = flag;
-        Particle.PORTAL.builder().at(getLocation()).show();
+        Particle.PORTAL.show(getLocation());
         Location l = this.getLocation().clone();
         l.setY(l.getY() - 1D);
         Particle.BLOCK_DUST.builder().ofBlockType(l.getBlock().getType()).at(getLocation()).show();
@@ -364,10 +375,10 @@ public abstract class Pet implements IPet {
         }
         this.getEntityPet().resizeBoundingBox(flag);
         this.isHat = flag;
-        Particle.PORTAL.builder().at(getLocation()).show();
+        Particle.PORTAL.show(getLocation());
         Location l = this.getLocation().clone();
         l.setY(l.getY() - 1D);
-        Particle.PORTAL.builder().at(getLocation()).show();
+        Particle.PORTAL.show(getLocation());
     }
 
     @Override

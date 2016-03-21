@@ -17,13 +17,15 @@
 
 package com.dsh105.echopet.compat.nms.v1_7_R1;
 
-import com.dsh105.commodus.particle.Particle;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.ISpawnUtil;
 import com.dsh105.echopet.compat.nms.v1_7_R1.entity.EntityPet;
+
 import net.minecraft.server.v1_7_R1.World;
+import net.techcable.sonarpet.particles.Particle;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R1.CraftWorld;
@@ -54,7 +56,7 @@ public class SpawnUtil implements ISpawnUtil {
             owner.sendMessage(EchoPet.getPrefix() + ChatColor.YELLOW + "Failed to spawn pet entity.");
             EchoPet.getManager().removePet(pet, true);
         } else {
-            Particle.MAGIC_RUNES.builder().at(l).show();
+            Particle.MAGIC_RUNES.show(l);
         }
         return entityPet;
     }

@@ -75,7 +75,7 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
     @Override
     @Deprecated
     public DataWatcher getDataWatcher() {
-        throw new UnsupportedOperationException(); // Disallow access to superclas datawatcher
+        return super.getDataWatcher();
     }
 
     /**

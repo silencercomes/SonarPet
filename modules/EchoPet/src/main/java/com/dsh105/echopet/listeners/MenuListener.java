@@ -18,7 +18,6 @@
 package com.dsh105.echopet.listeners;
 
 import com.dsh105.commodus.GeneralUtil;
-import com.dsh105.commodus.particle.Particle;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
@@ -26,6 +25,9 @@ import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.*;
 import com.dsh105.echopet.compat.api.util.menu.*;
 import com.dsh105.echopet.compat.api.util.menu.DataMenu.DataMenuType;
+
+import net.techcable.sonarpet.particles.Particle;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -95,11 +97,11 @@ public class MenuListener implements Listener {
                                         if (pet.getPetData().contains(pd)) {
                                             EchoPet.getManager().setData(pet, pd, false);
                                             inv.setItem(slot, mi.getBoolean(true));
-                                            Particle.RED_SMOKE.builder().at(pet.getLocation()).show();
+                                            Particle.RED_SMOKE.show(pet.getLocation());
                                         } else {
                                             EchoPet.getManager().setData(pet, pd, true);
                                             inv.setItem(slot, mi.getBoolean(false));
-                                            Particle.SPARKLE.builder().at(pet.getLocation()).show();
+                                            Particle.SPARKLE.show(pet.getLocation());
                                         }
                                     }
                                 } else {
