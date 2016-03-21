@@ -17,12 +17,16 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityIronGolemPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.Entity;
 import net.minecraft.server.v1_9_R1.World;
 
@@ -32,7 +36,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.IRONGOLEM)
 public class EntityIronGolemPet extends EntityPet implements IEntityIronGolemPet {
 
-    public static final DataWatcherObject<Boolean> IS_PLAYER_CREATED_METADATA = NMS.createMetadata(11, NMS.MetadataType.BOOLEAN);
+    public static final MetadataKey<Boolean> IS_PLAYER_CREATED_METADATA = new MetadataKey<>(11, MetadataType.BOOLEAN);
 
     public EntityIronGolemPet(World world) {
         super(world);
@@ -45,7 +49,7 @@ public class EntityIronGolemPet extends EntityPet implements IEntityIronGolemPet
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(IS_PLAYER_CREATED_METADATA, false);
+        getDatawatcher().register(IS_PLAYER_CREATED_METADATA, false);
     }
 
     @Override

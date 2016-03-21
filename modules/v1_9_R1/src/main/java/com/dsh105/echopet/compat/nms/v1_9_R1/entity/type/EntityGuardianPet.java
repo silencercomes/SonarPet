@@ -8,6 +8,8 @@ import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityGuardianPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
@@ -18,8 +20,8 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.GUARDIAN)
 public class EntityGuardianPet extends EntityPet implements IEntityGuardianPet {
 
-    public static final DataWatcherObject<Byte> GUARDIAN_FLAGS_METADATA = NMS.createMetadata(11, NMS.MetadataType.BYTE);
-    public static final DataWatcherObject<Integer> TARGET_ENTITY_ID_METADATA = NMS.createMetadata(12, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Byte> GUARDIAN_FLAGS_METADATA = new MetadataKey<>(11, MetadataType.BYTE);
+    public static final MetadataKey<Integer> TARGET_ENTITY_ID_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
 
     public EntityGuardianPet(World world) {
         super(world);
@@ -57,8 +59,8 @@ public class EntityGuardianPet extends EntityPet implements IEntityGuardianPet {
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(GUARDIAN_FLAGS_METADATA, (byte) 0);
-        this.datawatcher.register(TARGET_ENTITY_ID_METADATA, 0);
+        getDatawatcher().register(GUARDIAN_FLAGS_METADATA, (byte) 0);
+        getDatawatcher().register(TARGET_ENTITY_ID_METADATA, 0);
     }
 
     @Override
@@ -68,14 +70,14 @@ public class EntityGuardianPet extends EntityPet implements IEntityGuardianPet {
 
     @Override
     public boolean isElder() {
-        return (this.datawatcher.get(GUARDIAN_FLAGS_METADATA) & 0x04) != 0;
+        return (getDatawatcher().get(GUARDIAN_FLAGS_METADATA) & 0x04) != 0;
     }
 
     @Override
     public void setElder(boolean flag) {
         int i = 4;
-        byte existing = this.datawatcher.get(GUARDIAN_FLAGS_METADATA);
+        byte existing = getDatawatcher().get(GUARDIAN_FLAGS_METADATA);
 
-        this.datawatcher.register(GUARDIAN_FLAGS_METADATA, flag ? (existing | i) : (existing & (~i)));
+        getDatawatcher().register(GUARDIAN_FLAGS_METADATA, (byte) (flag ? (existing | i) : (existing & (~i))));
     }
 }

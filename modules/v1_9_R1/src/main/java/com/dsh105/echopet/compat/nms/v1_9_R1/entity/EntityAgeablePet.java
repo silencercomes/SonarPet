@@ -19,14 +19,14 @@ package com.dsh105.echopet.compat.nms.v1_9_R1.entity;
 
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
 
 public abstract class EntityAgeablePet extends EntityPet {
 
-    public static final DataWatcherObject<Boolean> IS_BABY_METADATA = NMS.createMetadata(11, NMS.MetadataType.BOOLEAN);
+    public static final MetadataKey<Boolean> IS_BABY_METADATA = new MetadataKey<>(11, MetadataType.BOOLEAN);
 
     private int age = 0;
     private boolean ageLocked = true;
@@ -45,7 +45,7 @@ public abstract class EntityAgeablePet extends EntityPet {
 
     public void setAge(int age) {
         this.age = age;
-        this.datawatcher.set(IS_BABY_METADATA, age < 0);
+        getDatawatcher().set(IS_BABY_METADATA, age < 0);
     }
 
     public boolean isAgeLocked() {
@@ -59,7 +59,7 @@ public abstract class EntityAgeablePet extends EntityPet {
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(IS_BABY_METADATA, false);
+        getDatawatcher().register(IS_BABY_METADATA, false);
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class EntityAgeablePet extends EntityPet {
 
     @Override
     public boolean isBaby() {
-        return this.datawatcher.get(IS_BABY_METADATA);
+        return getDatawatcher().get(IS_BABY_METADATA);
     }
 
     @Override

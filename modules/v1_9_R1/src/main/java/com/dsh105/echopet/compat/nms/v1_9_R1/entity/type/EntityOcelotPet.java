@@ -25,11 +25,10 @@ import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityOcelotPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
@@ -39,9 +38,9 @@ import org.bukkit.entity.Ocelot;
 @EntityPetType(petType = PetType.OCELOT)
 public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPet {
 
-    public static final DataWatcherObject<Byte> OCELOT_FLAGS_METADATA = NMS.createMetadata(12, NMS.MetadataType.BYTE);
-    public static final DataWatcherObject<Optional<UUID>> OCELOT_OWNER_METADATA = NMS.createMetadata(13, NMS.MetadataType.OPTIONAL_UUID);
-    public static final DataWatcherObject<Integer> OCELOT_TYPE_METADATA = NMS.createMetadata(14, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Byte> OCELOT_FLAGS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
+    public static final MetadataKey<Optional<UUID>> OCELOT_OWNER_METADATA = new MetadataKey<>(13, MetadataType.OPTIONAL_UUID);
+    public static final MetadataKey<Integer> OCELOT_TYPE_METADATA = new MetadataKey<>(14, MetadataType.VAR_INT);
 
     public EntityOcelotPet(World world) {
         super(world);
@@ -49,25 +48,25 @@ public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPe
 
     public EntityOcelotPet(World world, IPet pet) {
         super(world, pet);
-        datawatcher.set(OCELOT_FLAGS_METADATA, (byte) 0x04); // set tame
-        datawatcher.set(OCELOT_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
+        getDatawatcher().set(OCELOT_FLAGS_METADATA, (byte) 0x04); // set tame
+        getDatawatcher().set(OCELOT_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
     }
 
     public int getCatType() {
-        return this.datawatcher.get(OCELOT_TYPE_METADATA);
+        return getDatawatcher().get(OCELOT_TYPE_METADATA);
     }
 
     @Override
     public void setCatType(int i) {
-        this.datawatcher.set(OCELOT_TYPE_METADATA, i);
+        getDatawatcher().set(OCELOT_TYPE_METADATA, i);
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        datawatcher.register(OCELOT_FLAGS_METADATA, (byte) 0);
-        datawatcher.register(OCELOT_OWNER_METADATA, Optional.empty());
-        datawatcher.register(OCELOT_TYPE_METADATA, Ocelot.Type.BLACK_CAT.getId());
+        getDatawatcher().register(OCELOT_FLAGS_METADATA, (byte) 0);
+        getDatawatcher().register(OCELOT_OWNER_METADATA, Optional.empty());
+        getDatawatcher().register(OCELOT_TYPE_METADATA, Ocelot.Type.BLACK_CAT.getId());
     }
 
     @Override

@@ -56,7 +56,7 @@ public class EntityPigZombiePet extends EntityPet implements IEntityPigZombiePet
 
     @Override
     public void setBaby(boolean flag) {
-        this.datawatcher.set(ZOMBIE_IS_BABY_METADATA, flag);
+        getDatawatcher().set(ZOMBIE_IS_BABY_METADATA, flag);
     }
 
     @Override
@@ -65,16 +65,16 @@ public class EntityPigZombiePet extends EntityPet implements IEntityPigZombiePet
     }
 
     public void setVillagerType(Villager.Profession type) {
-        datawatcher.set(ZOMBIE_VILLAGER_METADATA, type == null ? 0 : type.getId() + 1);
+        getDatawatcher().set(ZOMBIE_VILLAGER_METADATA, type == null ? 0 : type.getId() + 1);
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        datawatcher.register(ZOMBIE_IS_BABY_METADATA, false);
-        datawatcher.register(ZOMBIE_VILLAGER_METADATA, 0); // not a villager
-        datawatcher.register(ZOMBIE_IS_CONVERTING_METADATA, false);
-        datawatcher.register(ZOMBIE_HAS_HANDS_UP_METADATA, false);
+        getDatawatcher().register(ZOMBIE_IS_BABY_METADATA, false);
+        getDatawatcher().register(ZOMBIE_VILLAGER_METADATA, 0); // not a villager
+        getDatawatcher().register(ZOMBIE_IS_CONVERTING_METADATA, false);
+        getDatawatcher().register(ZOMBIE_HAS_HANDS_UP_METADATA, false);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class EntityPigZombiePet extends EntityPet implements IEntityPigZombiePet
 
     @Override
     public boolean isBaby() {
-        return datawatcher.get(ZOMBIE_IS_BABY_METADATA);
+        return getDatawatcher().get(ZOMBIE_IS_BABY_METADATA);
     }
 
     @Override

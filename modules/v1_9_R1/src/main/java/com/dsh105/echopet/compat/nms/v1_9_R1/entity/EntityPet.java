@@ -31,6 +31,7 @@ import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMSEntityUtil;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.WrappedDataWatcher;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.ai.PetGoalFloat;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.ai.PetGoalFollowOwner;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.ai.PetGoalLookAtPlayer;
@@ -50,9 +51,7 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import static com.dsh105.echopet.compat.nms.v1_9_R1.NMS.*;
 
@@ -60,6 +59,24 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
 
     protected IPet pet;
     public PetGoalSelector petGoalSelector;
+    /**
+     * A object field to warn about accessing the datawatcher field
+     * @deprecated use getter
+     */
+    @Deprecated
+    public final Object datawatcher = null;
+    public WrappedDataWatcher getDatawatcher() {
+        return new WrappedDataWatcher(super.datawatcher);
+    }
+
+    /**
+     * @deprecated use the wrapper
+     */
+    @Override
+    @Deprecated
+    public DataWatcher getDataWatcher() {
+        throw new UnsupportedOperationException(); // Disallow access to superclas datawatcher
+    }
 
     /**
      * The field to check if the entity is jumping.

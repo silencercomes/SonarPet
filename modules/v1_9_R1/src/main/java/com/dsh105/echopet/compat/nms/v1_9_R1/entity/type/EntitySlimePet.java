@@ -17,13 +17,19 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetData;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySlimePet;
 import com.dsh105.echopet.compat.api.util.Perm;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
@@ -32,7 +38,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.SLIME)
 public class EntitySlimePet extends EntityPet implements IEntitySlimePet {
 
-    public static final DataWatcherObject<Integer> SIME_SIZE_METADATA = NMS.createMetadata(11, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> SIME_SIZE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
 
     int jumpDelay;
 
@@ -56,7 +62,7 @@ public class EntitySlimePet extends EntityPet implements IEntitySlimePet {
 
     @Override
     public void setSize(int i) {
-        this.datawatcher.set(SIME_SIZE_METADATA, i);
+        getDatawatcher().set(SIME_SIZE_METADATA, i);
         EntitySize es = this.getClass().getAnnotation(EntitySize.class);
         this.setSize(es.width() * (float) i, es.height() * (float) i);
         this.setPosition(this.locX, this.locY, this.locZ);
@@ -64,13 +70,13 @@ public class EntitySlimePet extends EntityPet implements IEntitySlimePet {
     }
 
     public int getSize() {
-        return datawatcher.get(SIME_SIZE_METADATA);
+        return getDatawatcher().get(SIME_SIZE_METADATA);
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(SIME_SIZE_METADATA, (byte) 1);
+        getDatawatcher().register(SIME_SIZE_METADATA, 1);
     }
 
     @Override

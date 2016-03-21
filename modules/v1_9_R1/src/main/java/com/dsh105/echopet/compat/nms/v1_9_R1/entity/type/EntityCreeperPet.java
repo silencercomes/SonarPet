@@ -21,6 +21,8 @@ import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityCreeperPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
@@ -31,9 +33,9 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.CREEPER)
 public class   EntityCreeperPet extends EntityPet implements IEntityCreeperPet {
 
-    public static final DataWatcherObject<Integer> CREEPER_STATE_METADATA = NMS.createMetadata(11, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Boolean> CREEPER_IS_POWERED_METADATA = NMS.createMetadata(12, NMS.MetadataType.BOOLEAN);
-    public static final DataWatcherObject<Boolean> CREEPER_IS_IGNITED_METADATA = NMS.createMetadata(13, NMS.MetadataType.BOOLEAN);
+    public static final MetadataKey<Integer> CREEPER_STATE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
+    public static final MetadataKey<Boolean> CREEPER_IS_POWERED_METADATA = new MetadataKey<>(12, MetadataType.BOOLEAN);
+    public static final MetadataKey<Boolean> CREEPER_IS_IGNITED_METADATA = new MetadataKey<>(13, MetadataType.BOOLEAN);
 
 
     public EntityCreeperPet(World world) {
@@ -46,20 +48,20 @@ public class   EntityCreeperPet extends EntityPet implements IEntityCreeperPet {
 
     @Override
     public void setPowered(boolean flag) {
-        this.datawatcher.set(CREEPER_IS_POWERED_METADATA, flag);
+        getDatawatcher().set(CREEPER_IS_POWERED_METADATA, flag);
     }
 
     @Override
     public void setIgnited(boolean flag) {
-        this.datawatcher.set(CREEPER_IS_IGNITED_METADATA, flag);
+        getDatawatcher().set(CREEPER_IS_IGNITED_METADATA, flag);
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(CREEPER_STATE_METADATA, (byte) -1);
-        this.datawatcher.register(CREEPER_IS_POWERED_METADATA, false);
-        this.datawatcher.register(CREEPER_IS_IGNITED_METADATA, false);
+        getDatawatcher().register(CREEPER_STATE_METADATA, -1);
+        getDatawatcher().register(CREEPER_IS_POWERED_METADATA, false);
+        getDatawatcher().register(CREEPER_IS_IGNITED_METADATA, false);
     }
 
     @Override

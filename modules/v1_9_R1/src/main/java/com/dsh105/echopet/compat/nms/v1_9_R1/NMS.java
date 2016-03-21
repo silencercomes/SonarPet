@@ -64,25 +64,6 @@ public class NMS {
         e.getControllerJump().a();
     }
 
-    public enum MetadataType {
-        BYTE(0),
-        VAR_INT(1),
-        BOOLEAN(6),
-        OPTIONAL_UUID(11),
-        OPTIONAL_BLOCK_DATA(12);
-
-        private final int id;
-
-        MetadataType(int id) {
-            this.id = id;
-        }
-    }
-
-
-    @SuppressWarnings("unchecked") // I wish enums had generics.....
-    public static <T> DataWatcherObject<T> createMetadata(int index, MetadataType type) {
-        return new DataWatcherObject<>(index, (DataWatcherSerializer<T>) DataWatcherRegistry.a(type.id));
-    }
 
     public static void playSound(Entity entity, SoundEffect nmsSound, float volume, float pitch) {
         entity.a(nmsSound, volume, pitch);

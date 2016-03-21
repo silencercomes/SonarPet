@@ -23,6 +23,8 @@ import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEndermanPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.IBlockData;
@@ -42,19 +44,19 @@ public class EntityEndermanPet extends EntityPet implements IEntityEndermanPet {
         super(world, pet);
     }
 
-    public static final DataWatcherObject<Optional<IBlockData>> ENDERMAN_CARRIED_BLOCK_METADATA = NMS.createMetadata(11, NMS.MetadataType.OPTIONAL_BLOCK_DATA);
-    public static final DataWatcherObject<Boolean> ENDERMAN_IS_SCREAMING_METADATA = NMS.createMetadata(12, NMS.MetadataType.BOOLEAN);
+    public static final MetadataKey<Optional<IBlockData>> ENDERMAN_CARRIED_BLOCK_METADATA = new MetadataKey<>(11, MetadataType.OPTIONAL_BLOCK_DATA);
+    public static final MetadataKey<Boolean> ENDERMAN_IS_SCREAMING_METADATA = new MetadataKey<>(12, MetadataType.BOOLEAN);
 
     @Override
     public void setScreaming(boolean flag) {
-        this.datawatcher.set(ENDERMAN_IS_SCREAMING_METADATA, flag);
+        getDatawatcher().set(ENDERMAN_IS_SCREAMING_METADATA, flag);
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.empty());
-        this.datawatcher.register(ENDERMAN_IS_SCREAMING_METADATA, false);
+        getDatawatcher().register(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.empty());
+        getDatawatcher().register(ENDERMAN_IS_SCREAMING_METADATA, false);
     }
 
     @Override
@@ -63,19 +65,19 @@ public class EntityEndermanPet extends EntityPet implements IEntityEndermanPet {
     }
 
     public boolean isScreaming() {
-        return datawatcher.get(ENDERMAN_IS_SCREAMING_METADATA);
+        return getDatawatcher().get(ENDERMAN_IS_SCREAMING_METADATA);
     }
 
     public void clearCarried() {
-        this.datawatcher.set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.empty());
+        getDatawatcher().set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.empty());
     }
 
     public void setCarried(IBlockData blockData) {
-        this.datawatcher.set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.of(blockData));
+        getDatawatcher().set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.of(blockData));
     }
 
     public Optional<IBlockData> getCarried() {
-        return datawatcher.get(ENDERMAN_CARRIED_BLOCK_METADATA);
+        return getDatawatcher().get(ENDERMAN_CARRIED_BLOCK_METADATA);
     }
 
     @Override

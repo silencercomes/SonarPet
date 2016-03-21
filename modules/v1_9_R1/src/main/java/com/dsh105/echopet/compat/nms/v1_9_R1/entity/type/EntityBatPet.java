@@ -19,10 +19,10 @@ package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
 import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityBatPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.MathHelper;
 import net.minecraft.server.v1_9_R1.World;
 
@@ -32,7 +32,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.BAT)
 public class EntityBatPet extends EntityPet implements IEntityBatPet {
 
-    public static final DataWatcherObject<Byte> BAT_HANGING_METADATA = NMS.createMetadata(11, NMS.MetadataType.BYTE);
+    public static final MetadataKey<Byte> BAT_HANGING_METADATA = new MetadataKey<>(11, MetadataType.BYTE);
 
     public EntityBatPet(World world) {
         super(world);
@@ -44,18 +44,18 @@ public class EntityBatPet extends EntityPet implements IEntityBatPet {
 
     @Override
     public void setHanging(boolean flag) {
-        byte var2 = this.datawatcher.get(BAT_HANGING_METADATA);
+        byte var2 = getDatawatcher().get(BAT_HANGING_METADATA);
         if(flag) {
-            this.datawatcher.set(BAT_HANGING_METADATA, (byte) (var2 | 1));
+            getDatawatcher().set(BAT_HANGING_METADATA, (byte) (var2 | 1));
         } else {
-            this.datawatcher.set(BAT_HANGING_METADATA, (byte) (var2 & -2));
+            getDatawatcher().set(BAT_HANGING_METADATA, (byte) (var2 & -2));
         }
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(BAT_HANGING_METADATA, (byte) 0);
+        getDatawatcher().register(BAT_HANGING_METADATA, (byte) 0);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EntityBatPet extends EntityPet implements IEntityBatPet {
     }
 
     public boolean isAsleep() {
-        return (this.datawatcher.get(BAT_HANGING_METADATA) & 1) != 0;
+        return (getDatawatcher().get(BAT_HANGING_METADATA) & 1) != 0;
     }
 
     @Override

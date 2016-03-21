@@ -22,11 +22,11 @@ import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEnderDragonPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityNoClipPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DamageSource;
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.DragonControllerPhase;
 import net.minecraft.server.v1_9_R1.EntityComplexPart;
 import net.minecraft.server.v1_9_R1.IComplex;
@@ -39,7 +39,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.ENDERDRAGON)
 public class EntityEnderDragonPet extends EntityNoClipPet implements IComplex, IMonster, IEntityEnderDragonPet {
 
-    public static final DataWatcherObject<Integer> DRAGON_PHASE_METADATA = NMS.createMetadata(11, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> DRAGON_PHASE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
 
     public EntityEnderDragonPet(World world) {
         super(world);
@@ -51,7 +51,7 @@ public class EntityEnderDragonPet extends EntityNoClipPet implements IComplex, I
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        datawatcher.register(DRAGON_PHASE_METADATA, DragonControllerPhase.k.b()); // set the dragon phase to the 'hover' phase
+        getDatawatcher().register(DRAGON_PHASE_METADATA, DragonControllerPhase.k.b()); // set the dragon phase to the 'hover' phase
     }
 
     @Override

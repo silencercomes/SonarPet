@@ -17,14 +17,17 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySkeletonPet;
-import com.dsh105.echopet.compat.api.entity.type.pet.ISkeletonPet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.EnumItemSlot;
 import net.minecraft.server.v1_9_R1.ItemStack;
 import net.minecraft.server.v1_9_R1.Items;
@@ -38,8 +41,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 @EntityPetType(petType = PetType.SKELETON)
 public class EntitySkeletonPet extends EntityPet implements IEntitySkeletonPet {
 
-    public static final DataWatcherObject<Integer> SKELETON_TYPE_METADATA = NMS.createMetadata(11, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Boolean> SKELETON_IS_TARGETING = NMS.createMetadata(12, NMS.MetadataType.BOOLEAN);
+    public static final MetadataKey<Integer> SKELETON_TYPE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
+    public static final MetadataKey<Boolean> SKELETON_IS_TARGETING = new MetadataKey<>(12, MetadataType.BOOLEAN);
 
     public EntitySkeletonPet(World world) {
         super(world);
@@ -71,18 +74,18 @@ public class EntitySkeletonPet extends EntityPet implements IEntitySkeletonPet {
 
 
     public Skeleton.SkeletonType getSkeletonType() {
-        return Skeleton.SkeletonType.getType(datawatcher.get(SKELETON_TYPE_METADATA));
+        return Skeleton.SkeletonType.getType(getDatawatcher().get(SKELETON_TYPE_METADATA));
     }
 
     public void setSkeletonType(Skeleton.SkeletonType type) {
-        datawatcher.set(SKELETON_TYPE_METADATA, type.getId());
+        getDatawatcher().set(SKELETON_TYPE_METADATA, type.getId());
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        datawatcher.register(SKELETON_TYPE_METADATA, Skeleton.SkeletonType.NORMAL.getId());
-        datawatcher.register(SKELETON_IS_TARGETING, false);
+        getDatawatcher().register(SKELETON_TYPE_METADATA, Skeleton.SkeletonType.NORMAL.getId());
+        getDatawatcher().register(SKELETON_IS_TARGETING, false);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class EntityCaveSpiderPet extends EntityPet implements IEntityCaveSpiderP
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(SPIDER_IS_CLIMBING_METADATA, 0);
+        getDatawatcher().register(SPIDER_IS_CLIMBING_METADATA, (byte) 0);
     }
 
     @Override

@@ -22,10 +22,10 @@ import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySheepPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
@@ -34,7 +34,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.SHEEP)
 public class EntitySheepPet extends EntityAgeablePet implements IEntitySheepPet {
 
-    public static final DataWatcherObject<Byte> SHEEP_STATUS_METADATA = NMS.createMetadata(12, NMS.MetadataType.BYTE);
+    public static final MetadataKey<Byte> SHEEP_STATUS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
 
     public EntitySheepPet(World world) {
         super(world);
@@ -45,32 +45,32 @@ public class EntitySheepPet extends EntityAgeablePet implements IEntitySheepPet 
     }
 
     public int getColor() {
-        return this.datawatcher.get(SHEEP_STATUS_METADATA) & 0xF;
+        return getDatawatcher().get(SHEEP_STATUS_METADATA) & 0xF;
     }
 
     @Override
     public void setColor(int i) {
-        byte b = this.datawatcher.get(SHEEP_STATUS_METADATA);
+        byte b = getDatawatcher().get(SHEEP_STATUS_METADATA);
 
         b = (byte) ((b & 0xF0) | (i & 0xF));
 
-        this.datawatcher.set(SHEEP_STATUS_METADATA, b);
+        getDatawatcher().set(SHEEP_STATUS_METADATA, b);
     }
 
     public boolean isSheared() {
-        return (this.datawatcher.get(SHEEP_STATUS_METADATA) & 0x10) == 0x10;
+        return (getDatawatcher().get(SHEEP_STATUS_METADATA) & 0x10) == 0x10;
     }
 
     @Override
     public void setSheared(boolean flag) {
-        byte b = this.datawatcher.get(SHEEP_STATUS_METADATA);
-        datawatcher.set(SHEEP_STATUS_METADATA, (byte) (flag ? (b | 0x10) : (b & ~0x10)));
+        byte b = getDatawatcher().get(SHEEP_STATUS_METADATA);
+        getDatawatcher().set(SHEEP_STATUS_METADATA, (byte) (flag ? (b | 0x10) : (b & ~0x10)));
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(SHEEP_STATUS_METADATA, 0);
+        getDatawatcher().register(SHEEP_STATUS_METADATA, (byte) 0);
     }
 
     @Override

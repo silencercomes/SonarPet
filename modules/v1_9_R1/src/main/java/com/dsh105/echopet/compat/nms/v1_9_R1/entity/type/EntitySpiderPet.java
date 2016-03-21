@@ -21,6 +21,8 @@ import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySpiderPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
@@ -31,7 +33,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.SPIDER)
 public class EntitySpiderPet extends EntityPet implements IEntitySpiderPet {
 
-    public static final DataWatcherObject<Byte> SPIDER_IS_CLIMBING_METADATA = NMS.createMetadata(11, NMS.MetadataType.BYTE);
+    public static final MetadataKey<Byte> SPIDER_IS_CLIMBING_METADATA = new MetadataKey<>(11, MetadataType.BYTE);
 
     public EntitySpiderPet(World world) {
         super(world);
@@ -44,7 +46,7 @@ public class EntitySpiderPet extends EntityPet implements IEntitySpiderPet {
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(SPIDER_IS_CLIMBING_METADATA, false);
+        getDatawatcher().register(SPIDER_IS_CLIMBING_METADATA, (byte) 0);
     }
 
     @Override

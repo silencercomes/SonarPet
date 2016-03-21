@@ -21,6 +21,8 @@ import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityBlazePet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.World;
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
@@ -31,7 +33,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.BLAZE)
 public class EntityBlazePet extends EntityPet implements IEntityBlazePet {
 
-    public static DataWatcherObject<Byte> BLAZE_ON_FIRE_METADATA = NMS.createMetadata(11, NMS.MetadataType.BYTE);
+    public static MetadataKey<Byte> BLAZE_ON_FIRE_METADATA = new MetadataKey<>(11, MetadataType.BYTE);
 
     public EntityBlazePet(World world) {
         super(world);
@@ -43,13 +45,13 @@ public class EntityBlazePet extends EntityPet implements IEntityBlazePet {
 
     @Override
     public void setOnFire(boolean flag) {
-        this.datawatcher.set(BLAZE_ON_FIRE_METADATA, (byte) (flag ? 1 : 0));
+        getDatawatcher().set(BLAZE_ON_FIRE_METADATA, (byte) (flag ? 1 : 0));
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(BLAZE_ON_FIRE_METADATA, (byte) 0);
+        getDatawatcher().register(BLAZE_ON_FIRE_METADATA, (byte) 0);
     }
 
     @Override

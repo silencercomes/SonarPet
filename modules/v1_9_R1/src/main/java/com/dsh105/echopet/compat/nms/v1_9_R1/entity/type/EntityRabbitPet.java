@@ -1,11 +1,15 @@
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityRabbitPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
@@ -15,7 +19,7 @@ import org.bukkit.entity.Rabbit;
 @EntityPetType(petType = PetType.RABBIT)
 public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPet {
 
-    public static final DataWatcherObject<Integer> RABBIT_TYPE_METADATA = NMS.createMetadata(12, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> RABBIT_TYPE_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
 
     private int jumpDelay;
 
@@ -40,18 +44,18 @@ public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPe
 
     @Override
     public Rabbit.Type getRabbitType() {
-        return CraftMagicMapping.fromMagic(this.datawatcher.get(RABBIT_TYPE_METADATA));
+        return CraftMagicMapping.fromMagic(getDatawatcher().get(RABBIT_TYPE_METADATA));
     }
     
     @Override
     public void setRabbitType(Rabbit.Type type) {
-        this.datawatcher.set(RABBIT_TYPE_METADATA, CraftMagicMapping.toMagic(type));
+        getDatawatcher().set(RABBIT_TYPE_METADATA, CraftMagicMapping.toMagic(type));
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(RABBIT_TYPE_METADATA, CraftMagicMapping.toMagic(Rabbit.Type.WHITE));
+        getDatawatcher().register(RABBIT_TYPE_METADATA, CraftMagicMapping.toMagic(Rabbit.Type.WHITE));
     }
     
     @Override

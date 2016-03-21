@@ -24,6 +24,8 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityVillagerPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
@@ -35,7 +37,7 @@ import org.bukkit.entity.Villager;
 @EntityPetType(petType = PetType.VILLAGER)
 public class EntityVillagerPet extends EntityAgeablePet implements IEntityVillagerPet {
 
-    public static final DataWatcherObject<Integer> VILLAGER_PROFESSION_METADATA = NMS.createMetadata(12, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> VILLAGER_PROFESSION_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
 
     public EntityVillagerPet(World world) {
         super(world);
@@ -51,7 +53,7 @@ public class EntityVillagerPet extends EntityAgeablePet implements IEntityVillag
     }
 
     public void setProfession(Villager.Profession profession) {
-        this.datawatcher.set(VILLAGER_PROFESSION_METADATA, profession.getId());
+        getDatawatcher().set(VILLAGER_PROFESSION_METADATA, profession.getId());
     }
 
     @Override
@@ -67,6 +69,6 @@ public class EntityVillagerPet extends EntityAgeablePet implements IEntityVillag
     @Override
     public void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(VILLAGER_PROFESSION_METADATA, Villager.Profession.FARMER.getId());
+        getDatawatcher().register(VILLAGER_PROFESSION_METADATA, Villager.Profession.FARMER.getId());
     }
 }

@@ -25,6 +25,8 @@ import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWolfPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IWolfPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.EnumColor;
@@ -40,21 +42,21 @@ import org.bukkit.Sound;
 public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
 
 
-    public static final DataWatcherObject<Byte> WOLF_FLAGS_METADATA = NMS.createMetadata(12, NMS.MetadataType.BYTE);
-    public static final DataWatcherObject<Optional<UUID>> WOLF_OWNER_METADATA = NMS.createMetadata(13, NMS.MetadataType.OPTIONAL_UUID);
-    public static final DataWatcherObject<Float> WOLF_DAMAGE_TAKEN_METADATA = NMS.createMetadata(14, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Boolean> WOLF_IS_BEGGING_METADATA = NMS.createMetadata(15, NMS.MetadataType.BOOLEAN);
-    public static final DataWatcherObject<Integer> WOLF_COLLAR_COLOR_METADATA = NMS.createMetadata(16, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Byte> WOLF_FLAGS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
+    public static final MetadataKey<Optional<UUID>> WOLF_OWNER_METADATA = new MetadataKey<>(13, MetadataType.OPTIONAL_UUID);
+    public static final MetadataKey<Float> WOLF_DAMAGE_TAKEN_METADATA = new MetadataKey<>(14, MetadataType.FLOAT);
+    public static final MetadataKey<Boolean> WOLF_IS_BEGGING_METADATA = new MetadataKey<>(15, MetadataType.BOOLEAN);
+    public static final MetadataKey<Integer> WOLF_COLLAR_COLOR_METADATA = new MetadataKey<>(16, MetadataType.VAR_INT);
 
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(WOLF_FLAGS_METADATA, 0); // Default to not tamed
-        this.datawatcher.register(WOLF_OWNER_METADATA, Optional.empty());
-        this.datawatcher.register(WOLF_DAMAGE_TAKEN_METADATA, 0);
-        this.datawatcher.register(WOLF_IS_BEGGING_METADATA, fallDistance);
-        this.datawatcher.register(WOLF_COLLAR_COLOR_METADATA, 0); // White colar
+        getDatawatcher().register(WOLF_FLAGS_METADATA, (byte) 0); // Default to not tamed
+        getDatawatcher().register(WOLF_OWNER_METADATA, Optional.empty());
+        getDatawatcher().register(WOLF_DAMAGE_TAKEN_METADATA, 0F);
+        getDatawatcher().register(WOLF_IS_BEGGING_METADATA, false);
+        getDatawatcher().register(WOLF_COLLAR_COLOR_METADATA, 0); // White colar
     }
 
     private boolean wet;
@@ -71,15 +73,15 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
     }
 
     public boolean isTamed() {
-        return (this.datawatcher.get(WOLF_FLAGS_METADATA) & 0x04) == 0x04;
+        return (getDatawatcher().get(WOLF_FLAGS_METADATA) & 0x04) == 0x04;
     }
 
     @Override
     public void setTamed(boolean flag) {
-        byte b = this.datawatcher.get(WOLF_FLAGS_METADATA);
+        byte b = getDatawatcher().get(WOLF_FLAGS_METADATA);
 
-        datawatcher.set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x04) : (b & ~0x04)));
-        datawatcher.set(WOLF_OWNER_METADATA, flag ? Optional.of(getPlayerOwner().getUniqueId()) : Optional.empty());
+        getDatawatcher().set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x04) : (b & ~0x04)));
+        getDatawatcher().set(WOLF_OWNER_METADATA, flag ? Optional.of(getPlayerOwner().getUniqueId()) : Optional.empty());
 
         if (!flag) {
             getPet().getPetData().remove(PetData.TAMED);
@@ -105,18 +107,18 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
             getPet().getPetData().remove(PetData.ANGRY);
         }
 
-        byte b = this.datawatcher.get(WOLF_FLAGS_METADATA);
+        byte b = getDatawatcher().get(WOLF_FLAGS_METADATA);
 
-        datawatcher.register(WOLF_FLAGS_METADATA, flag ? (b | 0x02) : (b & ~0x02));
+        getDatawatcher().register(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x02) : (b & ~0x02)));
     }
 
     public boolean isAngry() {
-        return (this.datawatcher.get(WOLF_FLAGS_METADATA) & 0x02) != 0;
+        return (getDatawatcher().get(WOLF_FLAGS_METADATA) & 0x02) != 0;
     }
 
     @Override
     public void setCollarColor(DyeColor dc) {
-        datawatcher.set(WOLF_COLLAR_COLOR_METADATA, (int) dc.getDyeData());
+        getDatawatcher().set(WOLF_COLLAR_COLOR_METADATA, (int) dc.getDyeData());
     }
 
     @Override
@@ -157,7 +159,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
         if (this.isAngry()) {
             return Sound.ENTITY_WOLF_GROWL;
         } else if (this.random.nextInt(3) == 0)
-            if (this.isTamed() && this.datawatcher.get(WOLF_DAMAGE_TAKEN_METADATA) < 10) {
+            if (this.isTamed() && getDatawatcher().get(WOLF_DAMAGE_TAKEN_METADATA) < 10) {
                 return Sound.ENTITY_WOLF_WHINE;
             } else {
                 return Sound.ENTITY_WOLF_PANT;

@@ -34,11 +34,12 @@ import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.Block;
 import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.Blocks;
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.Entity;
 import net.minecraft.server.v1_9_R1.World;
 
@@ -49,11 +50,11 @@ import org.bukkit.entity.Horse;
 @EntityPetType(petType = PetType.HORSE)
 public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet {
 
-    public static final DataWatcherObject<Byte> HORSE_FLAGS_METADATA = NMS.createMetadata(12, NMS.MetadataType.BYTE);
-    public static final DataWatcherObject<Integer> HORSE_TYPE_METADATA = NMS.createMetadata(13, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Integer> HORSE_COLOR_AND_STYLE_METADATA = NMS.createMetadata(14, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Optional<UUID>> HORSE_OWNER_METADATA = NMS.createMetadata(15, NMS.MetadataType.OPTIONAL_UUID);
-    public static final DataWatcherObject<Integer> HORSE_ARMOR_METADATA = NMS.createMetadata(16, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Byte> HORSE_FLAGS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
+    public static final MetadataKey<Integer> HORSE_TYPE_METADATA = new MetadataKey<>(13, MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> HORSE_COLOR_AND_STYLE_METADATA = new MetadataKey<>(14, MetadataType.VAR_INT);
+    public static final MetadataKey<Optional<UUID>> HORSE_OWNER_METADATA = new MetadataKey<>(15, MetadataType.OPTIONAL_UUID);
+    public static final MetadataKey<Integer> HORSE_ARMOR_METADATA = new MetadataKey<>(16, MetadataType.VAR_INT);
 
     private int rearingCounter = 0;
     int stepSoundCount = 0;
@@ -64,7 +65,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     public EntityHorsePet(World world, IPet pet) {
         super(world, pet);
-        datawatcher.set(HORSE_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
+        getDatawatcher().set(HORSE_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
     }
 
     @Override
@@ -77,17 +78,17 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
         if (t != HorseType.NORMAL) {
             this.setArmour(HorseArmour.NONE);
         }
-        this.datawatcher.set(HORSE_TYPE_METADATA, NMS.getId(t.getBukkitVariant()));
+        getDatawatcher().set(HORSE_TYPE_METADATA, NMS.getId(t.getBukkitVariant()));
     }
 
     @Override
     public void setVariant(HorseVariant v, HorseMarking m) {
-        this.datawatcher.set(HORSE_TYPE_METADATA, NMS.getId(v, m));
+        getDatawatcher().set(HORSE_TYPE_METADATA, NMS.getId(v, m));
     }
 
     @Override
     public void setArmour(HorseArmour a) {
-        this.datawatcher.set(HORSE_ARMOR_METADATA, NMS.getId(a));
+        getDatawatcher().set(HORSE_ARMOR_METADATA, NMS.getId(a));
     }
 
     @Override
@@ -125,28 +126,28 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
     }
 
     private void setHorseFlag(HorseFlag flag, boolean value) {
-        int bitFlags = this.datawatcher.get(HORSE_FLAGS_METADATA);
+        int bitFlags = getDatawatcher().get(HORSE_FLAGS_METADATA);
 
         if (value) {
             bitFlags |= flag.getId();
         } else {
             bitFlags &= ~flag.getId();
         }
-        datawatcher.set(HORSE_FLAGS_METADATA, (byte) bitFlags);
+        getDatawatcher().set(HORSE_FLAGS_METADATA, (byte) bitFlags);
     }
 
     public Horse.Variant getType() {
-        return NMS.variantById(this.datawatcher.get(HORSE_TYPE_METADATA));
+        return NMS.variantById(getDatawatcher().get(HORSE_TYPE_METADATA));
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        datawatcher.register(HORSE_FLAGS_METADATA, 0);
-        datawatcher.register(HORSE_TYPE_METADATA, NMS.getId(Horse.Variant.HORSE));
-        datawatcher.register(HORSE_COLOR_AND_STYLE_METADATA, NMS.getId(Horse.Color.WHITE, Horse.Style.NONE));
-        datawatcher.register(HORSE_OWNER_METADATA, Optional.empty());
-        datawatcher.register(HORSE_ARMOR_METADATA, NMS.getId(HorseArmour.NONE));
+        getDatawatcher().register(HORSE_FLAGS_METADATA, (byte) 0);
+        getDatawatcher().register(HORSE_TYPE_METADATA, NMS.getId(Horse.Variant.HORSE));
+        getDatawatcher().register(HORSE_COLOR_AND_STYLE_METADATA, NMS.getId(Horse.Color.WHITE, Horse.Style.NONE));
+        getDatawatcher().register(HORSE_OWNER_METADATA, Optional.empty());
+        getDatawatcher().register(HORSE_ARMOR_METADATA, NMS.getId(HorseArmour.NONE));
     }
 
     @Override

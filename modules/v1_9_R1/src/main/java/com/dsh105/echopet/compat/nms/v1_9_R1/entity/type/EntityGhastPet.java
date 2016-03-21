@@ -21,6 +21,8 @@ import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityGhastPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
@@ -31,7 +33,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.GHAST)
 public class EntityGhastPet extends EntityPet implements IEntityGhastPet {
 
-    public static DataWatcherObject<Boolean> IS_ATTACKING_METADATA = NMS.createMetadata(11, NMS.MetadataType.BOOLEAN);
+    public static MetadataKey<Boolean> IS_ATTACKING_METADATA = new MetadataKey<>(11, MetadataType.BOOLEAN);
 
     public EntityGhastPet(World world) {
         super(world);
@@ -46,7 +48,7 @@ public class EntityGhastPet extends EntityPet implements IEntityGhastPet {
     @Override
     protected void initAttributes() {
         super.initAttributes();
-        datawatcher.register(IS_ATTACKING_METADATA, false);
+        getDatawatcher().register(IS_ATTACKING_METADATA, false);
     }
 
     @Override

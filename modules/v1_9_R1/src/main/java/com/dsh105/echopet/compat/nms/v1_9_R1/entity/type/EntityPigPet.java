@@ -24,6 +24,8 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityPigPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
@@ -34,7 +36,7 @@ import org.bukkit.Sound;
 @EntityPetType(petType = PetType.PIG)
 public class EntityPigPet extends EntityAgeablePet implements IEntityPigPet {
 
-    public static final DataWatcherObject<Boolean> HAS_SADDLE_METADATA = NMS.createMetadata(12, NMS.MetadataType.BOOLEAN);
+    public static final MetadataKey<Boolean> HAS_SADDLE_METADATA = new MetadataKey<>(12, MetadataType.BOOLEAN);
 
     public EntityPigPet(World world) {
         super(world);
@@ -45,18 +47,18 @@ public class EntityPigPet extends EntityAgeablePet implements IEntityPigPet {
     }
 
     public boolean hasSaddle() {
-        return datawatcher.get(HAS_SADDLE_METADATA);
+        return getDatawatcher().get(HAS_SADDLE_METADATA);
     }
 
     @Override
     public void setSaddled(boolean flag) {
-        datawatcher.set(HAS_SADDLE_METADATA, flag);
+        getDatawatcher().set(HAS_SADDLE_METADATA, flag);
     }
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        this.datawatcher.register(HAS_SADDLE_METADATA, false);
+        getDatawatcher().register(HAS_SADDLE_METADATA, false);
     }
 
     @Override

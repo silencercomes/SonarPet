@@ -23,10 +23,10 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWitherPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
@@ -43,23 +43,23 @@ public class EntityWitherPet extends EntityPet implements IEntityWitherPet {
         super(world, pet);
     }
 
-    public static final DataWatcherObject<Integer> WITHER_FIRST_HEAD_TARGET_METADATA = NMS.createMetadata(11, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Integer> WITHER_SECOND_HEAD_TARGET_METADATA = NMS.createMetadata(12, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Integer> WITHER_THIRD_HEAD_TARGET_METADATA = NMS.createMetadata(13, NMS.MetadataType.VAR_INT);
-    public static final DataWatcherObject<Integer> WITHER_INVULNERABLE_METADATA = NMS.createMetadata(13, NMS.MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> WITHER_FIRST_HEAD_TARGET_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> WITHER_SECOND_HEAD_TARGET_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> WITHER_THIRD_HEAD_TARGET_METADATA = new MetadataKey<>(13, MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> WITHER_INVULNERABLE_METADATA = new MetadataKey<>(13, MetadataType.VAR_INT);
 
 
     @Override
     protected void initDatawatcher() {
         super.initDatawatcher();
-        datawatcher.register(WITHER_FIRST_HEAD_TARGET_METADATA, 0);
-        datawatcher.register(WITHER_SECOND_HEAD_TARGET_METADATA, 0);
-        datawatcher.register(WITHER_THIRD_HEAD_TARGET_METADATA, 0);
-        datawatcher.register(WITHER_INVULNERABLE_METADATA, 0);;
+        getDatawatcher().register(WITHER_FIRST_HEAD_TARGET_METADATA, 0);
+        getDatawatcher().register(WITHER_SECOND_HEAD_TARGET_METADATA, 0);
+        getDatawatcher().register(WITHER_THIRD_HEAD_TARGET_METADATA, 0);
+        getDatawatcher().register(WITHER_INVULNERABLE_METADATA, 0);;
     }
 
     public void setShielded(boolean flag) {
-        this.datawatcher.register(WITHER_INVULNERABLE_METADATA, (flag ? 1 : 0));
+        getDatawatcher().register(WITHER_INVULNERABLE_METADATA, (flag ? 1 : 0));
         this.setHealth((float) (flag ? 150 : 300));
     }
 
