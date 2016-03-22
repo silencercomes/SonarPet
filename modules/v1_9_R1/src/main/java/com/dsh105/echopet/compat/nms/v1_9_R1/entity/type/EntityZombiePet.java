@@ -43,8 +43,8 @@ public class EntityZombiePet extends EntityPet implements IEntityZombiePet {
 
     public static final MetadataKey<Boolean> ZOMBIE_IS_BABY_METADATA = new MetadataKey<>(11, MetadataType.BOOLEAN);
     public static final MetadataKey<Integer> ZOMBIE_VILLAGER_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
-    public static final MetadataKey<Boolean> ZOMBIE_IS_CONVERTING_METADATA = new MetadataKey<>(13, MetadataType.VAR_INT);
-    public static final MetadataKey<Boolean> ZOMBIE_HAS_HANDS_UP_METADATA = new MetadataKey<>(15, MetadataType.VAR_INT);
+    public static final MetadataKey<Boolean> ZOMBIE_IS_CONVERTING_METADATA = new MetadataKey<>(13, MetadataType.BOOLEAN);
+    public static final MetadataKey<Boolean> ZOMBIE_HAS_HANDS_UP_METADATA = new MetadataKey<>(15, MetadataType.BOOLEAN);
 
 
 
