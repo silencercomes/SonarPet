@@ -22,6 +22,8 @@ import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.ISpawnUtil;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+
+import net.minecraft.server.v1_9_R1.BlockPosition;
 import net.minecraft.server.v1_9_R1.World;
 import net.techcable.sonarpet.particles.Particle;
 
@@ -47,6 +49,7 @@ public class SpawnUtil implements ISpawnUtil {
         World mcWorld = ((CraftWorld) l.getWorld()).getHandle();
         EntityPet entityPet = (EntityPet) pet.getPetType().getNewEntityPetInstance(mcWorld, pet);
 
+        entityPet.spawnIn(mcWorld);
         entityPet.setLocation(new Location(mcWorld.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
         if (!l.getChunk().isLoaded()) {
             l.getChunk().load();

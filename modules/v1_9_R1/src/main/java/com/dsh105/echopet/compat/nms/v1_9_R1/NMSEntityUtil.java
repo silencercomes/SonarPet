@@ -29,6 +29,7 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.captainbern.reflection.matcher.Matchers.withArguments;
 import static com.captainbern.reflection.matcher.Matchers.withType;
@@ -123,8 +124,8 @@ public class NMSEntityUtil {
      * Hacky stuff to get around doTick() becoming final
      */
     
-    protected static FieldAccessor<List> GOALS;
-    protected static FieldAccessor<List> ACTIVE_GOALS;
+    protected static FieldAccessor<Set> GOALS;
+    protected static FieldAccessor<Set> ACTIVE_GOALS;
 
     protected static MethodAccessor<Void> ADD_GOAL;
 
@@ -151,7 +152,7 @@ public class NMSEntityUtil {
                 throw new RuntimeException("Failed to get the addGoal method!");
             }
 
-            List<SafeField<List>> fieldCandidates = goalTemplate.getSafeFields(withType(List.class));
+            List<SafeField<Set>> fieldCandidates = goalTemplate.getSafeFields(withType(Set.class));
             if (fieldCandidates.size() > 1) {
                 GOALS = fieldCandidates.get(0).getAccessor();
                 ACTIVE_GOALS = fieldCandidates.get(0).getAccessor();

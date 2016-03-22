@@ -35,6 +35,7 @@ import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.WrappedDataWatcher;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.ai.PetGoalFloat;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.ai.PetGoalFollowOwner;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.ai.PetGoalLookAtPlayer;
+import com.google.common.base.Preconditions;
 
 import net.minecraft.server.v1_9_R1.*;
 
@@ -303,8 +304,8 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
     }
 
     public void setLocation(Location l) {
-        this.setLocation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-        this.world = ((CraftWorld) l.getWorld()).getHandle();
+        Preconditions.checkArgument(l.getWorld().equals(this.getWorld().getWorld()), "Location world %s doesen't match entity world %s", l.getWorld(), this.getWorld());
+        this.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
     }
 
     public void teleport(Location l) {
