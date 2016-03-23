@@ -41,7 +41,7 @@ public interface INMS {
     public default void mount(Entity rider, Entity vehicle) {
         Preconditions.checkNotNull(rider, "Null rider");
         if (vehicle != null) {
-            rider.setPassenger(vehicle);
+            vehicle.setPassenger(rider);
         } else {
             rider.leaveVehicle();
         }
