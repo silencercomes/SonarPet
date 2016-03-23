@@ -15,24 +15,24 @@
  * along with EchoPet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.dsh105.echopet.compat.nms.v1_7_R4;
+package com.dsh105.echopet.compat.nms.v1_6_R3;
 
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.api.util.ISpawnUtil;
-import com.dsh105.echopet.compat.nms.v1_7_R4.entity.EntityPet;
+import com.dsh105.echopet.compat.api.util.INMS;
+import com.dsh105.echopet.compat.nms.v1_6_R3.entity.EntityPet;
 
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_6_R3.World;
 import net.techcable.sonarpet.particles.Particle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class SpawnUtil implements ISpawnUtil {
+public class NMSImpl implements INMS {
 
     @Override
     public EntityPet spawn(IPet pet, Player owner) {

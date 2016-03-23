@@ -20,7 +20,7 @@ package com.dsh105.echopet.compat.nms.v1_7_R3;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.api.util.ISpawnUtil;
+import com.dsh105.echopet.compat.api.util.INMS;
 import com.dsh105.echopet.compat.nms.v1_7_R3.entity.EntityPet;
 
 import net.minecraft.server.v1_7_R3.World;
@@ -32,7 +32,7 @@ import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class SpawnUtil implements ISpawnUtil {
+public class NMSImpl implements INMS {
 
     @Override
     public EntityPet spawn(IPet pet, Player owner) {

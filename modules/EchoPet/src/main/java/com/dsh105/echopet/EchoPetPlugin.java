@@ -31,7 +31,6 @@ import com.dsh105.echopet.compat.api.config.ConfigOptions;
 import com.dsh105.echopet.compat.api.plugin.*;
 import com.dsh105.echopet.compat.api.plugin.data.Updater;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
-import com.dsh105.echopet.compat.api.reflection.SafeConstructor;
 import com.dsh105.echopet.compat.api.reflection.utility.CommonReflection;
 import com.dsh105.echopet.compat.api.registration.PetRegistry;
 import com.dsh105.echopet.compat.api.util.*;
@@ -61,7 +60,6 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
 
     private static boolean isUsingNetty;
 
-    private static ISpawnUtil SPAWN_UTIL;
     private static PetManager MANAGER;
     private static SqlPetManager SQL_MANAGER;
     private static ConfigOptions OPTIONS;
@@ -103,9 +101,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
         COMMAND_MANAGER = new CommandManager(this);
         // Make sure that the plugin is running under the correct version to prevent errors
 
-        try {
-            Class.forName(ReflectionUtil.COMPAT_NMS_PATH + ".SpawnUtil");
-        } catch (ClassNotFoundException e) {
+        if (!INMS.isSupported()) {
             EchoPet.LOG.log(ChatColor.RED + "SonarPet " + ChatColor.GOLD
                     + this.getDescription().getVersion() + ChatColor.RED
                     + " is not compatible with this version of CraftBukkit");
@@ -121,8 +117,6 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
         }
 
         this.petRegistry = new PetRegistry();
-
-        SPAWN_UTIL = new SafeConstructor<ISpawnUtil>(ReflectionUtil.getVersionedClass("SpawnUtil")).newInstance();
 
         this.loadConfiguration();
 
@@ -389,8 +383,8 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     }
 
     @Override
-    public ISpawnUtil getSpawnUtil() {
-        return SPAWN_UTIL;
+    public INMS getSpawnUtil() {
+        return INMS.getInstance();
     }
 
     @Override

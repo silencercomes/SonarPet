@@ -33,6 +33,7 @@ import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.reflection.ReflectionConstants;
 import com.dsh105.echopet.compat.api.reflection.SafeMethod;
 import com.dsh105.echopet.compat.api.util.Lang;
+import com.dsh105.echopet.compat.api.util.INMS;
 import com.dsh105.echopet.compat.api.util.PetNames;
 import com.dsh105.echopet.compat.api.util.PlayerUtil;
 import com.dsh105.echopet.compat.api.util.ReflectionUtil;
@@ -293,10 +294,8 @@ public abstract class Pet implements IPet {
 
         // Ew...This stuff is UGLY :c
 
-        final SafeMethod method = new SafeMethod(ReflectionUtil.getNMSClass("Entity"), ReflectionConstants.ENTITY_FUNC_MOUNT.getName(), ReflectionUtil.getNMSClass("Entity"));
-
         if (!flag) {
-            method.invoke(PlayerUtil.playerToEntityPlayer(this.getOwner()), new Object[]{null});
+            INMS.getInstance().mount(this.getOwner(), null);
             //((CraftPlayer) this.getOwner()).getHandle().mount(null);
             if (this.getEntityPet() instanceof IEntityNoClipPet) {
                 ((IEntityNoClipPet) this.getEntityPet()).noClip(true);
@@ -309,7 +308,7 @@ public abstract class Pet implements IPet {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    method.invoke(PlayerUtil.playerToEntityPlayer(getOwner()), getEntityPet());
+                    INMS.getInstance().mount(getOwner(), getEntityPet().getBukkitEntity());
                     //((CraftPlayer) getOwner()).getHandle().mount(getEntityPet());
                     ownerIsMounting = false;
                     if (getEntityPet() instanceof IEntityNoClipPet) {
@@ -337,40 +336,36 @@ public abstract class Pet implements IPet {
         }
         this.teleportToOwner();
 
-        // Ew...This stuff is UGLY :c
-
-        SafeMethod method = new SafeMethod(ReflectionUtil.getNMSClass("Entity"), ReflectionConstants.ENTITY_FUNC_MOUNT.getName(), ReflectionUtil.getNMSClass("Entity"));
-
         //Entity craftPet = ((Entity) this.getCraftPet().getHandle());
         if (!flag) {
             if (this.getRider() != null) {
                 //Entity rider = ((Entity) this.getRider().getCraftPet().getHandle());
                 //rider.mount(null);
-                method.invoke(this.getRider().getEntityPet(), new Object[]{null});
+                INMS.getInstance().mount(this.getRider().getEntityPet().getBukkitEntity(), null);
 
                 //craftPet.mount(null);
-                method.invoke(this.getEntityPet(), new Object[]{null});
+                INMS.getInstance().mount(this.getEntityPet().getBukkitEntity(), null);
 
                 //rider.mount(craftPet);
-                method.invoke(this.getRider().getEntityPet(), this.getEntityPet());
+                INMS.getInstance().mount(this.getRider().getEntityPet().getBukkitEntity(), this.getEntityPet().getBukkitEntity());
             } else {
                 //craftPet.mount(null);
-                method.invoke(this.getEntityPet(), new Object[]{null});
+                INMS.getInstance().mount(this.getEntityPet().getBukkitEntity(), null);
             }
         } else {
             if (this.getRider() != null) {
                 //Entity rider = ((Entity) this.getRider().getCraftPet().getHandle());
                 //rider.mount(null);
-                method.invoke(this.getRider().getEntityPet(), new Object[]{null});
+                INMS.getInstance().mount(this.getRider().getEntityPet().getBukkitEntity(), null);
 
                 //craftPet.mount(((CraftPlayer) this.getOwner()).getHandle());
-                method.invoke(this.getEntityPet(), PlayerUtil.playerToEntityPlayer(this.getOwner()));
+                INMS.getInstance().mount(this.getEntityPet().getBukkitEntity(), this.getOwner());
 
                 //this.getCraftPet().setPassenger(this.getRider().getCraftPet());
-                method.invoke(this.getRider().getEntityPet(), this.getEntityPet());
+                INMS.getInstance().mount(this.getRider().getEntityPet().getBukkitEntity(), this.getEntityPet().getBukkitEntity());
             } else {
                 //craftPet.mount(((CraftPlayer) this.getOwner()).getHandle());
-                method.invoke(this.getEntityPet(), PlayerUtil.playerToEntityPlayer(this.getOwner()));
+                INMS.getInstance().mount(this.getEntityPet().getBukkitEntity(), this.getOwner());
             }
         }
         this.getEntityPet().resizeBoundingBox(flag);

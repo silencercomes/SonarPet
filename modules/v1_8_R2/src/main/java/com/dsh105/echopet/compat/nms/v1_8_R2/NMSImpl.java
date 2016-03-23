@@ -15,25 +15,24 @@
  * along with EchoPet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.dsh105.echopet.compat.nms.v1_9_R1;
+package com.dsh105.echopet.compat.nms.v1_8_R2;
 
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.api.util.ISpawnUtil;
-import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.api.util.INMS;
+import com.dsh105.echopet.compat.nms.v1_8_R2.entity.EntityPet;
 
-import net.minecraft.server.v1_9_R1.BlockPosition;
-import net.minecraft.server.v1_9_R1.World;
+import net.minecraft.server.v1_8_R2.World;
 import net.techcable.sonarpet.particles.Particle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class SpawnUtil implements ISpawnUtil {
+public class NMSImpl implements INMS {
 
     @Override
     public EntityPet spawn(IPet pet, Player owner) {
@@ -49,7 +48,6 @@ public class SpawnUtil implements ISpawnUtil {
         World mcWorld = ((CraftWorld) l.getWorld()).getHandle();
         EntityPet entityPet = (EntityPet) pet.getPetType().getNewEntityPetInstance(mcWorld, pet);
 
-        entityPet.spawnIn(mcWorld);
         entityPet.setLocation(new Location(mcWorld.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
         if (!l.getChunk().isLoaded()) {
             l.getChunk().load();
