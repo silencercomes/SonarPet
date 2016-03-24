@@ -46,7 +46,7 @@ public class EntityWitherPet extends EntityPet implements IEntityWitherPet {
     public static final MetadataKey<Integer> WITHER_FIRST_HEAD_TARGET_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
     public static final MetadataKey<Integer> WITHER_SECOND_HEAD_TARGET_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
     public static final MetadataKey<Integer> WITHER_THIRD_HEAD_TARGET_METADATA = new MetadataKey<>(13, MetadataType.VAR_INT);
-    public static final MetadataKey<Integer> WITHER_INVULNERABLE_METADATA = new MetadataKey<>(13, MetadataType.VAR_INT);
+    public static final MetadataKey<Integer> WITHER_INVULNERABLE_METADATA = new MetadataKey<>(14, MetadataType.VAR_INT);
 
 
     @Override
