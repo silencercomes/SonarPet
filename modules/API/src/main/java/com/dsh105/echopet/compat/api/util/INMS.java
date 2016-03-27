@@ -17,12 +17,21 @@
 
 package com.dsh105.echopet.compat.api.util;
 
+import lombok.*;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.plugin.IEchoPetPlugin;
 import com.google.common.base.Preconditions;
 
 import net.techcable.sonarpet.utils.Versioning;
@@ -48,14 +57,24 @@ public interface INMS {
     }
 
     public static boolean isSupported() {
-        return Helper.instance != null;
+        return Helper.noArgsConstructor != null || Helper.pluginArgConstructor != null;
     }
 
-    public static INMS getInstance() {
-        if (isSupported()) {
-            return Helper.instance;
-        } else {
-            throw new UnsupportedOperationException("Unsupported version");
+    @SneakyThrows // Won't throw an exception
+    public static INMS createInstance(IEchoPetPlugin plugin) {
+        Preconditions.checkNotNull(plugin, "Null plugin");
+        synchronized (Helper.instances) {
+            Preconditions.checkState(!Helper.instances.containsKey(plugin), "NMS already created for plugin");
+            final INMS nms;
+            if (Helper.pluginArgConstructor != null) {
+                nms = (INMS) Helper.pluginArgConstructor.invoke();
+            } else if (Helper.noArgsConstructor != null) {
+                nms = (INMS) Helper.noArgsConstructor.invoke(plugin);
+            } else {
+                throw new UnsupportedOperationException("Unsupported version");
+            }
+            Helper.instances.put(plugin, nms);
+            return nms;
         }
     }
 
@@ -66,24 +85,26 @@ public interface INMS {
  */
 @Deprecated
 class Helper {
+    public static final Map<IEchoPetPlugin, INMS> instances = Collections.synchronizedMap(new HashMap<>());
+    public static MethodHandle noArgsConstructor, pluginArgConstructor;
 
-    public static final INMS instance;
-
-    static {
-        MethodHandle constructor;
-        Class<?> implClass = Reflection.getClass("com.dsh105.echopet.compat.nms." + NMS_VERSION + ".NMSImpl");
-        if (implClass == null) {
-            instance = null;
-        } else {
-            try {
-                constructor = MethodHandles.publicLookup().findConstructor(implClass, MethodType.methodType(void.class));
-            } catch (NoSuchMethodException | IllegalAccessException e) {
-                throw new AssertionError("Unable to invoke constructor", e);
-            }
-            try {
-                instance = constructor == null ? null : (INMS) constructor.invoke();
-            } catch (Throwable t) {
-                throw new AssertionError("NMS constructor threw exception", t);
+    static  {
+        synchronized (instances) {
+            Class<?> implClass = Reflection.getClass("com.dsh105.echopet.compat.nms." + NMS_VERSION + ".NMSImpl");
+            if (implClass != null) {
+                try {
+                    try {
+                        noArgsConstructor = MethodHandles.publicLookup().findConstructor(implClass, MethodType.methodType(void.class));
+                    } catch (NoSuchMethodException e) {
+                        try {
+                            pluginArgConstructor = MethodHandles.publicLookup().findConstructor(implClass, MethodType.methodType(void.class, IEchoPetPlugin.class));
+                        } catch (NoSuchMethodException e2) {
+                            throw new RuntimeException("Can't find constructor");
+                        }
+                    }
+                } catch (Throwable t) {
+                    throw new AssertionError("Unable to invoke constructor", t);
+                }
             }
         }
     }
