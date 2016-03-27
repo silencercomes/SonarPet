@@ -109,11 +109,17 @@ public enum Particle {
 
     // Dark magic. Do not touch
     private static Object getInternalObject(String internalName) {
+        Preconditions.checkArgument(!internalName.endsWith("_"), "%s ends with an underscore.", internalName);
         // Normally i'd make these constants, but we can't as its called before fields are initalized
         Class<? extends Enum> enumParticleClass = getNmsClass("EnumParticle", Enum.class);
         SonarField<String> enumParticleInternalNameField = findFieldWithType(enumParticleClass, String.class);
         for (Enum particle : enumParticleClass.getEnumConstants()) {
-            if (enumParticleInternalNameField.getValue(particle).equals(internalName)) {
+            String particleInternalName = enumParticleInternalNameField.getValue(particle);
+            // 1.8 has some crazy stuff
+            if (particleInternalName.endsWith("_")) {
+                particleInternalName = particleInternalName.substring(0, particleInternalName.length() - 1);
+            }
+            if (particleInternalName.equals(internalName)) {
                 return particle;
             }
         }
