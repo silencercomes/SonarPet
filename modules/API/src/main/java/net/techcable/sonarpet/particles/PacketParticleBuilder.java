@@ -19,7 +19,7 @@ public abstract class PacketParticleBuilder extends ParticleBuilder {
         Preconditions.checkState(getPosition() != null, "Position not set");
 
         Preconditions.checkState(getPosition() != null, "Offset not set");
-        ServerUtil.sendPacket(packet, player);
+        ServerUtil.sendPacket(packet.getHandle(), player);
     }
 
     protected abstract Object getNMSParticleType();
