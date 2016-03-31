@@ -83,7 +83,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     @Override
     public void setVariant(HorseVariant v, HorseMarking m) {
-        getDatawatcher().set(HORSE_TYPE_METADATA, NMS.getId(v, m));
+        getDatawatcher().set(HORSE_COLOR_AND_STYLE_METADATA, NMS.getId(v, m));
     }
 
     @Override
