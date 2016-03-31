@@ -19,54 +19,57 @@ package com.dsh105.echopet.compat.api.config;
 
 import com.dsh105.echopet.compat.api.entity.PetType;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.SpawnEgg;
 
 public enum PetItem {
 
-    BAT(PetType.BAT, Material.getMaterial(383), (short) 65, "Bat Pet", "bat"),
-    BLAZE(PetType.BLAZE, Material.getMaterial(383), (short) 61, "Blaze Pet", "blaze"),
-    CAVESPIDER(PetType.CAVESPIDER, Material.getMaterial(383), (short) 59, "Cave Spider Pet", "cavespider"),
-    CHICKEN(PetType.CHICKEN, Material.getMaterial(383), (short) 93, "Chicken Pet", "chicken"),
-    COW(PetType.COW, Material.getMaterial(383), (short) 92, "Cow Pet", "cow"),
-    CREEPER(PetType.CREEPER, Material.getMaterial(383), (short) 50, "Creeper Pet", "creeper"),
-    ENDERDRAGON(PetType.ENDERDRAGON, Material.getMaterial(122), (short) 0, "EnderDragon Pet", "enderdragon"),
-    ENDERMAN(PetType.ENDERMAN, Material.getMaterial(383), (short) 58, "Enderman Pet", "enderman"),
-    ENDERMITE(PetType.ENDERMITE, Material.getMaterial(383), (short) 67, "Endermite Pet", "endermite"),
-    GHAST(PetType.GHAST, Material.getMaterial(383), (short) 56, "Ghast Pet", "ghast"),
-    GIANT(PetType.GIANT, Material.getMaterial(383), (short) 54, "Giant Pet", "giant"),
-    GUARDIAN(PetType.GUARDIAN, Material.getMaterial(383), (short) 68, "Guardian Pet", "guardian"),
-    HORSE(PetType.HORSE, Material.getMaterial(383), (short) 100, "Horse Pet", "horse"),
-    HUMAN(PetType.HUMAN, Material.SKULL_ITEM, (short) 3, "Human Pet", "human"),
-    IRONGOLEM(PetType.IRONGOLEM, Material.getMaterial(86), (short) 0, "Iron Golem Pet", "irongolem"),
-    MAGMACUBE(PetType.MAGMACUBE, Material.getMaterial(383), (short) 62, "Magma Cube Pet", "magmacube"),
-    MUSHROOMCOW(PetType.MUSHROOMCOW, Material.getMaterial(383), (short) 96, "Mushroom Cow Pet", "mushroomcow"),
-    OCELOT(PetType.OCELOT, Material.getMaterial(383), (short) 98, "Ocelot Pet", "ocelot"),
-    PIG(PetType.PIG, Material.getMaterial(383), (short) 90, "Pig Pet", "pig"),
-    PIGZOMBIE(PetType.PIGZOMBIE, Material.getMaterial(383), (short) 57, "PigZombie Pet", "pigzombie"),
-    RABBIT(PetType.RABBIT, Material.getMaterial(383), (short) 101, "Rabbit Pet", "rabbit"),
-    SHEEP(PetType.SHEEP, Material.getMaterial(383), (short) 91, "Sheep Pet", "sheep"),
-    SILVERFISH(PetType.SILVERFISH, Material.getMaterial(383), (short) 60, "Silverfish Pet", "silverfish"),
-    SKELETON(PetType.SKELETON, Material.getMaterial(383), (short) 51, "Skeleton Pet", "skeleton"),
-    SLIME(PetType.SLIME, Material.getMaterial(383), (short) 55, "Slime Pet", "slime"),
-    SNOWMAN(PetType.SNOWMAN, Material.getMaterial(332), (short) 0, "Snowman Pet", "snowman"),
-    SPIDER(PetType.SPIDER, Material.getMaterial(383), (short) 52, "Spider Pet", "spider"),
-    SQUID(PetType.SQUID, Material.getMaterial(383), (short) 94, "Squid Pet", "squid"),
-    VILLAGER(PetType.VILLAGER, Material.getMaterial(383), (short) 120, "Villager Pet", "villager"),
-    WITCH(PetType.WITCH, Material.getMaterial(383), (short) 66, "Witch Pet", "witch"),
-    WITHER(PetType.WITHER, Material.getMaterial(399), (short) 0, "Wither Pet", "wither"),
-    WOLF(PetType.WOLF, Material.getMaterial(383), (short) 95, "Wolf Pet", "wolf"),
-    ZOMBIE(PetType.ZOMBIE, Material.getMaterial(383), (short) 54, "Zombie Pet", "zombie");
+    BAT(PetType.BAT, Material.MONSTER_EGG, new SpawnEgg(EntityType.BAT), "Bat Pet", "bat"),
+    BLAZE(PetType.BLAZE, Material.MONSTER_EGG, new SpawnEgg(EntityType.BLAZE), "Blaze Pet", "blaze"),
+    CAVESPIDER(PetType.CAVESPIDER, Material.MONSTER_EGG, new SpawnEgg(EntityType.CAVE_SPIDER), "Cave Spider Pet", "cavespider"),
+    CHICKEN(PetType.CHICKEN, Material.MONSTER_EGG, new SpawnEgg(EntityType.CHICKEN), "Chicken Pet", "chicken"),
+    COW(PetType.COW, Material.MONSTER_EGG, new SpawnEgg(EntityType.COW), "Cow Pet", "cow"),
+    CREEPER(PetType.CREEPER, Material.MONSTER_EGG, new SpawnEgg(EntityType.CREEPER), "Creeper Pet", "creeper"),
+    ENDERDRAGON(PetType.ENDERDRAGON, Material.DRAGON_EGG, null, "EnderDragon Pet", "enderdragon"),
+    ENDERMAN(PetType.ENDERMAN, Material.MONSTER_EGG, new SpawnEgg(EntityType.ENDERMAN), "Enderman Pet", "enderman"),
+    ENDERMITE(PetType.ENDERMITE, Material.MONSTER_EGG, new SpawnEgg(EntityType.ENDERMITE), "Endermite Pet", "endermite"),
+    GHAST(PetType.GHAST, Material.MONSTER_EGG, new SpawnEgg(EntityType.GHAST), "Ghast Pet", "ghast"),
+    GIANT(PetType.GIANT, Material.MONSTER_EGG, new SpawnEgg(EntityType.GIANT), "Giant Pet", "giant"),
+    GUARDIAN(PetType.GUARDIAN, Material.MONSTER_EGG, new SpawnEgg(EntityType.GUARDIAN), "Guardian Pet", "guardian"),
+    HORSE(PetType.HORSE, Material.MONSTER_EGG, new SpawnEgg(EntityType.HORSE), "Horse Pet", "horse"),
+    HUMAN(PetType.HUMAN, Material.SKULL_ITEM, new MaterialData(Material.SKULL_ITEM, (byte) 3), "Human Pet", "human"),
+    IRONGOLEM(PetType.IRONGOLEM, Material.PUMPKIN, null, "Iron Golem Pet", "irongolem"),
+    MAGMACUBE(PetType.MAGMACUBE, Material.MONSTER_EGG, new SpawnEgg(EntityType.MAGMA_CUBE), "Magma Cube Pet", "magmacube"),
+    MUSHROOMCOW(PetType.MUSHROOMCOW, Material.MONSTER_EGG, new SpawnEgg(EntityType.MUSHROOM_COW), "Mushroom Cow Pet", "mushroomcow"),
+    OCELOT(PetType.OCELOT, Material.MONSTER_EGG, new SpawnEgg(EntityType.OCELOT), "Ocelot Pet", "ocelot"),
+    PIG(PetType.PIG, Material.MONSTER_EGG, new SpawnEgg(EntityType.PIG), "Pig Pet", "pig"),
+    PIGZOMBIE(PetType.PIGZOMBIE, Material.MONSTER_EGG, new SpawnEgg(EntityType.PIG_ZOMBIE), "PigZombie Pet", "pigzombie"),
+    RABBIT(PetType.RABBIT, Material.MONSTER_EGG, new SpawnEgg(EntityType.RABBIT), "Rabbit Pet", "rabbit"),
+    SHEEP(PetType.SHEEP, Material.MONSTER_EGG, new SpawnEgg(EntityType.SHEEP), "Sheep Pet", "sheep"),
+    SILVERFISH(PetType.SILVERFISH, Material.MONSTER_EGG, new SpawnEgg(EntityType.SILVERFISH), "Silverfish Pet", "silverfish"),
+    SKELETON(PetType.SKELETON, Material.MONSTER_EGG, new SpawnEgg(EntityType.SKELETON), "Skeleton Pet", "skeleton"),
+    SLIME(PetType.SLIME, Material.MONSTER_EGG, new SpawnEgg(EntityType.SLIME), "Slime Pet", "slime"),
+    SNOWMAN(PetType.SNOWMAN, Material.SNOW_BALL, null, "Snowman Pet", "snowman"),
+    SPIDER(PetType.SPIDER, Material.MONSTER_EGG, new SpawnEgg(EntityType.SPIDER), "Spider Pet", "spider"),
+    SQUID(PetType.SQUID, Material.MONSTER_EGG, new SpawnEgg(EntityType.SQUID), "Squid Pet", "squid"),
+    VILLAGER(PetType.VILLAGER, Material.MONSTER_EGG, new SpawnEgg(EntityType.VILLAGER), "Villager Pet", "villager"),
+    WITCH(PetType.WITCH, Material.MONSTER_EGG, new SpawnEgg(EntityType.WITCH), "Witch Pet", "witch"),
+    WITHER(PetType.WITHER, Material.NETHER_STAR, null, "Wither Pet", "wither"),
+    WOLF(PetType.WOLF, Material.MONSTER_EGG, new SpawnEgg(EntityType.WOLF), "Wolf Pet", "wolf"),
+    ZOMBIE(PetType.ZOMBIE, Material.MONSTER_EGG, new SpawnEgg(EntityType.ZOMBIE), "Zombie Pet", "zombie");
 
     private String cmd;
     public PetType petType;
     private Material mat;
-    private short data;
+    private MaterialData data;
     private String name;
 
-    PetItem(PetType petType, Material mat, short data, String name, String cmd) {
+    PetItem(PetType petType, Material mat, MaterialData data, String name, String cmd) {
         this.cmd = "pet " + cmd;
         this.petType = petType;
         this.mat = mat;
-        this.data = data;
+        this.data = data == null ? new MaterialData(mat) : data;
         this.name = name;
     }
 
@@ -83,7 +86,7 @@ public enum PetItem {
     }
 
     public short getData() {
-        return data;
+        return data.getData();
     }
 
     public String getName() {
