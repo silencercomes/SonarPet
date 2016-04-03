@@ -39,8 +39,9 @@ import com.dsh105.echopet.hook.WorldGuardProvider;
 import com.dsh105.echopet.listeners.MenuListener;
 import com.dsh105.echopet.listeners.PetEntityListener;
 import com.dsh105.echopet.listeners.PetOwnerListener;
-import com.jolbox.bonecp.BoneCP;
-import com.jolbox.bonecp.BoneCPConfig;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -49,7 +50,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -73,7 +73,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     private YAMLConfig petConfig;
     private YAMLConfig mainConfig;
     private YAMLConfig langConfig;
-    private BoneCP dbPool;
+    private HikariDataSource dbPool;
 
     private VanishProvider vanishProvider;
     private WorldGuardProvider worldGuardProvider;
@@ -239,50 +239,40 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
         String db = mainConfig.getString("sql.database", "EchoPet");
         String user = mainConfig.getString("sql.username", "none");
         String pass = mainConfig.getString("sql.password", "none");
-        BoneCPConfig bcc = new BoneCPConfig();
-        bcc.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
-        bcc.setUsername(user);
-        bcc.setPassword(pass);
-        bcc.setPartitionCount(2);
-        bcc.setMinConnectionsPerPartition(3);
-        bcc.setMaxConnectionsPerPartition(7);
-        bcc.setConnectionTestStatement("SELECT 1");
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
+        config.setUsername(user);
+        config.setPassword(pass);
+        dbPool = new HikariDataSource(config);
+        Connection connection = null;
+        Statement statement = null;
         try {
-            dbPool = new BoneCP(bcc);
-        } catch (SQLException e) {
-            Logger.log(Logger.LogLevel.SEVERE, "Failed to connect to MySQL! [MySQL DataBase: " + db + "].", e, true);
-        }
-        if (dbPool != null) {
-            Connection connection = null;
-            Statement statement = null;
-            try {
-                connection = dbPool.getConnection();
-                statement = connection.createStatement();
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS EchoPet_version3 (" +
-                        "OwnerName varchar(36)," +
-                        "PetType varchar(255)," +
-                        "PetName varchar(255)," +
-                        "PetData BIGINT," +
-                        "RiderPetType varchar(255)," +
-                        "RiderPetName varchar(255), " +
-                        "RiderPetData BIGINT," +
-                        "PRIMARY KEY (OwnerName)" +
-                        ");");
+            connection = dbPool.getConnection();
+            statement = connection.createStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS EchoPet_version3 (" +
+                    "OwnerName varchar(36)," +
+                    "PetType varchar(255)," +
+                    "PetName varchar(255)," +
+                    "PetData BIGINT," +
+                    "RiderPetType varchar(255)," +
+                    "RiderPetName varchar(255), " +
+                    "RiderPetData BIGINT," +
+                    "PRIMARY KEY (OwnerName)" +
+                    ");");
 
-                // Convert previous database versions
-                TableMigrationUtil.migrateTables();
-            } catch (SQLException e) {
-                Logger.log(Logger.LogLevel.SEVERE, "Table generation failed [MySQL DataBase: " + db + "].", e, true);
-            } finally {
-                try {
-                    if (statement != null) {
-                        statement.close();
-                    }
-                    if (connection != null) {
-                        connection.close();
-                    }
-                } catch (SQLException ignored) {
+            // Convert previous database versions
+            TableMigrationUtil.migrateTables();
+        } catch (SQLException e) {
+            Logger.log(Logger.LogLevel.SEVERE, "Table generation failed [MySQL DataBase: " + db + "].", e, true);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
                 }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException ignored) {
             }
         }
 
@@ -388,7 +378,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     }
 
     @Override
-    public BoneCP getDbPool() {
+    public HikariDataSource getDbPool() {
         return dbPool;
     }
 
