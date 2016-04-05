@@ -23,6 +23,10 @@ import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.INMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
 
+import net.minecraft.server.v1_9_R1.EntityHuman;
+import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.Packet;
+import net.minecraft.server.v1_9_R1.PacketPlayOutMount;
 import net.minecraft.server.v1_9_R1.World;
 import net.techcable.sonarpet.particles.Particle;
 
@@ -33,6 +37,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class NMSImpl implements INMS {
+
+    @Override
+    public void mount(org.bukkit.entity.Entity rider, org.bukkit.entity.Entity vehicle) {
+        NMS.startRiding(NMS.getHandle(rider), NMS.getHandle(vehicle), true);
+        Packet packet = new PacketPlayOutMount(NMS.getHandle(vehicle));
+        for (EntityHuman human : NMS.getHandle(rider).world.players) {
+            ((EntityPlayer) human).playerConnection.sendPacket(packet);
+        }
+    }
 
     @Override
     public EntityPet spawn(IPet pet, Player owner) {

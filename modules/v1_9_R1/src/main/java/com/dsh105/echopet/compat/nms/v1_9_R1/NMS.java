@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
 import com.dsh105.echopet.compat.api.entity.HorseMarking;
 import com.dsh105.echopet.compat.api.entity.HorseVariant;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.server.v1_9_R1.Block;
@@ -24,9 +25,12 @@ import net.minecraft.server.v1_9_R1.EntityPlayer;
 import net.minecraft.server.v1_9_R1.EnumHorseArmor;
 import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.SoundEffectType;
+import net.techcable.sonarpet.utils.reflection.Reflection;
+import net.techcable.sonarpet.utils.reflection.SonarMethod;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_9_R1.CraftSound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -138,6 +142,11 @@ public class NMS {
         }
     }
 
+
+    public static boolean startRiding(Entity rider, Entity vehicle, boolean force) {
+        return rider.a(vehicle, force);
+    }
+
     /**
      * Get the entities sideways movement.
      * <p>Positive numbers move to the left and negative to the right.</p>
@@ -187,12 +196,17 @@ public class NMS {
 
     // unwrappers
 
-    public static EntityPlayer getHandle(Player p) {
-        if (p instanceof CraftPlayer) {
-            return ((CraftPlayer) p).getHandle();
+    public static Entity getHandle(org.bukkit.entity.Entity e) {
+        Preconditions.checkNotNull(e, "Null entity");
+        if (e instanceof CraftEntity) {
+            return ((CraftPlayer) e).getHandle();
         } else {
-            throw new RuntimeException("Players must be CraftPlayers to get handle");
+            throw new IllegalArgumentException("Players must be Craft to get handle");
         }
+    }
+
+    public static EntityPlayer getHandle(Player p) {
+        return (EntityPlayer) getHandle((org.bukkit.entity.Entity) p);
     }
 
 }
