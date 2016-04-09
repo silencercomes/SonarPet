@@ -199,7 +199,7 @@ public class NMS {
     public static Entity getHandle(org.bukkit.entity.Entity e) {
         Preconditions.checkNotNull(e, "Null entity");
         if (e instanceof CraftEntity) {
-            return ((CraftPlayer) e).getHandle();
+            return ((CraftEntity) e).getHandle();
         } else {
             throw new IllegalArgumentException("Players must be Craft to get handle");
         }
