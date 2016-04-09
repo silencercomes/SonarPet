@@ -17,12 +17,16 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1;
 
+import java.util.Objects;
+
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.INMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.google.common.base.Preconditions;
 
+import net.minecraft.server.v1_9_R1.Entity;
 import net.minecraft.server.v1_9_R1.EntityHuman;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
 import net.minecraft.server.v1_9_R1.Packet;
@@ -39,11 +43,18 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class NMSImpl implements INMS {
 
     @Override
-    public void mount(org.bukkit.entity.Entity rider, org.bukkit.entity.Entity vehicle) {
-        NMS.startRiding(NMS.getHandle(rider), NMS.getHandle(vehicle), true);
-        Packet packet = new PacketPlayOutMount(NMS.getHandle(vehicle));
-        for (EntityHuman human : NMS.getHandle(rider).world.players) {
-            ((EntityPlayer) human).playerConnection.sendPacket(packet);
+    public void mount(org.bukkit.entity.Entity bukkitRider, org.bukkit.entity.Entity bukkitVehicle) {
+        Entity rider = NMS.getHandle(Objects.requireNonNull(bukkitRider, "Null rider"));
+        if (bukkitVehicle == null) {
+            rider.stopRiding();
+        } else {
+            Preconditions.checkArgument(bukkitRider.getWorld().equals(bukkitVehicle.getWorld()), "Rider is in world %s, while vehicle is in world %s", bukkitRider.getWorld().getName(), bukkitVehicle.getWorld().getName());
+            Entity vehicle = NMS.getHandle(bukkitVehicle);
+            NMS.startRiding(rider, vehicle, true);
+            Packet packet = new PacketPlayOutMount(vehicle);
+            for (EntityHuman human : rider.world.players) {
+                ((EntityPlayer) human).playerConnection.sendPacket(packet);
+            }
         }
     }
 
