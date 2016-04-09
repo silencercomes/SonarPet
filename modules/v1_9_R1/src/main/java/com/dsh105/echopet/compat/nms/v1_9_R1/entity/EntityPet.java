@@ -434,7 +434,7 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
             return;
         }
 
-        this.k(this.rideSpeed); // set the movement speed
+        this.l(this.rideSpeed); // set the movement speed
         super.g(moveEvent.getSidewardMotionSpeed(), moveEvent.getForwardMotionSpeed()); // superclass movement logic, with the speed from the movement event
 
         PetType pt = this.getPet().getPetType();
