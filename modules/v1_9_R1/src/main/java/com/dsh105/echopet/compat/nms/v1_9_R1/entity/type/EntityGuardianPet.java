@@ -78,6 +78,6 @@ public class EntityGuardianPet extends EntityPet implements IEntityGuardianPet {
         int i = 4;
         byte existing = getDatawatcher().get(GUARDIAN_FLAGS_METADATA);
 
-        getDatawatcher().register(GUARDIAN_FLAGS_METADATA, (byte) (flag ? (existing | i) : (existing & (~i))));
+        getDatawatcher().set(GUARDIAN_FLAGS_METADATA, (byte) (flag ? (existing | i) : (existing & (~i))));
     }
 }
