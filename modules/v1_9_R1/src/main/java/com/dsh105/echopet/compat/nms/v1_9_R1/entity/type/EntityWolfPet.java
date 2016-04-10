@@ -110,7 +110,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
 
         byte b = getDatawatcher().get(WOLF_FLAGS_METADATA);
 
-        getDatawatcher().register(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x02) : (b & ~0x02)));
+        getDatawatcher().set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x02) : (b & ~0x02)));
     }
 
     public boolean isAngry() {
