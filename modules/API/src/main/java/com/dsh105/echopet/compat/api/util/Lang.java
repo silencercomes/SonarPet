@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 
 public enum Lang {
 
-    PREFIX("prefix", "&4[&cEchoPet&4]&r "),
+    PREFIX("prefix", "&4[&cSonarPet&4]&r "),
 
     HELP("help", "&eUse &6/%cmd% &efor help."),
     NO_PERMISSION("no_permission", "&6%perm% &epermission needed to do that."),
