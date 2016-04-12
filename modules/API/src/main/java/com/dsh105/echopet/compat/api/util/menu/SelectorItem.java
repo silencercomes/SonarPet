@@ -17,72 +17,73 @@
 
 package com.dsh105.echopet.compat.api.util.menu;
 
+import lombok.*;
+
+import com.google.common.base.Preconditions;
+
+import net.techcable.sonarpet.item.ItemData;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 
 
 public enum SelectorItem {
 
-    SELECTOR(Material.BONE, 1, (short) 0, ChatColor.GREEN + "Pets", ""),
-    TOGGLE(Material.BONE, 1, (short) 0, ChatColor.YELLOW + "Toggle Pet", "toggle"),
-    CALL(Material.ENDER_PEARL, 1, (short) 0, ChatColor.YELLOW + "Call Pet", "call"),
-    RIDE(Material.CARROT_STICK, 1, (short) 0, ChatColor.YELLOW + "Ride Pet", "ride"),
-    HAT(Material.IRON_HELMET, 1, (short) 0, ChatColor.YELLOW + "Hat Pet", "hat"),
-    NAME(Material.NAME_TAG, 1, (short) 0, ChatColor.YELLOW + "Name Your Pet", "name"),
-    MENU(Material.WORKBENCH, 1, (short) 0, ChatColor.YELLOW + "Open PetMenu", "menu"),
-    CLOSE(Material.BOOK, 1, (short) 0, ChatColor.YELLOW + "Close", "select");
+    SELECTOR(Material.BONE, 1, ChatColor.GREEN + "Pets", ""),
+    TOGGLE(Material.BONE, 1, ChatColor.YELLOW + "Toggle Pet", "toggle"),
+    CALL(Material.ENDER_PEARL, 1, ChatColor.YELLOW + "Call Pet", "call"),
+    RIDE(Material.CARROT_STICK, 1, ChatColor.YELLOW + "Ride Pet", "ride"),
+    HAT(Material.IRON_HELMET, 1, ChatColor.YELLOW + "Hat Pet", "hat"),
+    NAME(Material.NAME_TAG, 1, ChatColor.YELLOW + "Name Your Pet", "name"),
+    MENU(Material.WORKBENCH, 1, ChatColor.YELLOW + "Open PetMenu", "menu"),
+    CLOSE(Material.BOOK, 1, ChatColor.YELLOW + "Close", "select");
 
-    private String command;
-    private Material mat;
-    private int amount;
-    private short data;
-    private String name;
+    private final String command;
+    @Getter
+    private final ItemData itemData;
+    private final int amount;
 
-    SelectorItem(Material mat, int amount, short data, String name, String command) {
-        this.command = "pet " + command;
-        this.mat = mat;
-        this.amount = amount;
-        this.data = data;
-        this.name = name;
+    SelectorItem(Material type, int amount, String name, String command) {
+        this(ItemData.create(type), amount, name, command);
     }
+
+    SelectorItem(ItemData itemData, int amount, String name, String command) {
+        Preconditions.checkNotNull(itemData, "Null item data");
+        itemData = itemData.withDisplayName(Preconditions.checkNotNull(name, "Null name"));
+        this.itemData = itemData;
+        this.command = "pet " + Preconditions.checkNotNull(command, "Null command");
+        this.amount = amount;
+    }
+
 
     public String getCommand() {
         return command;
     }
 
-    public Material getMat() {
-        return mat;
+    public Material getType() {
+        return getMaterialData().getItemType();
     }
 
     public int getAmount() {
         return amount;
     }
 
-    public short getData() {
-        return data;
+    public MaterialData getMaterialData() {
+        return getItemData().getMaterialData();
     }
 
     public String getName() {
-        return name;
+        return getItemData().getDisplayName().get();
     }
 
     public ItemStack getItem() {
-        ItemStack i = new ItemStack(this.mat, this.amount, this.data);
-        ItemMeta meta = i.getItemMeta();
-        meta.setDisplayName(this.name);
-        //meta.setLore(this.lore);
-        i.setItemMeta(meta);
-        return i;
+        return getItem(this.amount);
     }
 
     public ItemStack getItem(int amount) {
-        ItemStack i = new ItemStack(this.mat, amount, this.data);
-        ItemMeta meta = i.getItemMeta();
-        meta.setDisplayName(this.name);
-        //meta.setLore(this.lore);
-        i.setItemMeta(meta);
-        return i;
+        return getItemData().createStack(amount);
     }
 }

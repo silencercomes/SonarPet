@@ -17,84 +17,88 @@
 
 package com.dsh105.echopet.compat.api.util.menu;
 
-import com.dsh105.echopet.compat.api.util.menu.DataMenu.DataMenuType;
-import com.dsh105.echopet.compat.api.util.wrapper.WrappedMaterial;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.dsh105.echopet.compat.api.util.menu.DataMenu.DataMenuType;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
+import net.techcable.sonarpet.item.ItemData;
+import net.techcable.sonarpet.item.SkullItemData;
+import net.techcable.sonarpet.item.SkullItemData.SkullType;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public enum MenuItem {
 
-    HORSE_TYPE("HAY_BLOCK", 1, (short) 0, DataMenuType.HORSE_TYPE, "Type", "Horse"),
-    HORSE_VARIANT("LEASH", 1, (short) 0, DataMenuType.HORSE_VARIANT, "Variant", "Horse"),
-    HORSE_MARKING("INK_SACK", 1, (short) 0, DataMenuType.HORSE_MARKING, "Marking", "Horse"),
-    HORSE_ARMOUR("IRON_CHESTPLATE", 1, (short) 0, DataMenuType.HORSE_ARMOUR, "Armour", "Horse"),
-    RABBIT_TYPE("RABBIT_HIDE", 1, (short) 0, DataMenuType.RABBIT_TYPE, "Bunny type", "Rabbit"),
-    CHESTED("CHEST", 1, (short) 0, DataMenuType.BOOLEAN, "Chested", "Horse"),
-    FIRE("FIREBALL", 1, (short) 0, DataMenuType.BOOLEAN, "Fire", "Blaze"),
-    SADDLE("SADDLE", 1, (short) 0, DataMenuType.BOOLEAN, "Saddle", "Horse", "Pig"),
-    SHEARED("SHEARS", 1, (short) 0, DataMenuType.BOOLEAN, "Sheared", "Sheep"),
-    SCREAMING("ENDER_PEARL", 1, (short) 0, DataMenuType.BOOLEAN, "Screaming", "Enderman"),
-    POTION("POTION", 1, (short) 0, DataMenuType.BOOLEAN, "Potion", "Witch"),
-    SHIELD("GLASS", 1, (short) 0, DataMenuType.BOOLEAN, "Shield", "Wither"),
-    POWER("BEACON", 1, (short) 0, DataMenuType.BOOLEAN, "Powered", "Creeper"),
-    SIZE("SLIME_BALL", 1, (short) 0, DataMenuType.SIZE, "Size", "Slime", "MagmaCube"),
-    BABY("WHEAT", 1, (short) 0, DataMenuType.BOOLEAN, "Baby", "PigZombie", "Zombie", "Chicken", "Cow", "Horse", "MushroomCow", "Ocelot", "Pig", "Sheep", "Wolf", "Villager"),
-    CAT_TYPE("RAW_FISH", 1, (short) 0, DataMenuType.CAT_TYPE, "Cat Type", "Ocelot"),
-    ANGRY("BONE", 1, (short) 0, DataMenuType.BOOLEAN, "Angry", "Wolf"),
-    TAMED("BONE", 1, (short) 0, DataMenuType.BOOLEAN, "Tamed", "Wolf"),
-    WITHER("SKULL_ITEM", 1, (short) 1, DataMenuType.BOOLEAN, "Wither", "Skeleton"),
-    VILLAGER("EMERALD", 1, (short) 0, DataMenuType.BOOLEAN, "Villager", "Zombie", "PigZombie"),
-    ELDER("SEA_LANTERN", 1, (short) 0, DataMenuType.BOOLEAN, "Elder", "Guardian"),
-    COLOR("WOOL", 1, (short) 0, DataMenuType.COLOR, "Color", "Sheep", "Wolf"),
-    PROFESSION("IRON_AXE", 1, (short) 0, DataMenuType.PROFESSION, "Profession", "Villager"),
-    RIDE("CARROT_STICK", 1, (short) 0, DataMenuType.BOOLEAN, "Ride Pet", "Control your pet."),
-    HAT("IRON_HELMET", 1, (short) 0, DataMenuType.BOOLEAN, "Hat Pet", "Wear your pet on your head.");
+    HORSE_TYPE(Material.HAY_BLOCK, 1, DataMenuType.HORSE_TYPE, "Type", "Horse"),
+    HORSE_VARIANT(Material.LEASH, 1, DataMenuType.HORSE_VARIANT, "Variant", "Horse"),
+    HORSE_MARKING(Material.INK_SACK, 1, DataMenuType.HORSE_MARKING, "Marking", "Horse"),
+    HORSE_ARMOUR(Material.IRON_CHESTPLATE, 1, DataMenuType.HORSE_ARMOUR, "Armour", "Horse"),
+    RABBIT_TYPE(Material.RABBIT_HIDE, 1, DataMenuType.RABBIT_TYPE, "Bunny type", "Rabbit"),
+    CHESTED(Material.CHEST, 1, DataMenuType.BOOLEAN, "Chested", "Horse"),
+    FIRE(Material.FIREBALL, 1, DataMenuType.BOOLEAN, "Fire", "Blaze"),
+    SADDLE(Material.SADDLE, 1, DataMenuType.BOOLEAN, "Saddle", "Horse", "Pig"),
+    SHEARED(Material.SHEARS, 1, DataMenuType.BOOLEAN, "Sheared", "Sheep"),
+    SCREAMING(Material.ENDER_PEARL, 1, DataMenuType.BOOLEAN, "Screaming", "Enderman"),
+    POTION(Material.POTION, 1, DataMenuType.BOOLEAN, "Potion", "Witch"),
+    SHIELD(Material.GLASS, 1, DataMenuType.BOOLEAN, "Shield", "Wither"),
+    POWER(Material.BEACON, 1, DataMenuType.BOOLEAN, "Powered", "Creeper"),
+    SIZE(Material.SLIME_BALL, 1, DataMenuType.SIZE, "Size", "Slime", "MagmaCube"),
+    BABY(Material.WHEAT, 1, DataMenuType.BOOLEAN, "Baby", "PigZombie", "Zombie", "Chicken", "Cow", "Horse", "MushroomCow", "Ocelot", "Pig", "Sheep", "Wolf", "Villager"),
+    CAT_TYPE(Material.RAW_FISH, 1, DataMenuType.CAT_TYPE, "Cat Type", "Ocelot"),
+    ANGRY(Material.BONE, 1, DataMenuType.BOOLEAN, "Angry", "Wolf"),
+    TAMED(Material.BONE, 1, DataMenuType.BOOLEAN, "Tamed", "Wolf"),
+    WITHER(SkullItemData.create(SkullType.WITHER_SKELETON_SKULL), 1, DataMenuType.BOOLEAN, "Wither", "Skeleton"),
+    VILLAGER(Material.EMERALD, 1, DataMenuType.BOOLEAN, "Villager", "Zombie", "PigZombie"),
+    ELDER(Material.SEA_LANTERN, 1, DataMenuType.BOOLEAN, "Elder", "Guardian"),
+    COLOR(Material.WOOL, 1, DataMenuType.COLOR, "Color", "Sheep", "Wolf"),
+    PROFESSION(Material.IRON_AXE, 1, DataMenuType.PROFESSION, "Profession", "Villager"),
+    RIDE(Material.CARROT_STICK, 1, DataMenuType.BOOLEAN, "Ride Pet", "Control your pet."),
+    HAT(Material.IRON_HELMET, 1, DataMenuType.BOOLEAN, "Hat Pet", "Wear your pet on your head.");
 
-    private WrappedMaterial wrappedMaterial;
-    private String name;
-    private int amount;
-    private List<String> lore;
-    private short data;
-    private DataMenuType menuType;
+    private final int amount;
+    @Getter
+    private final ItemData itemData;
+    private final DataMenuType menuType;
 
-    MenuItem(String materialName, int amount, short data, DataMenuType menuType, String name, String... lore) {
-        this.wrappedMaterial = new WrappedMaterial(materialName);
-        this.name = name;
+    MenuItem(Material material, int amount, DataMenuType menuType, String name, String... lore) {
+        this(
+                ItemData.create(material),
+                amount,
+                menuType,
+                name,
+                lore
+        );
+    }
+
+    MenuItem(ItemData itemData, int amount, DataMenuType menuType, String name, String... lore) {
+        this(
+                Preconditions.checkNotNull(itemData, "Null item data")
+                        .withDisplayName(ChatColor.RED + Preconditions.checkNotNull(name, "Null name"))
+                        .withLore(ImmutableList.copyOf(Preconditions.checkNotNull(lore, "Null lore array"))),
+                amount,
+                menuType
+        );
+    }
+
+
+    MenuItem(ItemData itemData, int amount, DataMenuType menuType) {
+        this.itemData = Preconditions.checkNotNull(itemData, "Null item data");
         this.amount = amount;
-        this.data = data;
-        List<String> list = new ArrayList<String>();
-        list.addAll(Arrays.asList(lore));
-        this.lore = list;
-        this.menuType = menuType;
+        this.menuType = Preconditions.checkNotNull(menuType, "Null menu type");
     }
 
     public ItemStack getItem() {
-        if (this.wrappedMaterial.get() == null) { // Spigot 1.8 item that's not supported?
-            return null;
-        }
-        ItemStack i = new ItemStack(this.wrappedMaterial.get(), this.amount, this.data);
-        ItemMeta meta = i.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + this.name);
-        meta.setLore(this.lore);
-        i.setItemMeta(meta);
-        return i;
+        return itemData.createStack(amount);
     }
 
     public ItemStack getBoolean(boolean flag) {
-        if (this.wrappedMaterial.get() == null) { // Spigot 1.8 item that's not supported?
-            return null;
-        }
-        ItemStack i = new ItemStack(this.wrappedMaterial.get(), this.amount, this.data);
-        ItemMeta meta = i.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + this.name + (flag ? ChatColor.GREEN + " [TOGGLE ON]" : ChatColor.YELLOW + " [TOGGLE OFF]"));
-        meta.setLore(this.lore);
-        i.setItemMeta(meta);
-        return i;
+        ItemData itemData = this.itemData;
+        itemData = itemData.withDisplayName(itemData.getDisplayName().get() + (flag ? ChatColor.GREEN + " [TOGGLE ON]" : ChatColor.YELLOW + " [TOGGLE OFF]"));
+        return itemData.createStack(amount);
     }
 
     public DataMenuType getMenuType() {

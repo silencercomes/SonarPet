@@ -25,16 +25,39 @@ import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.google.common.base.Preconditions;
 
+import net.techcable.sonarpet.item.SpawnEggItemData;
 import net.techcable.sonarpet.utils.Versioning;
 import net.techcable.sonarpet.utils.reflection.Reflection;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.SpawnEgg;
 
 import static net.techcable.sonarpet.utils.Versioning.NMS_VERSION;
 
 @SuppressWarnings("deprecation")
 public interface INMS {
+
+    public default SpawnEggItemData createSpawnEggData(byte rawData, ItemMeta meta) {
+        EntityType entityType = new SpawnEgg(rawData).getSpawnedType();
+        if (entityType == null) entityType = SpawnEggItemData.DEFAULT_TYPE;
+        return createSpawnEggData(entityType, meta); // Convert raw data to entity type
+    }
+
+    public default SpawnEggItemData createSpawnEggData(EntityType entityType, ItemMeta meta) {
+        if (Versioning.NMS_VERSION.getMajorVersion() >= 9) throw new UnsupportedOperationException("Can't use bukkit API on versions newer than 1.9");
+        Preconditions.checkNotNull(meta, "Null meta");
+        Preconditions.checkNotNull(entityType, "Null entity type");
+        return new SpawnEggItemData(new SpawnEgg(entityType).getData(), meta) {
+            @Override
+            @SuppressWarnings("depreciation") // Bukkit is okay on versions less than 1.9, and we've already checked above
+            public EntityType getSpawnedType() {
+                return ((SpawnEgg) getMaterialData()).getSpawnedType();
+            }
+        };
+    }
 
     public IEntityPet spawn(IPet pet, Player owner);
 

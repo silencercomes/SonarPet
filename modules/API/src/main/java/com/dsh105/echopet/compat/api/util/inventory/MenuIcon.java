@@ -17,57 +17,59 @@
 
 package com.dsh105.echopet.compat.api.util.inventory;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import lombok.*;
 
 import java.util.Arrays;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
+import net.techcable.sonarpet.item.ItemData;
+
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.SpawnEgg;
+
 public class MenuIcon {
 
-    private int slot;
-    private int materialId;
-    private int materialData;
-    private String name;
-    private String[] lore;
+    private final int slot;
+    @Getter
+    private final ItemData itemData;
 
-    public MenuIcon(int slot, int materialId, int materialData, String name, String... lore) {
+    public MenuIcon(int slot, ItemData itemData) {
         this.slot = slot;
-        this.materialId = materialId;
-        this.materialData = materialData;
-        this.name = name;
-        this.lore = lore;
+        this.itemData = itemData;
     }
 
     public int getSlot() {
         return slot;
     }
 
-    public int getMaterialId() {
-        return materialId;
+    public Material getType() {
+        return getMaterialData().getItemType();
     }
 
-    public int getMaterialData() {
-        return materialData;
+    public MaterialData getMaterialData() {
+        return itemData.getMaterialData();
     }
 
     public String getName() {
-        return name;
+        return getItemData().getDisplayName().orElse("");
     }
 
-    public String[] getLore() {
-        return lore;
+    public ImmutableList<String> getLore() {
+        return getItemData().getLore();
+    }
+
+    public ItemMeta getItemMeta() {
+        return getItemData().getMeta();
     }
 
     public ItemStack getIcon(Player viewer) {
-        ItemStack i = new ItemStack(materialId, 1, (short) materialData);
-        ItemMeta meta = i.getItemMeta();
-        meta.setDisplayName(name);
-        if (this.lore != null && this.lore.length > 0) {
-            meta.setLore(Arrays.asList(lore));
-        }
-        i.setItemMeta(meta);
-        return i;
+        return getItemData().createStack(1);
     }
 
     public void onClick(Player viewer) {

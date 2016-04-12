@@ -18,12 +18,14 @@
 package com.dsh105.echopet.compat.nms.v1_9_R1;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.INMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.item.NMSSpawnEggItemData;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.server.v1_9_R1.Entity;
@@ -32,15 +34,33 @@ import net.minecraft.server.v1_9_R1.EntityPlayer;
 import net.minecraft.server.v1_9_R1.Packet;
 import net.minecraft.server.v1_9_R1.PacketPlayOutMount;
 import net.minecraft.server.v1_9_R1.World;
+import net.techcable.sonarpet.item.SpawnEggItemData;
 import net.techcable.sonarpet.particles.Particle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.SpawnEgg;
 
 public class NMSImpl implements INMS {
+
+    @Override
+    public SpawnEggItemData createSpawnEggData(byte rawData, ItemMeta meta) {
+        EntityType entityType = NMSSpawnEggItemData.getSpawnEggEntityTypeIfPresent(meta).orElse(EntityType.fromId(rawData));
+        if (entityType == null) entityType = SpawnEggItemData.DEFAULT_TYPE; // 'Fix' broken configs
+        return new NMSSpawnEggItemData(rawData, meta, entityType);
+    }
+
+    @Override
+    public SpawnEggItemData createSpawnEggData(EntityType entityType, ItemMeta meta) {
+        Preconditions.checkNotNull(entityType, "Null entity type");
+        Preconditions.checkNotNull(meta, "Null item meta");
+        return new NMSSpawnEggItemData(new SpawnEgg(entityType).getData(), meta, entityType); // Pretend we use metadata to make the code happy
+    }
 
     @Override
     public void mount(org.bukkit.entity.Entity bukkitRider, org.bukkit.entity.Entity bukkitVehicle) {

@@ -156,8 +156,8 @@ public class ConfigOptions extends Options {
                 int friendlySlot = icon.getSlot() + 1;
                 set("petSelector.menu.slot-" + friendlySlot + ".command", icon.getCommand());
                 set("petSelector.menu.slot-" + friendlySlot + ".petType", icon.getPetType() == null ? "" : icon.getPetType().toString());
-                set("petSelector.menu.slot-" + friendlySlot + ".materialId", icon.getMaterialId());
-                set("petSelector.menu.slot-" + friendlySlot + ".materialData", icon.getMaterialData());
+                set("petSelector.menu.slot-" + friendlySlot + ".materialId", icon.getType().getId());
+                set("petSelector.menu.slot-" + friendlySlot + ".materialData", icon.getMaterialData().getData());
                 set("petSelector.menu.slot-" + friendlySlot + ".name", (icon.getName() == null ? "" : icon.getName()).replace(ChatColor.COLOR_CHAR, '&'));
                 ArrayList<String> lore = new ArrayList<String>();
                 for (String s : icon.getLore()) {

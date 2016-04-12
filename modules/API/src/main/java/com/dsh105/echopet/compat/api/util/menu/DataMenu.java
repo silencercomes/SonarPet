@@ -52,7 +52,7 @@ public class DataMenu {
     public void setItems(DataMenuType type, int size) {
         int i = 0;
         for (DataMenuItem mi : DataMenuItem.values()) {
-            if (mi.getType() == type) {
+            if (mi.getMenuType() == type) {
                 this.inv.setItem(i, mi.getItem());
                 i++;
             }

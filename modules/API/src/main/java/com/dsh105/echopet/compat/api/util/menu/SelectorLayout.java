@@ -22,6 +22,8 @@ import com.dsh105.commodus.config.YAMLConfig;
 import com.dsh105.echopet.compat.api.config.ConfigOptions;
 import com.dsh105.echopet.compat.api.config.PetItem;
 import com.dsh105.echopet.compat.api.entity.PetType;
+import com.google.common.collect.ImmutableList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.HandlerList;
@@ -31,6 +33,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+
+import net.techcable.sonarpet.item.ItemData;
 
 public class SelectorLayout {
 
@@ -94,7 +99,8 @@ public class SelectorLayout {
                     loreList.add(ChatColor.translateAlternateColorCodes('&', part));
                 }
             }
-            selectorLayout.add(new SelectorIcon(i - 1, cmd, pt, id, data, name, loreList.toArray(new String[0])));
+            Material type = Material.getMaterial(id);
+            selectorLayout.add(new SelectorIcon(i - 1, cmd, pt, ItemData.create(type, data).withDisplayName(name.trim().isEmpty() ? Optional.empty() : Optional.of(name)).withLore(loreList)));
         }
 
         selectorMenu = new SelectorMenu();
@@ -121,7 +127,7 @@ public class SelectorLayout {
         ArrayList<SelectorIcon> layout = new ArrayList<SelectorIcon>();
         int count = 0;
         for (PetItem item : PetItem.values()) {
-            layout.add(new SelectorIcon(count, item.getCommand(), item.petType, item.getMat().getId(), item.getData(), item.getName()));
+            layout.add(new SelectorIcon(count, item.getCommand(), item.petType, item.getItemData()));
             count++;
         }
 
@@ -130,7 +136,7 @@ public class SelectorLayout {
         for (int j = 1; j < 10; j++) {
             SelectorItem s = selectorItems[i++];
             if (s != null) {
-                layout.add(new SelectorIcon((45 - j), s.getCommand(), null, s.getMat().getId(), s.getData(), s.getName()));
+                layout.add(new SelectorIcon((45 - j), s.getCommand(), null, s.getItemData()));
             }
         }
         return layout;

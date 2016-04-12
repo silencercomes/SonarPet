@@ -22,21 +22,49 @@ import net.minecraft.server.v1_9_R1.Entity;
 import net.minecraft.server.v1_9_R1.EntityInsentient;
 import net.minecraft.server.v1_9_R1.EntityLiving;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
+import net.minecraft.server.v1_9_R1.EntityTypes;
 import net.minecraft.server.v1_9_R1.EnumHorseArmor;
+import net.minecraft.server.v1_9_R1.Item;
+import net.minecraft.server.v1_9_R1.ItemStack;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.SoundEffectType;
 import net.techcable.sonarpet.utils.reflection.Reflection;
 import net.techcable.sonarpet.utils.reflection.SonarMethod;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_9_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_9_R1.util.CraftMagicNumbers;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class NMS {
 
+    public static NBTTagCompound getTagFromMeta(Material type, ItemMeta meta) {
+        Preconditions.checkNotNull(meta, "Null meta");
+        Preconditions.checkNotNull(type, "Null type");
+        Preconditions.checkArgument(Bukkit.getItemFactory().isApplicable(meta, type), "Meta %s isn't applicable to %s", meta, type);
+        Item item = CraftMagicNumbers.getItem(type);
+        ItemStack stack = new ItemStack(item);
+        boolean worked = CraftItemStack.setItemMeta(stack, meta);
+        if (!worked) throw new RuntimeException("Didn't work");
+        return stack.getTag();
+    }
+
+    public static ItemMeta createMetaFromTag(Material type, NBTTagCompound tag) {
+        Item item = CraftMagicNumbers.getItem(Preconditions.checkNotNull(type, "Null type"));
+        ItemStack stack = new ItemStack(item);
+        stack.setTag(Preconditions.checkNotNull(tag, "Null nbt tag"));
+        return CraftItemStack.getItemMeta(stack);
+    }
 
     //
     // Version Specific Code

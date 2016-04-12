@@ -20,21 +20,27 @@ package com.dsh105.echopet.compat.api.util.menu;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.inventory.MenuIcon;
+import com.google.common.base.Preconditions;
+
+import net.techcable.sonarpet.item.ItemData;
+import net.techcable.sonarpet.item.SkullItemData;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class SelectorIcon extends MenuIcon {
 
-    private String command;
-    private PetType petType;
+    private final String command;
+    private final PetType petType;
 
-    public SelectorIcon(int slot, String command, PetType petType, int materialId, int materialData, String name, String... lore) {
-        super(slot, materialId, materialData, name, lore);
-        this.command = command;
+    public SelectorIcon(int slot, String command, PetType petType, ItemData itemData) {
+        super(slot, itemData);
+        this.command = Preconditions.checkNotNull(command, "Null command");
         this.petType = petType;
     }
 
@@ -48,18 +54,14 @@ public class SelectorIcon extends MenuIcon {
 
     @Override
     public ItemStack getIcon(Player viewer) {
-        ItemStack i = super.getIcon(viewer);
-        ItemMeta meta = i.getItemMeta();
+        ItemData itemData = getItemData();
         ChatColor c = this.petType == null ? ChatColor.YELLOW : (viewer.hasPermission("echopet.pet.type." + this.getPetType().toString().toLowerCase().replace("_", ""))) ? ChatColor.GREEN : ChatColor.RED;
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', c + this.getName()));
-        i.setItemMeta(meta);
+        itemData = itemData.withDisplayName(ChatColor.translateAlternateColorCodes('&', c + this.getName()));
 
-        if (this.petType == PetType.HUMAN && i.getItemMeta() instanceof SkullMeta) {
-            SkullMeta sm = (SkullMeta) i.getItemMeta();
-            sm.setOwner(viewer.getName());
-            i.setItemMeta(sm);
+        if (this.petType == PetType.HUMAN && itemData instanceof SkullItemData) {
+            itemData = ((SkullItemData) itemData).withOwner(viewer.getUniqueId());
         }
-        return i;
+        return itemData.createStack(1);
     }
 
     @Override
