@@ -22,8 +22,8 @@
     <parent>
         <groupId>net.techcable.sonarpet</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-        <relativePath>../../</relativePath>
+        <version>1.0.1</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>nms-v1_7_R1</artifactId>

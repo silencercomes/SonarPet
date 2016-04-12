@@ -22,13 +22,14 @@
     <parent>
         <groupId>net.techcable.sonarpet</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-        <relativePath>../../</relativePath>
+        <version>1.0.1</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>net.tehcable.sonarpet</artifactId>
     <name>SonarPet</name>
     <packaging>jar</packaging>
+    <url>https://www.spigotmc.org/resources/sonarpets.20523/</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
