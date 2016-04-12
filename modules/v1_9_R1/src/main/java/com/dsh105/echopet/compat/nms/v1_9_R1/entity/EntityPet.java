@@ -128,6 +128,13 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
     }
 
     @Override
+    public void stopRiding() {} // Pets are being secretly dismounted, so we have to block it here
+
+    public void reallyStopRiding() {
+        super.stopRiding();
+    }
+
+    @Override
     public void resizeBoundingBox(boolean flag) {
         EntitySize es = this.getClass().getAnnotation(EntitySize.class);
         if (es != null) {

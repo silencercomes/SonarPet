@@ -66,7 +66,18 @@ public class NMSImpl implements INMS {
     public void mount(org.bukkit.entity.Entity bukkitRider, org.bukkit.entity.Entity bukkitVehicle) {
         Entity rider = NMS.getHandle(Objects.requireNonNull(bukkitRider, "Null rider"));
         if (bukkitVehicle == null) {
-            rider.stopRiding();
+            Entity vehicle = rider.getVehicle(); // This is how you *really* get the vehicle :/
+            if (rider instanceof EntityPet) {
+                ((EntityPet) rider).reallyStopRiding(); // normally we block dismounting, but now we really do want to dismount
+            } else {
+                rider.stopRiding();
+            }
+            if (vehicle != null) {
+                Packet packet = new PacketPlayOutMount(vehicle);
+                for (EntityHuman human : rider.world.players) {
+                    ((EntityPlayer) human).playerConnection.sendPacket(packet);
+                }
+            }
         } else {
             Preconditions.checkArgument(bukkitRider.getWorld().equals(bukkitVehicle.getWorld()), "Rider is in world %s, while vehicle is in world %s", bukkitRider.getWorld().getName(), bukkitVehicle.getWorld().getName());
             Entity vehicle = NMS.getHandle(bukkitVehicle);
