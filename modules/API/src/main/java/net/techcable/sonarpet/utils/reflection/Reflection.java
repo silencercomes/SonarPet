@@ -2,7 +2,7 @@ package net.techcable.sonarpet.utils.reflection;
 
 import lombok.*;
 
-import static net.techcable.sonarpet.utils.Versioning.NMS_VERSION;
+import static net.techcable.sonarpet.utils.Versioning.NMS_PACKAGE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Reflection {
@@ -22,7 +22,6 @@ public class Reflection {
         }
     }
 
-    public static final String NMS_PACKAGE = "net.minecraft.server." + NMS_VERSION;
     public static Class<?> getNmsClass(String id) {
         return getClass(NMS_PACKAGE + "." + id);
     }
