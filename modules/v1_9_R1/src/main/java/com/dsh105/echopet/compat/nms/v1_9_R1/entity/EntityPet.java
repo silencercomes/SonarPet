@@ -130,6 +130,11 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
     @Override
     public void stopRiding() {} // Pets are being secretly dismounted, so we have to block it here
 
+    @Override
+    public boolean startRiding(Entity entity) { // Don't mount boats.......
+        return false;
+    }
+
     public void reallyStopRiding() {
         super.stopRiding();
     }
