@@ -77,6 +77,9 @@ public class ProfileUtils {
      * @return a profile with the given name
      */
     public static Optional<PlayerProfile> lookup(String name) {
+        if (Bukkit.getPlayerExact(name) != null) {
+            return Optional.of(fromPlayer(Bukkit.getPlayerExact(name))) ;
+        }
         if (nameCache.contains(name)) Optional.of(nameCache.get(name));
         List<PlayerProfile> response = postNames(ImmutableList.of(name));
         if (response == null) return Optional.empty();
