@@ -215,6 +215,7 @@ public abstract class Pet implements IPet {
     @Override
     public void removeRider() {
         if (rider != null) {
+            INMS.getInstance().mount(rider.getCraftPet(), null);
             rider.removePet(true);
             this.rider = null;
         }
@@ -409,7 +410,7 @@ public abstract class Pet implements IPet {
             @Override
             public void run() {
                 if (getCraftPet() != null) {
-                    getCraftPet().setPassenger(Pet.this.getRider().getCraftPet());
+                    INMS.getInstance().mount(Pet.this.getRider().getCraftPet(), getCraftPet());
                 }
                 EchoPet.getSqlManager().saveToDatabase(Pet.this.rider, true);
             }
