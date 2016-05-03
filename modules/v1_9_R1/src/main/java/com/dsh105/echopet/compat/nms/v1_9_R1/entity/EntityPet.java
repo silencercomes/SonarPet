@@ -513,7 +513,9 @@ public abstract class EntityPet extends EntityCreature implements IAnimal, IEnti
             this.remove(false);
             return;
         }
-        this.petGoalSelector.updateGoals();
+        if (getPet().getRider() == null) {
+            this.petGoalSelector.updateGoals();
+        }
     }
 
     // EntityLiving

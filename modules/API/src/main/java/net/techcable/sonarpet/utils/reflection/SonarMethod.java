@@ -5,10 +5,8 @@ import lombok.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.WrongMethodTypeException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -205,8 +203,8 @@ public final class SonarMethod<T> {
      * @throws IllegalArgumentException if a field with the given name doesn't exist
      * @throws IllegalArgumentException if the field doesn't have the expected type
      */
-    public static SonarMethod<?> getMethod(Class<?> clazz, String name, Class<?>[] parameterTypes) {
-        return getMethod(clazz, name, Object.class, parameterTypes);
+    public static SonarMethod<?> getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {
+        return getMethodWithReturnType(clazz, name, Object.class, parameterTypes);
     }
 
 
@@ -222,7 +220,7 @@ public final class SonarMethod<T> {
      * @throws IllegalArgumentException if a field with the given name doesn't exist
      * @throws IllegalArgumentException if the field doesn't have the expected type
      */
-    public static <T> SonarMethod<T> getMethod(Class<?> clazz, String name, Class<T> returnType, Class<?>[] parameterTypes) {
+    public static <T> SonarMethod<T> getMethodWithReturnType(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
         Preconditions.checkNotNull(clazz, "Null class");
         Preconditions.checkNotNull(name, "Null name");
         Preconditions.checkNotNull(returnType, "Null type");

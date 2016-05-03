@@ -6,6 +6,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.dsh105.commodus.ServerUtil;
 import com.google.common.base.Preconditions;
 
+import net.techcable.sonarpet.utils.reflection.ReflectionConstants;
+
 import org.bukkit.entity.Player;
 
 public abstract class PacketParticleBuilder extends ParticleBuilder {
@@ -17,9 +19,8 @@ public abstract class PacketParticleBuilder extends ParticleBuilder {
         WrappedPacket packet = new WrappedPacket(PacketType.Play.Server.WORLD_PARTICLES);
         setupPacket(packet);
         Preconditions.checkState(getPosition() != null, "Position not set");
-
         Preconditions.checkState(getPosition() != null, "Offset not set");
-        ServerUtil.sendPacket(packet.getHandle(), player);
+        ReflectionConstants.sendPacket(player, packet.getHandle());
     }
 
     protected abstract Object getNMSParticleType();

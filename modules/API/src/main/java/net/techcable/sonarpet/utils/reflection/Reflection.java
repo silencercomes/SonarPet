@@ -3,6 +3,7 @@ package net.techcable.sonarpet.utils.reflection;
 import lombok.*;
 
 import static net.techcable.sonarpet.utils.Versioning.NMS_PACKAGE;
+import static net.techcable.sonarpet.utils.Versioning.OBC_PACKAGE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Reflection {
@@ -20,6 +21,10 @@ public class Reflection {
         } catch (ClassNotFoundException e) {
             return null;
         }
+    }
+
+    public static Class<?> getObcClass(String id) {
+        return getClass(OBC_PACKAGE + "." + id);
     }
 
     public static Class<?> getNmsClass(String id) {
