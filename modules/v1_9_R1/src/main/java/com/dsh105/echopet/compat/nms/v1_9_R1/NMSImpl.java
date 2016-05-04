@@ -24,6 +24,7 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.INMS;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.item.NMSSpawnEggItemData;
 import com.google.common.base.Preconditions;
@@ -68,8 +69,8 @@ public class NMSImpl implements INMS {
         Entity rider = NMS.getHandle(Objects.requireNonNull(bukkitRider, "Null rider"));
         if (bukkitVehicle == null) {
             Entity vehicle = rider.getVehicle(); // This is how you *really* get the vehicle :/
-            if (rider instanceof EntityPet) {
-                ((EntityPet) rider).reallyStopRiding(); // normally we block dismounting, but now we really do want to dismount
+            if (rider instanceof EntityInsentientPet) {
+                ((EntityInsentientPet) rider).reallyStopRiding(); // normally we block dismounting, but now we really do want to dismount
             } else {
                 rider.stopRiding();
             }
@@ -91,7 +92,7 @@ public class NMSImpl implements INMS {
     }
 
     @Override
-    public EntityPet spawn(IPet pet, Player owner) {
+    public EntityInsentientPet spawn(IPet pet, Player owner) {
         Location l = owner.getLocation();
         PetPreSpawnEvent spawnEvent = new PetPreSpawnEvent(pet, l);
         EchoPet.getPlugin().getServer().getPluginManager().callEvent(spawnEvent);
@@ -102,16 +103,16 @@ public class NMSImpl implements INMS {
         }
         l = spawnEvent.getSpawnLocation();
         World mcWorld = ((CraftWorld) l.getWorld()).getHandle();
-        EntityPet entityPet = (EntityPet) pet.getPetType().getNewEntityPetInstance(mcWorld, pet);
+        EntityInsentientPet entityPet = (EntityInsentientPet) pet.getPetType().getNewEntityPetInstance(mcWorld, pet);
 
-        entityPet.spawnIn(mcWorld);
+        entityPet.getEntity().spawnIn(mcWorld);
         //noinspection RedundantCast - the version of craftbukkit we compile against doesn't have this method, but the version of bukkit does
         ((Creature) entityPet.getBukkitEntity()).setCollidable(false);
         entityPet.setLocation(new Location(mcWorld.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
         if (!l.getChunk().isLoaded()) {
             l.getChunk().load();
         }
-        if (!mcWorld.addEntity(entityPet, CreatureSpawnEvent.SpawnReason.CUSTOM)) {
+        if (!mcWorld.addEntity(entityPet.getEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM)) {
             owner.sendMessage(EchoPet.getPrefix() + ChatColor.YELLOW + "Failed to spawn pet entity.");
             EchoPet.getManager().removePet(pet, true);
         } else {

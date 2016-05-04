@@ -17,7 +17,9 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import java.util.UUID;
+import lombok.*;
+
+import java.util.Random;
 
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
@@ -25,62 +27,109 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityOcelotPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
-import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePetData;
 import com.google.common.base.Optional;
 
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityOcelot;
+import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftChicken;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftOcelot;
 import org.bukkit.entity.Ocelot;
 
 @EntitySize(width = 0.6F, height = 0.8F)
 @EntityPetType(petType = PetType.OCELOT)
-public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPet {
+public class EntityOcelotPet extends EntityOcelot implements EntityAgeablePet, IEntityOcelotPet {
 
-    public static final MetadataKey<Byte> OCELOT_FLAGS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
-    public static final MetadataKey<Optional<UUID>> OCELOT_OWNER_METADATA = new MetadataKey<>(13, MetadataType.OPTIONAL_UUID);
-    public static final MetadataKey<Integer> OCELOT_TYPE_METADATA = new MetadataKey<>(14, MetadataType.VAR_INT);
-
-    public EntityOcelotPet(World world) {
-        super(world);
-    }
-
-    public EntityOcelotPet(World world, IPet pet) {
-        super(world, pet);
-        getDatawatcher().set(OCELOT_FLAGS_METADATA, (byte) 0x04); // set tame
-        getDatawatcher().set(OCELOT_OWNER_METADATA, Optional.of(pet.getOwnerUUID()));
+    @Override
+    public void initiateEntityPet() {
+        setCatType(Ocelot.Type.BLACK_CAT.getId());
+        setOwnerUUID(pet.getOwnerUUID());
     }
 
     public int getCatType() {
-        return getDatawatcher().get(OCELOT_TYPE_METADATA);
+        return getBukkitEntity().getCatType().getId();
     }
 
     @Override
     public void setCatType(int i) {
-        getDatawatcher().set(OCELOT_TYPE_METADATA, i);
+        Ocelot.Type type = Ocelot.Type.getType(i);
+        if (type == null) throw new IllegalArgumentException("Invalid cat type id: " + i);
+        getBukkitEntity().setCatType(type);
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(OCELOT_FLAGS_METADATA, (byte) 0);
-        getDatawatcher().register(OCELOT_OWNER_METADATA, Optional.absent());
-        getDatawatcher().register(OCELOT_TYPE_METADATA, Ocelot.Type.BLACK_CAT.getId());
+    public Sound getIdleSound() {
+        return (this.random().nextInt(4) == 0 ? Sound.ENTITY_CAT_PURREOW : Sound.ENTITY_CAT_AMBIENT); // Play puring sounds instead of default mojang sounds
     }
 
     @Override
-    protected void makeStepSound() {
-        //this.makeSound("mob.ozelot.step", 0.15F, 1.0F); // TODO
-    }
-
-    @Override
-    protected Sound getIdleSound() {
-        return (this.random.nextInt(4) == 0 ? Sound.ENTITY_CAT_PURREOW : Sound.ENTITY_CAT_AMBIENT); // Play puring sounds instead of default mojang sounds
-    }
-
-    @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_CAT_DEATH;
+    }
+
+    // EntityAgeablePet Implementations
+
+    @Override
+    public EntityOcelot getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityOcelotPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftOcelot getBukkitEntity() {
+        return (CraftOcelot) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

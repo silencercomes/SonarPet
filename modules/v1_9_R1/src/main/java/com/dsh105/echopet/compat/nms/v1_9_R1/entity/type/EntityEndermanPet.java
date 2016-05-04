@@ -17,33 +17,34 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import lombok.*;
+
+import java.util.Random;
+
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEndermanPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
-import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPetData;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
-import com.google.common.base.Optional;
 
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
-import net.minecraft.server.v1_9_R1.IBlockData;
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityEnderman;
+import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderman;
 
 @EntitySize(width = 0.6F, height = 2.9F)
 @EntityPetType(petType = PetType.ENDERMAN)
-public class EntityEndermanPet extends EntityPet implements IEntityEndermanPet {
+public class EntityEndermanPet extends EntityEnderman implements EntityInsentientPet, IEntityEndermanPet {
 
-    public EntityEndermanPet(World world) {
-        super(world);
-    }
-
-    public EntityEndermanPet(World world, IPet pet) {
-        super(world, pet);
-    }
-
-    public static final MetadataKey<Optional<IBlockData>> ENDERMAN_CARRIED_BLOCK_METADATA = new MetadataKey<>(11, MetadataType.OPTIONAL_BLOCK_DATA);
     public static final MetadataKey<Boolean> ENDERMAN_IS_SCREAMING_METADATA = new MetadataKey<>(12, MetadataType.BOOLEAN);
 
     @Override
@@ -51,41 +52,83 @@ public class EntityEndermanPet extends EntityPet implements IEntityEndermanPet {
         getDatawatcher().set(ENDERMAN_IS_SCREAMING_METADATA, flag);
     }
 
-    @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.absent());
-        getDatawatcher().register(ENDERMAN_IS_SCREAMING_METADATA, false);
-    }
-
-    @Override
-    protected Sound getIdleSound() {
-        return this.isScreaming() ? Sound.ENTITY_ENDERMEN_SCREAM : Sound.ENTITY_ENDERMEN_AMBIENT;
-    }
-
     public boolean isScreaming() {
         return getDatawatcher().get(ENDERMAN_IS_SCREAMING_METADATA);
     }
 
-    public void clearCarried() {
-        getDatawatcher().set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.absent());
-    }
-
-    public void setCarried(IBlockData blockData) {
-        getDatawatcher().set(ENDERMAN_CARRIED_BLOCK_METADATA, Optional.of(blockData));
-    }
-
-    public Optional<IBlockData> getCarried() {
-        return getDatawatcher().get(ENDERMAN_CARRIED_BLOCK_METADATA);
+    @Override
+    public Sound getIdleSound() {
+        return this.isScreaming() ? Sound.ENTITY_ENDERMEN_SCREAM : Sound.ENTITY_ENDERMEN_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_ENDERMEN_DEATH;
     }
 
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.REGULAR;
+    }
+
+    // EntityInsentientPet Implementations
+
+    @Override
+    public EntityEnderman getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityEndermanPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftEnderman getBukkitEntity() {
+        return (CraftEnderman) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityInsentientPet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityInsentientPet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

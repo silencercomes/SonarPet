@@ -53,6 +53,33 @@ public final class SonarField<T> {
         }
     }
 
+
+    /**
+     * Set the value of the field
+     *
+     * @param instance the instance of the object to get the field from
+     * @param value the value to set
+     * @throws IllegalStateException field is static
+     * @throws NullPointerException  if the field is static
+     * @throws NullPointerException
+     */
+    @SuppressWarnings("unchecked")
+    public void setValue(Object instance, T value) {
+        try {
+            setter.invoke(instance, value);
+        } catch (Throwable t) {
+            if (isStatic()) {
+                throw new IllegalStateException("Field is static");
+            } else if (instance == null) {
+                throw new NullPointerException("Object is null");
+            } else if (!getHandle().getDeclaringClass().isInstance(instance)) {
+                throw new IllegalArgumentException("Object is not of expected type. Got " + instance.getClass() + " instead of " + getHandle().getType());
+            } else {
+                throw new AssertionError("setter threw an unexpected exeception", t);
+            }
+        }
+    }
+
     /**
      * Return if the field is static
      *

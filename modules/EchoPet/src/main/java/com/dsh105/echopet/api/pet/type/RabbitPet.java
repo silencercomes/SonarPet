@@ -44,11 +44,11 @@ public class RabbitPet extends Pet implements IRabbitPet {
     
     @Override
     public void setRabbitType(Rabbit.Type type) {
-        ((IEntityRabbitPet) getEntityPet()).setRabbitType(type);
+        ((IEntityRabbitPet) getEntityPet()).setType(type);
     }
     
     @Override
     public Rabbit.Type getRabbitType() {
-        return ((IEntityRabbitPet) getEntityPet()).getRabbitType();
+        return ((IEntityRabbitPet) getEntityPet()).getType();
     }
 }

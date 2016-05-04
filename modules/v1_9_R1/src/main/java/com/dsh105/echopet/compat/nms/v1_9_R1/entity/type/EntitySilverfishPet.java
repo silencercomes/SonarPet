@@ -17,43 +17,111 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
-import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySilverfishPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
+import lombok.*;
 
+import java.util.Random;
+
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySilverfishPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPetData;
+
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntitySilverfish;
+import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftSilverfish;
 
 @EntitySize(width = 0.3F, height = 0.7F)
 @EntityPetType(petType = PetType.SILVERFISH)
-public class EntitySilverfishPet extends EntityPet implements IEntitySilverfishPet {
-
-    public EntitySilverfishPet(World world) {
-        super(world);
-    }
-
-    public EntitySilverfishPet(World world, IPet pet) {
-        super(world, pet);
-    }
+public class EntitySilverfishPet extends EntitySilverfish implements EntityInsentientPet, IEntitySilverfishPet {
 
     @Override
-    protected void makeStepSound() {
+    public void makeStepSound() {
         this.playSound(Sound.ENTITY_SILVERFISH_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_SILVERFISH_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_SILVERFISH_DEATH;
     }
 
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.TINY;
+    }
+
+
+    // EntityInsentientPet Implementations
+
+    @Override
+    public EntitySilverfishPet getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntitySilverfishPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftSilverfish getBukkitEntity() {
+        return (CraftSilverfish) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityInsentientPet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityInsentientPet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

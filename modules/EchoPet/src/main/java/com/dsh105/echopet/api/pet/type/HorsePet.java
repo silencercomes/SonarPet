@@ -40,7 +40,7 @@ public class HorsePet extends Pet implements IHorsePet {
 
     @Override
     public void setHorseType(HorseType type) {
-        ((IEntityHorsePet) getEntityPet()).setType(type);
+        ((IEntityHorsePet) getEntityPet()).setHorseType(type);
         this.horseType = type;
     }
 

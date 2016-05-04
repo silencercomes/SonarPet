@@ -22,7 +22,7 @@ import org.bukkit.entity.Rabbit;
 
 public interface IEntityRabbitPet extends IEntityAgeablePet {
 
-    Rabbit.Type getRabbitType();
+    Rabbit.Type getType();
 
-    void setRabbitType(Rabbit.Type type);
+    void setType(Rabbit.Type type);
 }

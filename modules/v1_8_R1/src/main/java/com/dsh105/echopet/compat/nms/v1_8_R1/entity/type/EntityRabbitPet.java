@@ -33,12 +33,12 @@ public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPe
     }
 
     @Override
-    public Rabbit.Type getRabbitType() {
+    public Rabbit.Type getType() {
         return TypeMapping.fromMagic(this.datawatcher.getByte(18));
     }
     
     @Override
-    public void setRabbitType(Rabbit.Type type) {
+    public void setType(Rabbit.Type type) {
         this.datawatcher.watch(18, Byte.valueOf((byte) TypeMapping.toMagic(type)));
     }
 

@@ -17,6 +17,9 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
 import java.util.UUID;
 
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
@@ -27,62 +30,45 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWolfPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePetData;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 import com.google.common.base.Optional;
 
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityVillager;
+import net.minecraft.server.v1_9_R1.EntityWolf;
 import net.minecraft.server.v1_9_R1.EnumParticle;
 import net.minecraft.server.v1_9_R1.MathHelper;
+import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftVillager;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftWolf;
 
 @EntitySize(width = 0.6F, height = 0.8F)
 @EntityPetType(petType = PetType.WOLF)
-public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
-
-
-    public static final MetadataKey<Byte> WOLF_FLAGS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
-    public static final MetadataKey<Optional<UUID>> WOLF_OWNER_METADATA = new MetadataKey<>(13, MetadataType.OPTIONAL_UUID);
-    public static final MetadataKey<Float> WOLF_DAMAGE_TAKEN_METADATA = new MetadataKey<>(14, MetadataType.FLOAT);
-    public static final MetadataKey<Boolean> WOLF_IS_BEGGING_METADATA = new MetadataKey<>(15, MetadataType.BOOLEAN);
-    public static final MetadataKey<Integer> WOLF_COLLAR_COLOR_METADATA = new MetadataKey<>(16, MetadataType.VAR_INT);
-
-
-    @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(WOLF_FLAGS_METADATA, (byte) 0); // Default to not tamed
-        getDatawatcher().register(WOLF_OWNER_METADATA, Optional.absent());
-        getDatawatcher().register(WOLF_DAMAGE_TAKEN_METADATA, 0F);
-        getDatawatcher().register(WOLF_IS_BEGGING_METADATA, false);
-        getDatawatcher().register(WOLF_COLLAR_COLOR_METADATA, 0); // White colar
-    }
+public class EntityWolfPet extends EntityWolf implements EntityAgeablePet, IEntityWolfPet {
 
     private boolean wet;
     private boolean shaking;
     private float shakeCount;
 
-    public EntityWolfPet(World world) {
-        super(world);
-    }
-
-    public EntityWolfPet(World world, IPet pet) {
-        super(world, pet);
+    @Override
+    public void initiateEntityPet() {
         setTamed(true); // Tame
     }
 
     public boolean isTamed() {
-        return (getDatawatcher().get(WOLF_FLAGS_METADATA) & 0x04) == 0x04;
+        return getBukkitEntity().isTamed();
     }
 
     @Override
     public void setTamed(boolean flag) {
-        byte b = getDatawatcher().get(WOLF_FLAGS_METADATA);
-
-        getDatawatcher().set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x04) : (b & ~0x04)));
-        getDatawatcher().set(WOLF_OWNER_METADATA, flag ? Optional.of(getPlayerOwner().getUniqueId()) : Optional.absent());
+        super.setTamed(flag);
 
         if (!flag) {
             getPet().getPetData().remove(PetData.TAMED);
@@ -108,23 +94,21 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
             getPet().getPetData().remove(PetData.ANGRY);
         }
 
-        byte b = getDatawatcher().get(WOLF_FLAGS_METADATA);
-
-        getDatawatcher().set(WOLF_FLAGS_METADATA, (byte) (flag ? (b | 0x02) : (b & ~0x02)));
+        super.setAngry(flag);
     }
 
     public boolean isAngry() {
-        return (getDatawatcher().get(WOLF_FLAGS_METADATA) & 0x02) != 0;
+        return super.isAngry();
     }
 
     @Override
     public void setCollarColor(DyeColor dc) {
-        getDatawatcher().set(WOLF_COLLAR_COLOR_METADATA, (int) dc.getDyeData());
+        getBukkitEntity().setCollarColor(dc);
     }
 
     @Override
     public void onLive() {
-        super.onLive();
+        EntityAgeablePet.super.onLive();
         if (this.inWater) {
             this.wet = true;
             this.shaking = false;
@@ -156,23 +140,83 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         if (this.isAngry()) {
             return Sound.ENTITY_WOLF_GROWL;
-        } else if (this.random.nextInt(3) == 0)
-            if (this.isTamed() && getDatawatcher().get(WOLF_DAMAGE_TAKEN_METADATA) < 10) {
+        } else if (this.random.nextInt(3) == 0) {
+            if (this.isTamed() && getHealth() < 10) {
                 return Sound.ENTITY_WOLF_WHINE;
             } else {
                 return Sound.ENTITY_WOLF_PANT;
             }
-        else {
+        } else {
             return Sound.ENTITY_WOLF_AMBIENT;
         }
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_WOLF_DEATH;
     }
 
+    // EntityAgeablePet Implementations
+
+    @Override
+    public EntityWolf getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityWolfPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftWolf getBukkitEntity() {
+        return (CraftWolf) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
+    }
 }

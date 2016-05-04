@@ -17,18 +17,21 @@
 
 package com.dsh105.echopet.compat.api.entity;
 
+import lombok.*;
+
+import org.bukkit.Material;
+
+@RequiredArgsConstructor
 public enum HorseArmour {
 
-    NONE(Integer.MIN_VALUE),
-    IRON(1),
-    GOLD(2),
-    DIAMOND(3);
+    NONE(null, Integer.MIN_VALUE),
+    IRON(Material.IRON_BARDING, 1),
+    GOLD(Material.GOLD_BARDING, 2),
+    DIAMOND(Material.DIAMOND, 3);
 
-    private int id;
-
-    HorseArmour(int id) {
-        this.id = id;
-    }
+    @Getter
+    private final Material material;
+    private final int id;
 
     /**
      * Get the internal id of the armor

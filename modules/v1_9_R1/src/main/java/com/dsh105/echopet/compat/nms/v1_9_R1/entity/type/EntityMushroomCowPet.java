@@ -17,41 +17,110 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityMushroomCowPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePetData;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPetData;
 
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityChicken;
+import net.minecraft.server.v1_9_R1.EntityEnderman;
+import net.minecraft.server.v1_9_R1.EntityMushroomCow;
+import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftChicken;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEnderman;
 
 @EntitySize(width = 0.9F, height = 1.3F)
 @EntityPetType(petType = PetType.MUSHROOMCOW)
-public class EntityMushroomCowPet extends EntityAgeablePet implements IEntityMushroomCowPet {
-
-    public EntityMushroomCowPet(World world) {
-        super(world);
-    }
-
-    public EntityMushroomCowPet(World world, IPet pet) {
-        super(world, pet);
-    }
+public class EntityMushroomCowPet extends EntityMushroomCow implements EntityAgeablePet, IEntityMushroomCowPet {
 
     @Override
-    protected void makeStepSound() {
+    public void makeStepSound() {
         this.playSound(Sound.ENTITY_COW_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_COW_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_COW_DEATH;
+    }
+
+
+    // EntityAgeablePet Implementations
+
+    @Override
+    public EntityMushroomCow getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityMushroomCowPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftChicken getBukkitEntity() {
+        return (CraftChicken) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

@@ -28,7 +28,7 @@ public interface IEntityPet {
 
     public SizeCategory getSizeCategory();
 
-    public Creature getBukkitEntity();
+    public LivingEntity getBukkitEntity();
 
     public void resizeBoundingBox(boolean flag);
 

@@ -61,7 +61,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
     }
 
     @Override
-    public void setType(HorseType t) {
+    public void setHorseType(HorseType t) {
         if (t != HorseType.NORMAL) {
             this.setArmour(HorseArmour.NONE);
         }

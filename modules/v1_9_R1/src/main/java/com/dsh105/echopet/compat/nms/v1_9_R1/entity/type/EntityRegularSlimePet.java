@@ -24,65 +24,53 @@ import java.util.Random;
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
-import com.dsh105.echopet.compat.api.entity.type.nms.IEntityPigPet;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySlimePet;
+import com.dsh105.echopet.compat.api.util.Perm;
 import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
-import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePetData;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPetData;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntitySlimePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntitySlimePetData;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R1.Block;
 import net.minecraft.server.v1_9_R1.BlockPosition;
-import net.minecraft.server.v1_9_R1.DataWatcherObject;
-import net.minecraft.server.v1_9_R1.EntityMushroomCow;
-import net.minecraft.server.v1_9_R1.EntityPig;
+import net.minecraft.server.v1_9_R1.EntitySlime;
 import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftChicken;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPig;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftSlime;
 
-@EntitySize(width = 0.9F, height = 0.9F)
-@EntityPetType(petType = PetType.PIG)
-public class EntityPigPet extends EntityPig implements EntityAgeablePet, IEntityPigPet {
-
-    public boolean hasSaddle() {
-        return getBukkitEntity().hasSaddle();
-    }
-
-    @Override
-    public void setSaddled(boolean flag) {
-        getBukkitEntity().setSaddle(flag);
-    }
-
-    @Override
-    public void makeStepSound() {
-        this.playSound(Sound.ENTITY_PIG_STEP, 0.15F, 1.0F);
-    }
+@EntitySize(width = 0.6F, height = 0.6F)
+@EntityPetType(petType = PetType.SLIME)
+public class EntityRegularSlimePet extends EntitySlime implements EntitySlimePet, IEntitySlimePet {
 
     @Override
     public Sound getIdleSound() {
-        return Sound.ENTITY_PIG_AMBIENT;
+        return null;
     }
 
     @Override
     public Sound getDeathSound() {
-        return Sound.ENTITY_PIG_DEATH;
+        return (this.getSize() > 1 ? Sound.ENTITY_SLIME_DEATH : Sound.ENTITY_SMALL_SLIME_DEATH);
     }
 
-    // EntityAgeablePet Implementations
+    // EntitySlimePet Implementations
 
     @Override
-    public EntityPig getEntity() {
+    public EntitySlime getEntity() {
         return this;
     }
 
     @Getter
     private IPet pet;
     @Getter
-    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+    private final EntitySlimePetData nmsData = new EntitySlimePetData(this);
 
     @Override
     public void m() {
@@ -94,15 +82,15 @@ public class EntityPigPet extends EntityPig implements EntityAgeablePet, IEntity
         move(sideMot, forwMot, super::g);
     }
 
-    public EntityPigPet(World world, IPet pet) {
+    public EntityRegularSlimePet(World world, IPet pet) {
         super(world);
         this.pet = pet;
         this.initiateEntityPet();
     }
 
     @Override
-    public CraftPig getBukkitEntity() {
-        return (CraftPig) super.getBukkitEntity();
+    public CraftSlime getBukkitEntity() {
+        return (CraftSlime) super.getBukkitEntity();
     }
 
     // Access helpers
@@ -114,7 +102,7 @@ public class EntityPigPet extends EntityPig implements EntityAgeablePet, IEntity
 
     @Override
     public SoundEffect bS() {
-        return EntityAgeablePet.super.bS();
+        return EntitySlimePet.super.bS();
     }
 
     @Override
@@ -125,7 +113,7 @@ public class EntityPigPet extends EntityPig implements EntityAgeablePet, IEntity
 
     @Override
     public SoundEffect G() {
-        return EntityAgeablePet.super.G();
+        return EntitySlimePet.super.G();
     }
 
     @Override

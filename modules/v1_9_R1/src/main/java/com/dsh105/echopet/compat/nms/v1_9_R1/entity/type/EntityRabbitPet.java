@@ -1,110 +1,112 @@
 package com.dsh105.echopet.compat.nms.v1_9_R1.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityRabbitPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityAgeablePetData;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R1.metadata.MetadataType;
+import com.google.common.base.Preconditions;
 
+import net.minecraft.server.v1_9_R1.Block;
+import net.minecraft.server.v1_9_R1.BlockPosition;
+import net.minecraft.server.v1_9_R1.EntityRabbit;
+import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.minecraft.server.v1_9_R1.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftRabbit;
 import org.bukkit.entity.Rabbit;
 
 @EntitySize(width = 0.6F, height = 0.7F)
 @EntityPetType(petType = PetType.RABBIT)
-public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPet {
-
-    public static final MetadataKey<Integer> RABBIT_TYPE_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
-
-    private int jumpDelay;
-
-    public EntityRabbitPet(World world) {
-        super(world);
-    }
-
-    public EntityRabbitPet(World world, IPet pet) {
-        super(world, pet);
-        this.jumpDelay = this.random.nextInt(15) + 10;
-    }
+public class EntityRabbitPet extends EntityRabbit implements EntityAgeablePet, IEntityRabbitPet {
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_RABBIT_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_RABBIT_HURT;
     }
 
     @Override
-    public Rabbit.Type getRabbitType() {
-        return CraftMagicMapping.fromMagic(getDatawatcher().get(RABBIT_TYPE_METADATA));
-    }
-    
-    @Override
-    public void setRabbitType(Rabbit.Type type) {
-        getDatawatcher().set(RABBIT_TYPE_METADATA, CraftMagicMapping.toMagic(type));
+    public Rabbit.Type getType() {
+        return getBukkitEntity().getRabbitType();
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(RABBIT_TYPE_METADATA, CraftMagicMapping.toMagic(Rabbit.Type.WHITE));
+    public void setType(Rabbit.Type type) {
+        getBukkitEntity().setRabbitType(Preconditions.checkNotNull(type, "Null type"));
     }
-    
+
+    // EntityAgeablePet Implementations
+
     @Override
-    public void onLive() {
-        super.onLive();
-        // same as the slime
-        if (this.onGround && this.jumpDelay-- <= 0) {
-            NMS.jump(this);
-            this.jumpDelay = this.random.nextInt(15) + 10;
-            this.world.broadcastEntityEffect(this, (byte) 1);
-        }
+    public EntityRabbit getEntity() {
+        return this;
     }
 
-    // TODO: Replace this nonesne with something better
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
 
-    /**
-     * Magic bunny mappings from CraftRabbit
-     */
-    private static class CraftMagicMapping {
-        private static final int[] types = new int[Rabbit.Type.values().length];
-        private static final Rabbit.Type[] reverse = new Rabbit.Type[Rabbit.Type.values().length];
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
 
-        static {
-            set(Rabbit.Type.BROWN, 0);
-            set(Rabbit.Type.WHITE, 1);
-            set(Rabbit.Type.BLACK, 2);
-            set(Rabbit.Type.BLACK_AND_WHITE, 3);
-            set(Rabbit.Type.GOLD, 4);
-            set(Rabbit.Type.SALT_AND_PEPPER, 5);
-            set(Rabbit.Type.THE_KILLER_BUNNY, 99);
-        }
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
 
-        private CraftMagicMapping() {
-        }
+    public EntityRabbitPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
 
-        private static void set(Rabbit.Type type, int value) {
-            types[type.ordinal()] = value;
-            if(value < reverse.length) {
-                reverse[value] = type;
-            }
+    @Override
+    public CraftRabbit getBukkitEntity() {
+        return (CraftRabbit) super.getBukkitEntity();
+    }
 
-        }
+    // Access helpers
 
-        public static Rabbit.Type fromMagic(int magic) {
-            return magic >= 0 && magic < reverse.length?reverse[magic]:(magic == 99? Rabbit.Type.THE_KILLER_BUNNY:null);
-        }
+    @Override
+    public Random random() {
+        return this.random;
+    }
 
-        public static int toMagic(Rabbit.Type type) {
-            return types[type.ordinal()];
-        }
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }
