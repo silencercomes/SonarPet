@@ -226,7 +226,7 @@ public final class SonarMethod<T> {
         Preconditions.checkNotNull(returnType, "Null type");
         try {
             Method method = clazz.getDeclaredMethod(name, parameterTypes);
-            if (Primitives.wrap(returnType).isAssignableFrom(Primitives.wrap(method.getReturnType()))) {
+            if (!Primitives.wrap(returnType).isAssignableFrom(Primitives.wrap(method.getReturnType()))) {
                 throw new IllegalArgumentException("Expected return type " + returnType + " doesn't equal the actual return type " + method.getReturnType());
             }
             return new SonarMethod<>(method);
