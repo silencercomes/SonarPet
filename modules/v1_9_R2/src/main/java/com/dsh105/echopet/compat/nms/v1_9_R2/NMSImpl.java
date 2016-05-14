@@ -103,7 +103,7 @@ public class NMSImpl implements INMS {
         EntityPet entityPet = (EntityPet) pet.getPetType().getNewEntityPetInstance(mcWorld, pet);
 
         entityPet.spawnIn(mcWorld);
-        entityPet.getPet().getCraftPet().setCollidable(false);
+        entityPet.getBukkitEntity().setCollidable(false);
         entityPet.setLocation(new Location(mcWorld.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
         if (!l.getChunk().isLoaded()) {
             l.getChunk().load();

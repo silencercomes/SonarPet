@@ -40,6 +40,7 @@ import net.techcable.sonarpet.particles.Particle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -104,7 +105,8 @@ public class NMSImpl implements INMS {
         EntityPet entityPet = (EntityPet) pet.getPetType().getNewEntityPetInstance(mcWorld, pet);
 
         entityPet.spawnIn(mcWorld);
-        entityPet.getPet().getCraftPet().setCollidable(false);
+        //noinspection RedundantCast - the version of craftbukkit we compile against doesn't have this method, but the version of bukkit does
+        ((Creature) entityPet.getBukkitEntity()).setCollidable(false);
         entityPet.setLocation(new Location(mcWorld.getWorld(), l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch()));
         if (!l.getChunk().isLoaded()) {
             l.getChunk().load();
