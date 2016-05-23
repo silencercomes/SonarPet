@@ -286,7 +286,7 @@ public interface EntityInsentientPet extends IAnimal, IEntityPet {
     }
 
     public default void setLocation(Location l) {
-        Preconditions.checkArgument(l.getWorld().equals(this.getEntity().getWorld()), "Location world %s doesen't match entity world %s", l.getWorld(), getEntity().getWorld());
+        Preconditions.checkArgument(l.getWorld().equals(this.getBukkitEntity().getWorld()), "Location world %s doesn't match entity world %s", l.getWorld(), getBukkitEntity().getWorld());
         this.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
     }
 
