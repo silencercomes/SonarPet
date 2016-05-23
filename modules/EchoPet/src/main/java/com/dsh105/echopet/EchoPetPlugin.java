@@ -164,7 +164,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
             MANAGER.removeAllPets();
         }
         if (dbPool != null) {
-            dbPool.shutdown();
+            dbPool.close();
         }
         if (this.spigotProtocolHackPacketListener != null) {
             this.spigotProtocolHackPacketListener.shutdown();
