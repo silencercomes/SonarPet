@@ -24,52 +24,53 @@ import java.util.Random;
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
-import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWitchPet;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySlimePet;
+import com.dsh105.echopet.compat.api.util.Perm;
+import com.dsh105.echopet.compat.nms.v1_9_R2.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
 import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPetData;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntitySlimePet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntitySlimePetData;
+import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
+import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
 
 import net.minecraft.server.v1_9_R2.Block;
 import net.minecraft.server.v1_9_R2.BlockPosition;
-import net.minecraft.server.v1_9_R2.EntityWitch;
+import net.minecraft.server.v1_9_R2.EntitySlime;
 import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPigZombie;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftSlime;
 
-@EntitySize(width = 0.6F, height = 1.9F)
-@EntityPetType(petType = PetType.WITCH)
-public class EntityWitchPet extends EntityWitch implements EntityInsentientPet, IEntityWitchPet {
+@EntitySize(width = 0.6F, height = 0.6F)
+@EntityPetType(petType = PetType.SLIME)
+public class EntityRegularSlimePet extends EntitySlime implements EntitySlimePet, IEntitySlimePet {
 
     @Override
     public Sound getIdleSound() {
-        return Sound.ENTITY_WITCH_AMBIENT;
+        return null;
     }
 
     @Override
     public Sound getDeathSound() {
-        return Sound.ENTITY_WITCH_DEATH;
+        return (this.getSize() > 1 ? Sound.ENTITY_SLIME_DEATH : Sound.ENTITY_SMALL_SLIME_DEATH);
     }
 
-    @Override
-    public SizeCategory getSizeCategory() {
-        return SizeCategory.REGULAR;
-    }
-
-
-    // EntityInsentientPet Implementations
+    // EntitySlimePet Implementations
 
     @Override
-    public EntityWitchPet getEntity() {
+    public EntitySlime getEntity() {
         return this;
     }
 
     @Getter
     private IPet pet;
     @Getter
-    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+    private final EntitySlimePetData nmsData = new EntitySlimePetData(this);
 
     @Override
     public void m() {
@@ -81,15 +82,15 @@ public class EntityWitchPet extends EntityWitch implements EntityInsentientPet, 
         move(sideMot, forwMot, super::g);
     }
 
-    public EntityWitchPet(World world, IPet pet) {
+    public EntityRegularSlimePet(World world, IPet pet) {
         super(world);
         this.pet = pet;
         this.initiateEntityPet();
     }
 
     @Override
-    public CraftPigZombie getBukkitEntity() {
-        return (CraftPigZombie) super.getBukkitEntity();
+    public CraftSlime getBukkitEntity() {
+        return (CraftSlime) super.getBukkitEntity();
     }
 
     // Access helpers
@@ -101,7 +102,7 @@ public class EntityWitchPet extends EntityWitch implements EntityInsentientPet, 
 
     @Override
     public SoundEffect bS() {
-        return EntityInsentientPet.super.bS();
+        return EntitySlimePet.super.bS();
     }
 
     @Override
@@ -112,7 +113,7 @@ public class EntityWitchPet extends EntityWitch implements EntityInsentientPet, 
 
     @Override
     public SoundEffect G() {
-        return EntityInsentientPet.super.G();
+        return EntitySlimePet.super.G();
     }
 
     @Override

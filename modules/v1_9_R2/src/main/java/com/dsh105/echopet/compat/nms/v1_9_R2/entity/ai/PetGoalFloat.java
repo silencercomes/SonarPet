@@ -20,17 +20,17 @@ package com.dsh105.echopet.compat.nms.v1_9_R2.entity.ai;
 import com.dsh105.echopet.compat.api.ai.APetGoalFloat;
 import com.dsh105.echopet.compat.api.ai.PetGoalType;
 import com.dsh105.echopet.compat.nms.v1_9_R2.NMS;
-import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
 
 import net.minecraft.server.v1_9_R2.Navigation;
 
 public class PetGoalFloat extends APetGoalFloat {
 
-    private EntityPet pet;
+    private EntityInsentientPet pet;
 
-    public PetGoalFloat(EntityPet pet) {
+    public PetGoalFloat(EntityInsentientPet pet) {
         this.pet = pet;
-        ((Navigation) pet.getNavigation()).c(true); // set that we can swim
+        ((Navigation) pet.getEntity().getNavigation()).c(true); // set that we can swim
     }
 
     @Override
@@ -45,14 +45,14 @@ public class PetGoalFloat extends APetGoalFloat {
 
     @Override
     public boolean shouldStart() {
-        return this.pet.isInWater()
-                || this.pet.an(); // is in lava
+        return this.pet.getEntity().isInWater()
+                || this.pet.getEntity().an(); // is in lava
     }
 
     @Override
     public void tick() {
         if (this.pet.random().nextFloat() < 0.8F) {
-            NMS.jump(this.pet);
+            NMS.jump(this.pet.getEntity());
         }
     }
 }

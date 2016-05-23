@@ -2,6 +2,8 @@ package com.dsh105.echopet.compat.nms.v1_9_R2.metadata;
 
 import lombok.*;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.google.common.base.Preconditions;
 
 import net.minecraft.server.v1_9_R2.DataWatcher;

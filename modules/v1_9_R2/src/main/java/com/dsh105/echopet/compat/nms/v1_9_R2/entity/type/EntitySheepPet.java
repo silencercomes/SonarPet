@@ -17,74 +17,117 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySheepPet;
 import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityAgeablePet;
-import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
-import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityAgeablePetData;
 
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
+import net.minecraft.server.v1_9_R2.EntitySheep;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftSheep;
 
 @EntitySize(width = 0.9F, height = 1.3F)
 @EntityPetType(petType = PetType.SHEEP)
-public class EntitySheepPet extends EntityAgeablePet implements IEntitySheepPet {
-
-    public static final MetadataKey<Byte> SHEEP_STATUS_METADATA = new MetadataKey<>(12, MetadataType.BYTE);
-
-    public EntitySheepPet(World world) {
-        super(world);
-    }
-
-    public EntitySheepPet(World world, IPet pet) {
-        super(world, pet);
-    }
-
-    public int getColor() {
-        return getDatawatcher().get(SHEEP_STATUS_METADATA) & 0xF;
-    }
+public class EntitySheepPet extends EntitySheep implements EntityAgeablePet, IEntitySheepPet {
 
     @Override
     public void setColor(int i) {
-        byte b = getDatawatcher().get(SHEEP_STATUS_METADATA);
-
-        b = (byte) ((b & 0xF0) | (i & 0xF));
-
-        getDatawatcher().set(SHEEP_STATUS_METADATA, b);
-    }
-
-    public boolean isSheared() {
-        return (getDatawatcher().get(SHEEP_STATUS_METADATA) & 0x10) == 0x10;
+        DyeColor color = DyeColor.getByWoolData((byte) i);
+        if ((byte) i != i || color == null) {
+            throw new IllegalArgumentException("Invalid wool color id: " + i);
+        }
+        getBukkitEntity().setColor(color);
     }
 
     @Override
-    public void setSheared(boolean flag) {
-        byte b = getDatawatcher().get(SHEEP_STATUS_METADATA);
-        getDatawatcher().set(SHEEP_STATUS_METADATA, (byte) (flag ? (b | 0x10) : (b & ~0x10)));
-    }
-
-    @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(SHEEP_STATUS_METADATA, (byte) 0);
-    }
-
-    @Override
-    protected void makeStepSound() {
+    public void makeStepSound() {
         this.playSound(Sound.ENTITY_SHEEP_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_SHEEP_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_SHEEP_DEATH;
     }
+
+
+    // EntityAgeablePet Implementations
+
+    @Override
+    public EntitySheep getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntitySheepPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftSheep getBukkitEntity() {
+        return (CraftSheep) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
+    }
+
 }

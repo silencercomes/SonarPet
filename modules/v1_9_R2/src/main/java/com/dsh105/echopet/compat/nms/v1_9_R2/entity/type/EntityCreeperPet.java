@@ -17,64 +17,111 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
-import com.dsh105.echopet.compat.api.entity.type.nms.IEntityCreeperPet;
-import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityPet;
-import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
-import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
+import lombok.*;
 
-import net.minecraft.server.v1_9_R2.DataWatcherObject;
+import java.util.Random;
+
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntityCreeperPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPetData;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
+
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
+import net.minecraft.server.v1_9_R2.EntityCreeper;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftBat;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftCreeper;
 
 @EntitySize(width = 0.6F, height = 1.9F)
 @EntityPetType(petType = PetType.CREEPER)
-public class   EntityCreeperPet extends EntityPet implements IEntityCreeperPet {
-
-    public static final MetadataKey<Integer> CREEPER_STATE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
-    public static final MetadataKey<Boolean> CREEPER_IS_POWERED_METADATA = new MetadataKey<>(12, MetadataType.BOOLEAN);
-    public static final MetadataKey<Boolean> CREEPER_IS_IGNITED_METADATA = new MetadataKey<>(13, MetadataType.BOOLEAN);
-
-
-    public EntityCreeperPet(World world) {
-        super(world);
-    }
-
-    public EntityCreeperPet(World world, IPet pet) {
-        super(world, pet);
-    }
-
-    @Override
-    public void setPowered(boolean flag) {
-        getDatawatcher().set(CREEPER_IS_POWERED_METADATA, flag);
-    }
+public class  EntityCreeperPet extends EntityCreeper implements EntityInsentientPet, IEntityCreeperPet {
 
     @Override
     public void setIgnited(boolean flag) {
-        getDatawatcher().set(CREEPER_IS_IGNITED_METADATA, flag);
+        getEntity().setPowered(flag);
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(CREEPER_STATE_METADATA, -1);
-        getDatawatcher().register(CREEPER_IS_POWERED_METADATA, false);
-        getDatawatcher().register(CREEPER_IS_IGNITED_METADATA, false);
-    }
-
-    @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return null;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_CREEPER_DEATH;
     }
 
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.REGULAR;
+    }
+
+    // EntityIsentientPet Implementations
+
+    @Override
+    public EntityCreeper getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityCreeperPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftCreeper getBukkitEntity() {
+        return (CraftCreeper) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityInsentientPet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityInsentientPet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

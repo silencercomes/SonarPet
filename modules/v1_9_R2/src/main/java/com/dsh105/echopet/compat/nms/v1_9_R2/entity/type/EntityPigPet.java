@@ -17,61 +17,119 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityPigPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.NMS;
 import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityAgeablePetData;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
 
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
 import net.minecraft.server.v1_9_R2.DataWatcherObject;
+import net.minecraft.server.v1_9_R2.EntityMushroomCow;
+import net.minecraft.server.v1_9_R2.EntityPig;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftChicken;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPig;
 
 @EntitySize(width = 0.9F, height = 0.9F)
 @EntityPetType(petType = PetType.PIG)
-public class EntityPigPet extends EntityAgeablePet implements IEntityPigPet {
-
-    public static final MetadataKey<Boolean> HAS_SADDLE_METADATA = new MetadataKey<>(12, MetadataType.BOOLEAN);
-
-    public EntityPigPet(World world) {
-        super(world);
-    }
-
-    public EntityPigPet(World world, IPet pet) {
-        super(world, pet);
-    }
+public class EntityPigPet extends EntityPig implements EntityAgeablePet, IEntityPigPet {
 
     public boolean hasSaddle() {
-        return getDatawatcher().get(HAS_SADDLE_METADATA);
+        return getBukkitEntity().hasSaddle();
     }
 
     @Override
     public void setSaddled(boolean flag) {
-        getDatawatcher().set(HAS_SADDLE_METADATA, flag);
+        getBukkitEntity().setSaddle(flag);
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(HAS_SADDLE_METADATA, false);
-    }
-
-    @Override
-    protected void makeStepSound() {
+    public void makeStepSound() {
         this.playSound(Sound.ENTITY_PIG_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_PIG_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_PIG_DEATH;
+    }
+
+    // EntityAgeablePet Implementations
+
+    @Override
+    public EntityPig getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityPigPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftPig getBukkitEntity() {
+        return (CraftPig) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

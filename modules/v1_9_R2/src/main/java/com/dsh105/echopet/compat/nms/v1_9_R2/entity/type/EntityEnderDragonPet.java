@@ -17,50 +17,51 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEnderDragonPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPetData;
 import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityNoClipPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R2.DamageSource;
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
 import net.minecraft.server.v1_9_R2.DragonControllerPhase;
-import net.minecraft.server.v1_9_R2.EntityComplexPart;
-import net.minecraft.server.v1_9_R2.IComplex;
-import net.minecraft.server.v1_9_R2.IMonster;
+import net.minecraft.server.v1_9_R2.EntityCreeper;
+import net.minecraft.server.v1_9_R2.EntityEnderDragon;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftBat;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEnderDragon;
 
 @EntitySize(width = 16.0F, height = 8.0F)
 @EntityPetType(petType = PetType.ENDERDRAGON)
-public class EntityEnderDragonPet extends EntityNoClipPet implements IComplex, IMonster, IEntityEnderDragonPet {
-
-    public static final MetadataKey<Integer> DRAGON_PHASE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
+public class EntityEnderDragonPet extends EntityEnderDragon implements EntityNoClipPet, EntityInsentientPet, IEntityEnderDragonPet {
 
     public EntityEnderDragonPet(World world) {
         super(world);
     }
 
-    // TODO: logic
-
-
-    @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(DRAGON_PHASE_METADATA, DragonControllerPhase.k.b()); // set the dragon phase to the 'hover' phase
-    }
+    // TODO: override ender dragon logic
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_ENDERDRAGON_GROWL;
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_ENDERDRAGON_AMBIENT;
     }
 
@@ -69,13 +70,64 @@ public class EntityEnderDragonPet extends EntityNoClipPet implements IComplex, I
         return SizeCategory.GIANT;
     }
 
+    // EntityInsentientPet Implementations
+
     @Override
-    public World a() {
-        return world;
+    public EntityEnderDragon getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityEnderDragonPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
     }
 
     @Override
-    public boolean a(EntityComplexPart entityComplexPart, DamageSource damageSource, float v) {
-        return true; // Tacos
+    public CraftEnderDragon getBukkitEntity() {
+        return (CraftEnderDragon) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityNoClipPet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityNoClipPet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

@@ -17,21 +17,16 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity;
 
-import com.dsh105.echopet.compat.api.entity.IPet;
-import net.minecraft.server.v1_9_R2.World;
+import com.dsh105.echopet.compat.api.entity.IEntityNoClipPet;
 
 
-public abstract class EntityNoClipPet extends EntityPet {
+public interface EntityNoClipPet extends EntityInsentientPet, IEntityNoClipPet {
 
-    public EntityNoClipPet(World world, IPet pet) {
-        super(world, pet);
+    @Override
+    public EntityInsentientPetData getNmsData();
+
+    public default void noClip(boolean flag) {
+        getEntity().noclip = flag;
     }
 
-    protected EntityNoClipPet(World world) {
-        super(world);
-    }
-
-    public void noClip(boolean flag) {
-        this.noclip = flag;
-    }
 }

@@ -30,7 +30,10 @@ import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.dsh105.echopet.compat.api.util.menu.SelectorLayout;
+import com.google.common.base.Preconditions;
+
 import org.bukkit.Location;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -263,16 +266,11 @@ public class EchoPetAPI {
      *               attack
      */
     public void setAttackTarget(IPet pet, LivingEntity target) {
-        if (pet == null) {
-            EchoPet.LOG.severe("Failed to set attack target for Pet through the EchoPetAPI. Pet cannot be null.");
-            return;
-        }
-        if (target == null) {
-            EchoPet.LOG.severe("Failed to set attack target for Pet through the EchoPetAPI. Target cannot be null.");
-            return;
-        }
+        Preconditions.checkNotNull(pet, "Null pet");
+        Preconditions.checkNotNull(target, "Null target");
+        Preconditions.checkArgument(pet.getCraftPet() instanceof Creature, "Pet is a %s, not a Creature", pet.getPetType());
         if (pet.getEntityPet().getPetGoalSelector().getGoal("Attack") != null) {
-            pet.getCraftPet().setTarget(target);
+            ((Creature) pet.getCraftPet()).setTarget(target);
         }
     }
 
@@ -283,10 +281,9 @@ public class EchoPetAPI {
      * @return {@link org.bukkit.entity.LivingEntity} being attacked, null if none
      */
     public LivingEntity getAttackTarget(IPet pet) {
-        if (pet == null) {
-            EchoPet.LOG.severe("Failed to get attack target for Pet through the EchoPetAPI. Pet cannot be null.");
-        }
-        return pet.getCraftPet().getTarget();
+        Preconditions.checkNotNull(pet, "Null pet");
+        Preconditions.checkArgument(pet.getCraftPet() instanceof Creature, "Pet is a %s, not a Creature", pet.getPetType());
+        return ((Creature) pet.getCraftPet()).getTarget();
     }
 
     /**

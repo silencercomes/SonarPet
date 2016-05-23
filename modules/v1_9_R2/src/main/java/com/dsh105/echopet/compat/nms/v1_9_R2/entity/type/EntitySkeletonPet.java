@@ -17,6 +17,10 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
@@ -24,36 +28,36 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySkeletonPet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPetData;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
 
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
+import net.minecraft.server.v1_9_R2.EntitySkeleton;
 import net.minecraft.server.v1_9_R2.EnumItemSlot;
 import net.minecraft.server.v1_9_R2.ItemStack;
 import net.minecraft.server.v1_9_R2.Items;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftSkeleton;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @EntitySize(width = 0.6F, height = 1.9F)
 @EntityPetType(petType = PetType.SKELETON)
-public class EntitySkeletonPet extends EntityPet implements IEntitySkeletonPet {
+public class EntitySkeletonPet extends EntitySkeleton implements EntityInsentientPet, IEntitySkeletonPet {
 
-    public static final MetadataKey<Integer> SKELETON_TYPE_METADATA = new MetadataKey<>(11, MetadataType.VAR_INT);
-    public static final MetadataKey<Boolean> SKELETON_IS_TARGETING = new MetadataKey<>(12, MetadataType.BOOLEAN);
-
-    public EntitySkeletonPet(World world) {
-        super(world);
-    }
-
-    public EntitySkeletonPet(World world, final IPet pet) {
-        super(world, pet);
+    @Override
+    public void initiateEntityPet() {
+        EntityInsentientPet.super.initiateEntityPet();
         new BukkitRunnable() {
             @Override
             public void run() {
-                switch (getSkeletonType()) {
+                switch (getBukkitEntity().getSkeletonType()) {
                     case NORMAL:
                         setEquipment(EnumItemSlot.MAINHAND, new ItemStack(Items.BOW));
                         break;
@@ -69,43 +73,27 @@ public class EntitySkeletonPet extends EntityPet implements IEntitySkeletonPet {
 
     @Override
     public void setWither(boolean flag) {
-        setSkeletonType(flag ? Skeleton.SkeletonType.WITHER : Skeleton.SkeletonType.NORMAL);
-    }
-
-
-    public Skeleton.SkeletonType getSkeletonType() {
-        return Skeleton.SkeletonType.getType(getDatawatcher().get(SKELETON_TYPE_METADATA));
-    }
-
-    public void setSkeletonType(Skeleton.SkeletonType type) {
-        getDatawatcher().set(SKELETON_TYPE_METADATA, type.getId());
+        getBukkitEntity().setSkeletonType(flag ? Skeleton.SkeletonType.WITHER : Skeleton.SkeletonType.NORMAL);
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(SKELETON_TYPE_METADATA, Skeleton.SkeletonType.NORMAL.getId());
-        getDatawatcher().register(SKELETON_IS_TARGETING, false);
-    }
-
-    @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_SKELETON_AMBIENT;
     }
 
     @Override
-    protected void makeStepSound() {
+    public void makeStepSound() {
         this.playSound(Sound.ENTITY_SKELETON_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_SKELETON_DEATH;
     }
 
     @Override
     public SizeCategory getSizeCategory() {
-        switch (getSkeletonType()) {
+        switch (getBukkitEntity().getSkeletonType()) {
             case NORMAL:
                 return SizeCategory.REGULAR;
             case WITHER:
@@ -113,5 +101,67 @@ public class EntitySkeletonPet extends EntityPet implements IEntitySkeletonPet {
             default:
                 throw new AssertionError("Unknown skeleton type: " + getSkeletonType());
         }
+    }
+
+
+    // EntityInsentientPet Implementations
+
+    @Override
+    public EntitySkeleton getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntitySkeletonPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftSkeleton getBukkitEntity() {
+        return (CraftSkeleton) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityInsentientPet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityInsentientPet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

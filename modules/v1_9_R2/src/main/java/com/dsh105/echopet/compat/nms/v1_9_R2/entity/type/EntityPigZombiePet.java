@@ -17,35 +17,41 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.*;
+import lombok.*;
+
+import java.util.Random;
+
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityPigZombiePet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPetData;
 
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
+import net.minecraft.server.v1_9_R2.EntityPigZombie;
 import net.minecraft.server.v1_9_R2.EnumItemSlot;
 import net.minecraft.server.v1_9_R2.ItemStack;
 import net.minecraft.server.v1_9_R2.Items;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPigZombie;
 import org.bukkit.entity.Villager;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static com.dsh105.echopet.compat.nms.v1_9_R2.entity.type.EntityZombiePet.ZOMBIE_IS_BABY_METADATA;
-import static com.dsh105.echopet.compat.nms.v1_9_R2.entity.type.EntityZombiePet.ZOMBIE_VILLAGER_METADATA;
-import static com.dsh105.echopet.compat.nms.v1_9_R2.entity.type.EntityZombiePet.ZOMBIE_IS_CONVERTING_METADATA;
-import static com.dsh105.echopet.compat.nms.v1_9_R2.entity.type.EntityZombiePet.ZOMBIE_HAS_HANDS_UP_METADATA;
-
 @EntitySize(width = 0.6F, height = 1.8F)
 @EntityPetType(petType = PetType.PIGZOMBIE)
-public class EntityPigZombiePet extends EntityPet implements IEntityPigZombiePet { // NOTE: pig zombies extend zombies!
+public class EntityPigZombiePet extends EntityPigZombie implements EntityInsentientPet, IEntityPigZombiePet { // NOTE: pig zombies extend zombies!
 
-    public EntityPigZombiePet(World world) {
-        super(world);
-    }
-
-    public EntityPigZombiePet(World world, IPet pet) {
-        super(world, pet);
+    @Override
+    public void initiateEntityPet() {
+        EntityInsentientPet.super.initiateEntityPet();
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -56,41 +62,31 @@ public class EntityPigZombiePet extends EntityPet implements IEntityPigZombiePet
 
     @Override
     public void setBaby(boolean flag) {
-        getDatawatcher().set(ZOMBIE_IS_BABY_METADATA, flag);
+        getBukkitEntity().setBaby(flag);
     }
 
     @Override
     public void setVillager(boolean flag) {
-        setVillagerType(flag ? Villager.Profession.FARMER : null);
+        getBukkitEntity().setVillager(flag);
     }
 
     public void setVillagerType(Villager.Profession type) {
-        getDatawatcher().set(ZOMBIE_VILLAGER_METADATA, type == null ? 0 : type.getId() + 1);
+        getBukkitEntity().setVillagerProfession(type);
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(ZOMBIE_IS_BABY_METADATA, false);
-        getDatawatcher().register(ZOMBIE_VILLAGER_METADATA, 0); // not a villager
-        getDatawatcher().register(ZOMBIE_IS_CONVERTING_METADATA, false);
-        getDatawatcher().register(ZOMBIE_HAS_HANDS_UP_METADATA, false);
-    }
-
-    @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_ZOMBIE_PIG_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_ZOMBIE_PIG_DEATH;
-
     }
 
     @Override
     public boolean isBaby() {
-        return getDatawatcher().get(ZOMBIE_IS_BABY_METADATA);
+        return getBukkitEntity().isBaby();
     }
 
     @Override
@@ -100,5 +96,66 @@ public class EntityPigZombiePet extends EntityPet implements IEntityPigZombiePet
         } else {
             return SizeCategory.REGULAR;
         }
+    }
+
+    // EntityInsentientPet Implementations
+
+    @Override
+    public EntityPigZombie getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityPigZombiePet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftPigZombie getBukkitEntity() {
+        return (CraftPigZombie) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityInsentientPet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityInsentientPet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }

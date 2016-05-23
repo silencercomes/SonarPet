@@ -17,87 +17,65 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity;
 
-import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.IEntityAgeablePet;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
-import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
-import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R2.World;
+import net.minecraft.server.v1_9_R2.EntityAgeable;
 
-public abstract class EntityAgeablePet extends EntityPet {
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftAgeable;
 
-    public static final MetadataKey<Boolean> IS_BABY_METADATA = new MetadataKey<>(11, MetadataType.BOOLEAN);
+public interface EntityAgeablePet extends EntityInsentientPet, IEntityAgeablePet {
 
-    private int age = 0;
-    private boolean ageLocked = true;
+    @Override
+    public EntityAgeable getEntity();
 
-    public EntityAgeablePet(World world) {
-        super(world);
+    @Override
+    public CraftAgeable getBukkitEntity();
+
+    @Override
+    public EntityAgeablePetData getNmsData();
+
+    public default int getAge() {
+        return getEntity().getAge();
     }
 
-    public EntityAgeablePet(World world, IPet pet) {
-        super(world, pet);
+    public default void setAge(int age) {
+        getEntity().setAgeRaw(age);
     }
 
-    public int getAge() {
-        return age;
+    public default boolean isAgeLocked() {
+        return getEntity().ageLocked;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-        getDatawatcher().set(IS_BABY_METADATA, age < 0);
-    }
-
-    public boolean isAgeLocked() {
-        return ageLocked;
-    }
-
-    public void setAgeLocked(boolean ageLocked) {
-        this.ageLocked = ageLocked;
+    public default void setAgeLocked(boolean ageLocked) {
+        getEntity().ageLocked = ageLocked;
     }
 
     @Override
-    protected void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(IS_BABY_METADATA, false);
-    }
-
-    @Override
-    public void m() {
-        super.m();
-        if (!(this.world.isClientSide || this.ageLocked)) {
-            int i = this.getAge();
-
-            if (i < 0) {
-                ++i;
-                this.setAge(i);
-            } else if (i > 0) {
-                --i;
-                this.setAge(i);
-            }
-        }
-    }
-
-    public void setBaby(boolean flag) {
-        if (isBaby() == flag) return;
+    public default void setBaby(boolean flag) {
         if (flag) {
-            setAge(-24000); // Taken from craftbukkit ;)
+            getBukkitEntity().setBaby();
         } else {
-            setAge(0);
+            getBukkitEntity().setAdult();
         }
     }
 
-    @Override
-    public boolean isBaby() {
-        return getDatawatcher().get(IS_BABY_METADATA);
+    public default boolean isBaby() {
+        return !getBukkitEntity().isAdult();
     }
 
     @Override
-    public SizeCategory getSizeCategory() {
+    public default SizeCategory getSizeCategory() {
         if (this.isBaby()) {
             return SizeCategory.TINY;
         } else {
             return SizeCategory.REGULAR;
         }
+    }
+
+    @Override
+    public default void initiateEntityPet() {
+        EntityInsentientPet.super.initiateEntityPet();
+        this.setAgeLocked(true);
     }
 }

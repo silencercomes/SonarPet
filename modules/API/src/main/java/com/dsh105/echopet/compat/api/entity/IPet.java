@@ -19,6 +19,7 @@ package com.dsh105.echopet.compat.api.entity;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public interface IPet {
 
     public IEntityPet getEntityPet();
 
-    public Creature getCraftPet();
+    public LivingEntity getCraftPet();
 
     public Location getLocation();
 

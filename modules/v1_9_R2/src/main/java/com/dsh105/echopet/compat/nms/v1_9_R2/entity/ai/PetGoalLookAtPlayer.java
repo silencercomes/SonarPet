@@ -19,28 +19,28 @@ package com.dsh105.echopet.compat.nms.v1_9_R2.entity.ai;
 
 import com.dsh105.echopet.compat.api.ai.APetGoalLookAtPlayer;
 import com.dsh105.echopet.compat.api.ai.PetGoalType;
-import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityPet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityInsentientPet;
 
 import net.minecraft.server.v1_9_R2.Entity;
 import net.minecraft.server.v1_9_R2.EntityHuman;
 
 public class PetGoalLookAtPlayer extends APetGoalLookAtPlayer {
 
-    private EntityPet pet;
+    private EntityInsentientPet pet;
     protected Entity player;
     private float range;
     private int ticksLeft;
     private float chance;
     private Class clazz;
 
-    public PetGoalLookAtPlayer(EntityPet pet, Class c) {
+    public PetGoalLookAtPlayer(EntityInsentientPet pet, Class c) {
         this.pet = pet;
         this.range = 8.0F;
         this.chance = 0.02F;
         this.clazz = c;
     }
 
-    public PetGoalLookAtPlayer(EntityPet pet, Class c, float f, float f1) {
+    public PetGoalLookAtPlayer(EntityInsentientPet pet, Class c, float f, float f1) {
         this.pet = pet;
         this.range = f;
         this.chance = f1;
@@ -61,13 +61,13 @@ public class PetGoalLookAtPlayer extends APetGoalLookAtPlayer {
     public boolean shouldStart() {
         if (this.pet.random().nextFloat() >= this.chance) {
             return false;
-        } else if (!this.pet.passengers.isEmpty()) {
+        } else if (!this.pet.getEntity().passengers.isEmpty()) {
             return false;
         } else {
             if (this.clazz == EntityHuman.class) {
-                this.player = this.pet.world.findNearbyPlayer(this.pet, (double) this.range);
+                this.player = this.pet.getEntity().world.findNearbyPlayer(this.pet.getEntity(), (double) this.range);
             } else {
-                this.player = this.pet.world.a(this.clazz, this.pet.getBoundingBox().grow((double) this.range, 3.0D, (double) this.range), this.pet);
+                this.player = this.pet.getEntity().world.a(this.clazz, this.pet.getEntity().getBoundingBox().grow((double) this.range, 3.0D, (double) this.range), this.pet.getEntity());
             }
             return this.player != null;
         }
@@ -76,7 +76,7 @@ public class PetGoalLookAtPlayer extends APetGoalLookAtPlayer {
     @Override
     public boolean shouldContinue() {
         return this.player.isAlive()
-                && (this.pet.h(this.player) <= (double) (this.range * this.range) // pet.distanceSquared(player) < range squared
+                && (this.pet.getEntity().h(this.player) <= (double) (this.range * this.range) // pet.distanceSquared(player) < range squared
                 && this.ticksLeft > 0);
     }
 
@@ -98,7 +98,7 @@ public class PetGoalLookAtPlayer extends APetGoalLookAtPlayer {
          * The speed to change the pitch at is requested from the entity.
          * Also done in PetGoalFollowOwner.tick()
          */
-        this.pet.getControllerLook().a(this.player, 10.0F, (float) this.pet.N());
+        this.pet.getEntity().getControllerLook().a(this.player, 10.0F, (float) this.pet.getEntity().N());
         --this.ticksLeft;
     }
 }

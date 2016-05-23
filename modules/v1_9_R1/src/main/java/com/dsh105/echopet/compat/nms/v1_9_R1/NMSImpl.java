@@ -25,7 +25,6 @@ import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.INMS;
 import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityInsentientPet;
-import com.dsh105.echopet.compat.nms.v1_9_R1.entity.EntityPet;
 import com.dsh105.echopet.compat.nms.v1_9_R1.item.NMSSpawnEggItemData;
 import com.google.common.base.Preconditions;
 

@@ -17,34 +17,37 @@
 
 package com.dsh105.echopet.compat.nms.v1_9_R2.entity.type;
 
+import lombok.*;
+
+import java.util.Random;
+
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.EntitySize;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityVillagerPet;
 import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.v1_9_R2.entity.EntityAgeablePetData;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataKey;
 import com.dsh105.echopet.compat.nms.v1_9_R2.metadata.MetadataType;
 
-import net.minecraft.server.v1_9_R2.DataWatcherObject;
+import net.minecraft.server.v1_9_R2.Block;
+import net.minecraft.server.v1_9_R2.BlockPosition;
+import net.minecraft.server.v1_9_R2.EntityMushroomCow;
+import net.minecraft.server.v1_9_R2.EntityVillager;
+import net.minecraft.server.v1_9_R2.SoundEffect;
 import net.minecraft.server.v1_9_R2.World;
 
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftChicken;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftVillager;
 import org.bukkit.entity.Villager;
 
 @EntitySize(width = 0.6F, height = 1.8F)
 @EntityPetType(petType = PetType.VILLAGER)
-public class EntityVillagerPet extends EntityAgeablePet implements IEntityVillagerPet {
+public class EntityVillagerPet extends EntityVillager implements EntityAgeablePet, IEntityVillagerPet {
 
     public static final MetadataKey<Integer> VILLAGER_PROFESSION_METADATA = new MetadataKey<>(12, MetadataType.VAR_INT);
-
-    public EntityVillagerPet(World world) {
-        super(world);
-    }
-
-    public EntityVillagerPet(World world, IPet pet) {
-        super(world, pet);
-    }
 
     @Override
     public void setProfession(int i) {
@@ -56,18 +59,73 @@ public class EntityVillagerPet extends EntityAgeablePet implements IEntityVillag
     }
 
     @Override
-    protected Sound getIdleSound() {
+    public Sound getIdleSound() {
         return Sound.ENTITY_VILLAGER_AMBIENT;
     }
 
     @Override
-    protected Sound getDeathSound() {
+    public Sound getDeathSound() {
         return Sound.ENTITY_VILLAGER_DEATH;
     }
 
+    // EntityAgeablePet Implementations
+
     @Override
-    public void initDatawatcher() {
-        super.initDatawatcher();
-        getDatawatcher().register(VILLAGER_PROFESSION_METADATA, Villager.Profession.FARMER.getId());
+    public EntityVillager getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+    @Override
+    public void m() {
+        super.m();
+        onLive();
+    }
+
+    public void g(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::g);
+    }
+
+    public EntityVillagerPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftVillager getBukkitEntity() {
+        return (CraftVillager) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public SoundEffect bS() {
+        return EntityAgeablePet.super.bS();
+    }
+
+    @Override
+    public void a(BlockPosition blockposition, Block block) {
+        super.a(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public SoundEffect G() {
+        return EntityAgeablePet.super.G();
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
     }
 }
