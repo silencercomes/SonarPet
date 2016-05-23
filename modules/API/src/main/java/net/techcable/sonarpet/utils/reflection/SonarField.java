@@ -110,23 +110,21 @@ public final class SonarField<T> {
      *
      * @param clazz     the class to get the field from
      * @param name      the name of the field
-     * @param fieldType the type of the field
+     * @param expectedType the expected type of the field
      * @return the name
      * @throws NullPointerException     if clazz, name or type is null
      * @throws IllegalArgumentException if a field with the given name doesn't exist
      * @throws IllegalArgumentException if the field doesn't have the expected type
      */
-    public static <T> SonarField<T> getField(Class<?> clazz, String name, Class<T> fieldType) {
+    public static <T> SonarField<T> getField(Class<?> clazz, String name, Class<T> expectedType) {
         Preconditions.checkNotNull(clazz, "Null class");
         Preconditions.checkNotNull(name, "Null name");
-        Preconditions.checkNotNull(fieldType, "Null type");
-        if (fieldType.isPrimitive()) {
-            fieldType = Primitives.wrap(fieldType);
-        }
+        Preconditions.checkNotNull(expectedType, "Null type");
         try {
             Field f = clazz.getDeclaredField(name);
-            if (fieldType.isAssignableFrom(Primitives.wrap(f.getType()))) {
-                throw new IllegalArgumentException("Expected type " + fieldType + " doesn't equal the actual type of " + f.getType());
+            Class<?> fieldType = f.getType();
+            if (!Reflection.isLenientlyAssignableFrom(expectedType, fieldType)) {
+                throw new IllegalArgumentException("Expected type " + expectedType + " isn't assignable from " + fieldType);
             }
             return new SonarField<>(f);
         } catch (NoSuchFieldException e) {
@@ -190,7 +188,7 @@ public final class SonarField<T> {
         Preconditions.checkNotNull(fieldType, "Null type");
         ImmutableList.Builder<SonarField<T>> builder = ImmutableList.builder();
         for (Field field : clazz.getDeclaredFields()) {
-            if (fieldType.isAssignableFrom(field.getType())) {
+            if (Reflection.isLenientlyAssignableFrom(fieldType, field.getType())) {
                 builder.add(new SonarField<T>(field));
             }
         }

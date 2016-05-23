@@ -2,6 +2,8 @@ package net.techcable.sonarpet.utils.reflection;
 
 import lombok.*;
 
+import com.google.common.primitives.Primitives;
+
 import static net.techcable.sonarpet.utils.Versioning.NMS_PACKAGE;
 import static net.techcable.sonarpet.utils.Versioning.OBC_PACKAGE;
 
@@ -33,5 +35,11 @@ public class Reflection {
 
     public static <T> Class<? extends T> getNmsClass(String id, Class<T> clazz) {
         return getClass(NMS_PACKAGE + "." + id, clazz);
+    }
+
+    public static boolean isLenientlyAssignableFrom(Class<?> first, Class<?> second) {
+        if (first.isPrimitive()) first = Primitives.wrap(first);
+        if (second.isPrimitive()) second = Primitives.wrap(second);
+        return first.isAssignableFrom(second);
     }
 }

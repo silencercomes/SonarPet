@@ -213,21 +213,26 @@ public final class SonarMethod<T> {
      *
      * @param clazz          the class to get the field from
      * @param name           the name of the field
-     * @param returnType     the return type of the method
+     * @param expectedReturnType     the return type of the method
      * @param parameterTypes the parameter types of the method
      * @return the name
      * @throws NullPointerException     if clazz, name or type is null
      * @throws IllegalArgumentException if a field with the given name doesn't exist
      * @throws IllegalArgumentException if the field doesn't have the expected type
      */
-    public static <T> SonarMethod<T> getMethodWithReturnType(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
+    public static <T> SonarMethod<T> getMethodWithReturnType(Class<?> clazz, String name, Class<T> expectedReturnType, Class<?>... parameterTypes) {
         Preconditions.checkNotNull(clazz, "Null class");
         Preconditions.checkNotNull(name, "Null name");
-        Preconditions.checkNotNull(returnType, "Null type");
+        Preconditions.checkNotNull(expectedReturnType, "Null expected return type type");
+        Preconditions.checkNotNull(parameterTypes, "Null parameter types array");
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Preconditions.checkNotNull(parameterTypes[i], "Null parameter type at index %s", i);
+        }
         try {
             Method method = clazz.getDeclaredMethod(name, parameterTypes);
-            if (!Primitives.wrap(returnType).isAssignableFrom(Primitives.wrap(method.getReturnType()))) {
-                throw new IllegalArgumentException("Expected return type " + returnType + " doesn't equal the actual return type " + method.getReturnType());
+            Class<?> returnType = method.getReturnType();
+            if (!Reflection.isLenientlyAssignableFrom(expectedReturnType, returnType)) {
+                throw new IllegalArgumentException("Expected return type " + expectedReturnType + " isn't assignable from " + returnType);
             }
             return new SonarMethod<>(method);
         } catch (NoSuchMethodException e) {
