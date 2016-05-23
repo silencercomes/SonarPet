@@ -105,7 +105,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
             EchoPet.LOG.log(ChatColor.RED + "Initialisation failed. Please update the plugin.");
 
             DynamicPluginCommand cmd = new DynamicPluginCommand(this.cmdString, new String[0], "", "",
-                    new VersionIncompatibleCommand(this.cmdString, prefix, ChatColor.YELLOW +
+                    new VersionIncompatibleCommand(this, this.cmdString, ChatColor.YELLOW +
                             "SonarPet " + ChatColor.GOLD + this.getDescription().getVersion() + ChatColor.YELLOW + " is not compatible with this version of CraftBukkit. Please update the plugin.",
                             "echopet.pet", ChatColor.YELLOW + "You are not allowed to do that."),
                     null, this);

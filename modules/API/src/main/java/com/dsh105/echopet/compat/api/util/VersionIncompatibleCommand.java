@@ -17,21 +17,23 @@
 
 package com.dsh105.echopet.compat.api.util;
 
+import com.dsh105.echopet.compat.api.plugin.IEchoPetPlugin;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class VersionIncompatibleCommand implements CommandExecutor {
 
+    private final IEchoPetPlugin plugin;
     private String cmdLabel;
-    private String pluginPrefix;
     private String msg;
     private String perm;
     private String permMsg;
 
-    public VersionIncompatibleCommand(String cmdLabel, String pluginPrefix, String msg, String perm, String permMsg) {
+    public VersionIncompatibleCommand(IEchoPetPlugin plugin, String cmdLabel, String msg, String perm, String permMsg) {
+        this.plugin = plugin;
         this.cmdLabel = cmdLabel;
-        this.pluginPrefix = pluginPrefix;
         this.msg = msg;
         this.perm = perm;
         this.permMsg = permMsg;
@@ -40,9 +42,9 @@ public class VersionIncompatibleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender.hasPermission(this.perm)) {
-            commandSender.sendMessage(this.pluginPrefix + " " + this.msg);
+            commandSender.sendMessage(plugin.getPrefix() + " " + this.msg);
         } else {
-            commandSender.sendMessage(this.pluginPrefix + " " + this.permMsg);
+            commandSender.sendMessage(plugin.getPrefix() + " " + this.permMsg);
         }
         return true;
     }
