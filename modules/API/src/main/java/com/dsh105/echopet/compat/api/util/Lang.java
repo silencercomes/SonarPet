@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 
 public enum Lang {
 
-    PREFIX("prefix", "&4[&cSonarPet&4]&r "),
+    PREFIX("prefix", ChatColor.DARK_RED + "[" + ChatColor.RED + "SonarPet" + ChatColor.DARK_RED + "] " + ChatColor.RESET),
 
     HELP("help", "&eUse &6/%cmd% &efor help."),
     NO_PERMISSION("no_permission", "&6%perm% &epermission needed to do that."),
@@ -136,6 +136,10 @@ public enum Lang {
         return this.path;
     }
 
+    public String getDefault() {
+        return this.def;
+    }
+
     public static void sendTo(CommandSender sender, String message) {
         EchoPetSendMessageEvent event = new EchoPetSendMessageEvent(message, sender);
         EchoPet.getPlugin().getServer().getPluginManager().callEvent(event);
@@ -168,7 +172,7 @@ public enum Lang {
         }
     }
 
-    public String toString_() {
+    public String toStringRaw() {
         return EchoPet.getPlugin().getLangConfig().getString(this.path, this.def);
     }
 }

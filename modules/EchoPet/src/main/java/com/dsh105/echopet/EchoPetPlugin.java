@@ -78,8 +78,6 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
     private VanishProvider vanishProvider;
     private WorldGuardProvider worldGuardProvider;
 
-    public String prefix = "" + ChatColor.DARK_RED + "[" + ChatColor.RED + "SonarPet" + ChatColor.DARK_RED + "] " + ChatColor.RESET;
-
     public String cmdString = "pet";
     public String adminCmdString = "petadmin";
 
@@ -215,7 +213,7 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
             try {
                 for (Lang l : Lang.values()) {
                     String[] desc = l.getDescription();
-                    langConfig.set(l.getPath(), langConfig.getString(l.getPath(), l.toString_()), desc);
+                    langConfig.set(l.getPath(), langConfig.getString(l.getPath(), l.toStringRaw()), desc);
                 }
                 langConfig.saveConfig();
             } catch (Exception e) {
@@ -226,11 +224,6 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
             Logger.log(Logger.LogLevel.WARNING, "Configuration File [language.yml] generation failed.", e, true);
         }
         langConfig.reloadConfig();
-
-        if (Lang.PREFIX.toString_().equals("&4[&cSonarPet&4]&r")) {
-            langConfig.set(Lang.PREFIX.getPath(), "&4[&cSonarPet&4]&r ", Lang.PREFIX.getDescription());
-        }
-        this.prefix = Lang.PREFIX.toString();
     }
 
     private void prepareSqlDatabase() {
@@ -350,7 +343,13 @@ public class EchoPetPlugin extends JavaPlugin implements IEchoPetPlugin {
 
     @Override
     public String getPrefix() {
-        return prefix;
+        final String defaultPrefix = Lang.PREFIX.getDefault();
+        if (langConfig == null) return defaultPrefix;
+        if (Lang.PREFIX.toStringRaw().equals(defaultPrefix.trim())) {
+            langConfig.set(Lang.PREFIX.getPath(), defaultPrefix, Lang.PREFIX.getDescription());
+            return defaultPrefix;
+        }
+        return Lang.PREFIX.toString();
     }
 
     public static PetManager getManager() {
