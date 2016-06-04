@@ -51,17 +51,6 @@ public class EntityOcelotPet extends EntityOcelot implements EntityAgeablePet, I
         setOwnerUUID(pet.getOwnerUUID());
     }
 
-    public int getCatType() {
-        return getBukkitEntity().getCatType().getId();
-    }
-
-    @Override
-    public void setCatType(int i) {
-        Ocelot.Type type = Ocelot.Type.getType(i);
-        if (type == null) throw new IllegalArgumentException("Invalid cat type id: " + i);
-        getBukkitEntity().setCatType(type);
-    }
-
     @Override
     public Sound getIdleSound() {
         return (this.random().nextInt(4) == 0 ? Sound.ENTITY_CAT_PURREOW : Sound.ENTITY_CAT_AMBIENT); // Play puring sounds instead of default mojang sounds
