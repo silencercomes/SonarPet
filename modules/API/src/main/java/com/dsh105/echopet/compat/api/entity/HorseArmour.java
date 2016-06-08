@@ -24,7 +24,7 @@ import org.bukkit.Material;
 @RequiredArgsConstructor
 public enum HorseArmour {
 
-    NONE(null, Integer.MIN_VALUE),
+    NONE(null, 0),
     IRON(Material.IRON_BARDING, 1),
     GOLD(Material.GOLD_BARDING, 2),
     DIAMOND(Material.DIAMOND, 3);
