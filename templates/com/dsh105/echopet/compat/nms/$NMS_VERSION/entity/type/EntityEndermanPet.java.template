@@ -1,0 +1,128 @@
+/*
+ * This file is part of EchoPet.
+ *
+ * EchoPet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * EchoPet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EchoPet.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.dsh105.echopet.compat.nms.NMS_VERSION.entity.type;
+
+#include "nms.h"
+
+import lombok.*;
+
+import java.util.Random;
+
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEndermanPet;
+import com.dsh105.echopet.compat.nms.NMS_VERSION.entity.EntityInsentientPet;
+import com.dsh105.echopet.compat.nms.NMS_VERSION.entity.EntityInsentientPetData;
+
+import net.minecraft.server.NMS_VERSION.Block;
+import net.minecraft.server.NMS_VERSION.BlockPosition;
+import net.minecraft.server.NMS_VERSION.Entity;
+import net.minecraft.server.NMS_VERSION.EntityEnderman;
+import net.minecraft.server.NMS_VERSION.World;
+
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftEnderman;
+import org.bukkit.entity.Player;
+
+@EntitySize(width = 0.6F, height = 2.9F)
+@EntityPetType(petType = PetType.ENDERMAN)
+public class EntityEndermanPet extends EntityEnderman implements EntityInsentientPet, IEntityEndermanPet {
+
+#if NMS_VERSION == v1_10_R1
+    public static final int SCREAMING_METADATA_ID = 13;
+#elif NMS_VERSION == v1_9_R1 || NMS_VERSION == v1_9_R2
+    public static final int SCREAMING_METADATA_ID = 12;
+#elif NMS_VERSION == v1_8_R3
+    public static final int SCREAMING_METADATA_ID = 18;
+#else
+    #error "Unknown screaming metadata version"
+#endif
+
+    @Override
+    public void setScreaming(boolean flag) {
+        SET_METADATA_BOOLEAN(this, SCREAMING_METADATA_ID, flag);
+    }
+
+    public boolean isScreaming() {
+        return GET_METADATA_BOOLEAN(this, SCREAMING_METADATA_ID);
+    }
+
+    @Override
+    public SizeCategory getSizeCategory() {
+        return SizeCategory.REGULAR;
+    }
+
+    // EntityInsentientPet Implementations
+
+    @Override
+    public EntityEnderman getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityInsentientPetData nmsData = new EntityInsentientPetData(this);
+
+    @Override
+    public void ENTITY_TICK_METHOD() {
+        super.ENTITY_TICK_METHOD();
+        onLive();
+    }
+
+    public void ENTITY_MOVE_METHOD(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::ENTITY_MOVE_METHOD);
+    }
+
+    public EntityEndermanPet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftEnderman getBukkitEntity() {
+        return (CraftEnderman) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public void ON_STEP_METHOD(BlockPosition blockposition, Block block) {
+        super.ON_STEP_METHOD(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
+    }
+
+    @Override
+    public final boolean a(net.minecraft.server.NMS_VERSION.EntityHuman human) {
+        return onInteract((Player) human.getBukkitEntity());
+    }
+}

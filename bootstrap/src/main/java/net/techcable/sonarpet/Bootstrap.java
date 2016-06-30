@@ -1,8 +1,5 @@
 package net.techcable.sonarpet;
 
-import lombok.*;
-
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -17,22 +14,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Bootstrap extends JavaPlugin {
-    private static final Field PLUGINS_BY_NAME_FIELD;
-
-    static {
-        Field pluginsByNameField = null;
-        try {
-            pluginsByNameField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
-            pluginsByNameField.setAccessible(true);
-        } catch (NoSuchFieldException ignored) {}
-        PLUGINS_BY_NAME_FIELD = pluginsByNameField;
-    }
 
     private BootstrapedPlugin plugin;
 
-
     @Override
-    @SuppressWarnings("Since15") // We should be java 8 compatible after we check for JDK/JRE 8 >:)
     public void onLoad() {
         int javaVersion;
         try {
@@ -50,27 +35,6 @@ public class Bootstrap extends JavaPlugin {
             return;
         }
         plugin = new EchoPetPlugin(this);
-        // Inject plugin as 'EchoPet' for backwards compatibility
-        try {
-            if (PLUGINS_BY_NAME_FIELD != null) {
-                @SuppressWarnings("unchecked")
-                Map<String, Plugin> pluginsByName = (Map<String, Plugin>) PLUGINS_BY_NAME_FIELD.get(getServer().getPluginManager());
-                Plugin old = pluginsByName.putIfAbsent("EchoPet", plugin);
-                if (old != null) {
-                    getLogger().severe("EchoPet was detected on your server.");
-                    getLogger().severe("EchoPet is incompatible with SonarPets and you should uninstall it.");
-                    Bukkit.shutdown();
-                    return;
-                }
-            } else {
-                getLogger().warning("Unable to inject SonarPets backwards compatibility into the plugin list!");
-                getLogger().warning("Can't find field 'lookupNames' in " + Bukkit.getPluginManager().getClass().getTypeName());
-                getLogger().warning("This is non fatal but may break backwards compatibility with EchoPets.");
-            }
-        } catch (IllegalAccessException e) {
-            getLogger().log(Level.WARNING, "Unable to inject SonarPets backwards compatibility into the plugin list!", e);
-            getLogger().warning("This is non fatal but may break backwards compatibility with EchoPets.");
-        }
         plugin.onLoad();
     }
 
@@ -80,24 +44,8 @@ public class Bootstrap extends JavaPlugin {
     }
 
     @Override
-    @SuppressWarnings("Since15") // We should be java 8 compatible after since we'ved check for JDK/JRE 8 >:)
     public void onDisable() {
         plugin.onDisable();
-        // Inject plugin as 'EchoPet' for backwards compatibility
-        try {
-            if (PLUGINS_BY_NAME_FIELD != null) {
-                @SuppressWarnings("unchecked")
-                Map<String, Plugin> pluginsByName = (Map<String, Plugin>) PLUGINS_BY_NAME_FIELD.get(getServer().getPluginManager());
-                pluginsByName.remove("EchoPet");
-            } else {
-                getLogger().warning("Unable to remove SonarPets backwards compatibility into the plugin list!");
-                getLogger().warning("Can't find field 'lookupNames' in " + Bukkit.getPluginManager().getClass().getTypeName());
-                getLogger().warning("This is non fatal but may break backwards compatibility with EchoPets.");
-            }
-        } catch (IllegalAccessException e) {
-            getLogger().log(Level.WARNING, "Unable to remove SonarPets backwards compatibility into the plugin list!", e);
-            getLogger().warning("This is non fatal but may break backwards compatibility with EchoPets.");
-        }
     }
 
     @Override

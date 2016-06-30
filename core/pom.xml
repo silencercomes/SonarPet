@@ -183,7 +183,6 @@
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <finalName>${project.name}</finalName>
         <resources>
             <resource>
                 <filtering>true</filtering>

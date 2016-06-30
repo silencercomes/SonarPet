@@ -23,3 +23,5 @@ I've made some changes to EchoPet in SonarPet, which are listed below.
 - Dsh105 - Creating EchoPet
 - CaptainBern - Helping out with EchoPet
 - Techcable - 1.9 update and maintinaing SonarPet
+
+## License

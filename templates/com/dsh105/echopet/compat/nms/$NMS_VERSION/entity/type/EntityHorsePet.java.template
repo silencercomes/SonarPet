@@ -1,0 +1,260 @@
+/*
+ * This file is part of EchoPet.
+ *
+ * EchoPet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * EchoPet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EchoPet.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.dsh105.echopet.compat.nms.NMS_VERSION.entity.type;
+
+#include "nms.h"
+
+import lombok.*;
+
+import java.util.Random;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.EntitySize;
+import com.dsh105.echopet.compat.api.entity.HorseArmour;
+import com.dsh105.echopet.compat.api.entity.HorseMarking;
+import com.dsh105.echopet.compat.api.entity.HorseType;
+import com.dsh105.echopet.compat.api.entity.HorseVariant;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SizeCategory;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
+import com.dsh105.echopet.compat.nms.NMS_VERSION.NMS;
+import com.dsh105.echopet.compat.nms.NMS_VERSION.entity.EntityAgeablePet;
+import com.dsh105.echopet.compat.nms.NMS_VERSION.entity.EntityAgeablePetData;
+import com.dsh105.echopet.compat.nms.NMS_VERSION.entity.EntityInsentientPet;
+import com.google.common.base.Optional;
+
+import net.minecraft.server.NMS_VERSION.Block;
+import net.minecraft.server.NMS_VERSION.BlockPosition;
+import net.minecraft.server.NMS_VERSION.Blocks;
+import net.minecraft.server.NMS_VERSION.Entity;
+import net.minecraft.server.NMS_VERSION.EntityChicken;
+import net.minecraft.server.NMS_VERSION.EntityHorse;
+import net.minecraft.server.NMS_VERSION.World;
+import net.techcable.sonarpet.SafeSounds;
+
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftChicken;
+import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftHorse;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+@EntitySize(width = 1.4F, height = 1.6F)
+@EntityPetType(petType = PetType.HORSE)
+public class EntityHorsePet extends EntityHorse implements EntityAgeablePet, IEntityHorsePet {
+
+    private int rearingCounter = 0;
+    int stepSoundCount = 0;
+
+    public EntityHorsePet(World world) {
+        super(world);
+    }
+
+    @Override
+    public void initiateEntityPet() {
+        getBukkitEntity().setOwnerUUID(pet.getOwnerUUID());
+    }
+
+    @Override
+    public void setSaddled(boolean flag) {
+        getBukkitEntity().getInventory().setSaddle(flag ? new ItemStack(Material.SADDLE, 1) : null);
+    }
+
+    public Horse.Variant getBukkitVariant() {
+        return GET_HORSE_VARIANT(this);
+    }
+
+    @Override
+    public void setHorseType(HorseType t) {
+        if (t != HorseType.NORMAL) {
+            this.setArmour(HorseArmour.NONE);
+        }
+        SET_HORSE_VARIANT(this, t.getBukkitVariant());
+    }
+
+    @Override
+    public void setVariant(HorseVariant v, HorseMarking m) {
+        getBukkitEntity().setColor(v.getBukkitColour());
+        getBukkitEntity().setStyle(m.getBukkitStyle());
+    }
+
+    @Override
+    public void setArmour(HorseArmour a) {
+        getBukkitEntity().getInventory().setArmor(a.getMaterial() == null ? null : new ItemStack(a.getMaterial(), 1));
+    }
+
+    @Override
+    public void setChested(boolean flag) {
+        getBukkitEntity().setCarryingChest(flag);
+    }
+
+    private void setRearing(boolean b) {
+        // metadata flag with id 64
+#if NMS_VERSION >= v1_9_R1
+        this.v(b);
+#elif NMS_VERSION == v1_8_R3
+        this.s(b);
+#else
+    #error "Don't know how to check if a navigation CAN_ENTER_DOORS"
+#endif
+    }
+
+    @Override
+    public boolean attack(Entity entity) {
+        boolean flag = EntityAgeablePet.super.attack(entity);
+        if (flag) {
+            this.setRearing(true);
+            switch (getBukkitVariant()) {
+                case DONKEY:
+                    playSound(SafeSounds.DONKEY_ANGRY.getBukkitSound(), 1, 1);
+                    break;
+                default:
+                    playSound(SafeSounds.HORSE_ANGRY.getBukkitSound(), 1, 1);
+                    break;
+            }
+        }
+        return flag;
+    }
+
+    @Override
+    public void makeStepSound(int i, int j, int k, Block block) {
+        NMS.SoundData soundData = NMS.getBlockSoundData(block);
+
+        if (this.world.getType(new BlockPosition(i, j + 1, k)).getBlock() == Blocks.SNOW) {
+            soundData = NMS.getBlockSoundData(Blocks.SNOW);
+        }
+
+        final net.minecraft.server.NMS_VERSION.Material material;
+#if NMS_VERSION >= v1_9_R1
+        material = block.getBlockData().getMaterial();
+#else
+        material = block.getBlockData().getBlock().getMaterial();
+#endif
+        if (!material.isLiquid()) {
+            if (!NMS.getPassengers(this).isEmpty() && getBukkitVariant() != Horse.Variant.HORSE && getBukkitVariant() != Horse.Variant.MULE) {
+                ++this.stepSoundCount;
+                if (this.stepSoundCount > 5 && this.stepSoundCount % 3 == 0) {
+                    this.playSound(SafeSounds.HORSE_GALLOP.getBukkitSound(), soundData.getVolume() * 0.15F, soundData.getPitch());
+                    if (getBukkitVariant() == Horse.Variant.HORSE && this.random.nextInt(10) == 0) {
+                        this.playSound(SafeSounds.HORSE_BREATHE.getBukkitSound(), soundData.getVolume() * 0.6F, soundData.getPitch());
+                    }
+                } else if (this.stepSoundCount <= 5) {
+                    this.playSound(SafeSounds.HORSE_STEP_WOOD.getBukkitSound(), soundData.getVolume() * 0.15F, soundData.getPitch());
+                }
+            } else if (soundData.equals(NMS.SoundData.WOOD)) {
+                this.playSound(SafeSounds.HORSE_STEP_WOOD.getBukkitSound(), soundData.getVolume() * 0.15F, soundData.getPitch());
+            } else {
+                this.playSound(SafeSounds.HORSE_STEP.getBukkitSound(), soundData.getVolume() * 0.15F, soundData.getPitch());
+            }
+        }
+    }
+
+    @Override
+    public void move(float sideMot, float forwMot, BiConsumer<Float, Float> superMoveFunction) {
+        EntityAgeablePet.super.move(sideMot, forwMot, superMoveFunction);
+        if (forwMot <= 0.0F) {
+            this.stepSoundCount = 0;
+        }
+    }
+
+    @Override
+    public SizeCategory getSizeCategory() {
+        if (this.isBaby()) {
+            return SizeCategory.TINY;
+        } else {
+            return SizeCategory.LARGE;
+        }
+    }
+
+    @Override
+    public void onLive() {
+        EntityAgeablePet.super.onLive();
+        if (rearingCounter > 0 && ++rearingCounter > 20) {
+            setRearing(false);
+        }
+    }
+
+    @Override
+    public void doJumpAnimation() {
+        this.playSound(SafeSounds.HORSE_JUMP.getBukkitSound(), 0.4F, 1.0F);
+        this.rearingCounter = 1;
+        setRearing(true);
+    }
+
+
+    // EntityAgeablePet Implementations
+
+    @Override
+    public EntityHorse getEntity() {
+        return this;
+    }
+
+    @Getter
+    private IPet pet;
+    @Getter
+    private final EntityAgeablePetData nmsData = new EntityAgeablePetData(this);
+
+
+    @Override
+    public void ENTITY_TICK_METHOD() {
+        super.ENTITY_TICK_METHOD();
+        onLive();
+    }
+
+    public void ENTITY_MOVE_METHOD(float sideMot, float forwMot) {
+        move(sideMot, forwMot, super::ENTITY_MOVE_METHOD);
+    }
+
+    public EntityHorsePet(World world, IPet pet) {
+        super(world);
+        this.pet = pet;
+        this.initiateEntityPet();
+    }
+
+    @Override
+    public CraftHorse getBukkitEntity() {
+        return (CraftHorse) super.getBukkitEntity();
+    }
+
+    // Access helpers
+
+    @Override
+    public Random random() {
+        return this.random;
+    }
+
+    @Override
+    public void ON_STEP_METHOD(BlockPosition blockposition, Block block) {
+        super.ON_STEP_METHOD(blockposition, block);
+        onStep(blockposition, block);
+    }
+
+    @Override
+    public void setYawPitch(float f, float f1) {
+        super.setYawPitch(f, f1);
+    }
+
+    @Override
+    public final boolean a(net.minecraft.server.NMS_VERSION.EntityHuman human) {
+        return onInteract((Player) human.getBukkitEntity());
+    }
+}

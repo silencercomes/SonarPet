@@ -133,6 +133,7 @@
             <groupId>com.comphenix.packetwrapper</groupId>
             <artifactId>PacketWrapper</artifactId>
             <version>1.7.2-R0.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -174,7 +175,6 @@
 
     <build>
         <defaultGoal>clean package install</defaultGoal>
-        <finalName>${project.name}</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>
