@@ -74,7 +74,7 @@ public class EntityPigZombiePet extends EntityPigZombie implements EntityInsenti
 
     @Override
     public boolean isBaby() {
-        return getBukkitEntity().isBaby();
+        return super.isBaby();
     }
 
     @Override
