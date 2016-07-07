@@ -35,7 +35,7 @@ public class EntityGuardianPet extends EntityGuardian implements EntityInsentien
 
     @Override
     public boolean isElder() {
-        return getBukkitEntity().isElder();
+        return super.isElder();
     }
 
     @Override
