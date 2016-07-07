@@ -42,8 +42,7 @@ import net.minecraft.server.NMS_VERSION.World;
 import net.techcable.sonarpet.SafeSounds;
 
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftChicken;
-import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftEnderman;
+import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftMushroomCow;
 import org.bukkit.entity.Player;
 
 @EntitySize(width = 0.9F, height = 1.3F)
@@ -84,8 +83,8 @@ public class EntityMushroomCowPet extends EntityMushroomCow implements EntityAge
     }
 
     @Override
-    public CraftChicken getBukkitEntity() {
-        return (CraftChicken) super.getBukkitEntity();
+    public CraftMushroomCow getBukkitEntity() {
+        return (CraftMushroomCow) super.getBukkitEntity();
     }
 
     // Access helpers
