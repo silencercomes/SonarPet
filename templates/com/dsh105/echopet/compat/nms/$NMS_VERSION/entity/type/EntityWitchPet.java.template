@@ -38,7 +38,7 @@ import net.minecraft.server.NMS_VERSION.EntityWitch;
 import net.minecraft.server.NMS_VERSION.World;
 
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftPigZombie;
+import org.bukkit.craftbukkit.NMS_VERSION.entity.CraftWitch;
 import org.bukkit.entity.Player;
 
 @EntitySize(width = 0.6F, height = 1.9F)
@@ -80,8 +80,8 @@ public class EntityWitchPet extends EntityWitch implements EntityInsentientPet, 
     }
 
     @Override
-    public CraftPigZombie getBukkitEntity() {
-        return (CraftPigZombie) super.getBukkitEntity();
+    public CraftWitch getBukkitEntity() {
+        return (CraftWitch) super.getBukkitEntity();
     }
 
     // Access helpers
