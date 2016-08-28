@@ -79,7 +79,7 @@ public interface EntityInsentientPet extends IAnimal, IEntityPet {
      * The field to check if the entity is jumping.
      * Uses reflection to bypass access checks
      */
-    public static final SonarField<Boolean> IS_JUMPING_FIELD = SonarField.getField(EntityLiving.class, "be", boolean.class);
+    public static final SonarField<Boolean> IS_JUMPING_FIELD = SonarField.getField(EntityLiving.class, "IS_JUMPING_FIELD_NAME", boolean.class);
 
     public default void initiateEntityPet() {
         this.resetEntitySize();

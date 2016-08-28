@@ -2,6 +2,18 @@
 // Field name definitions
 //
 
+#if NMS_VERSION == v1_10_R1
+    #define IS_JUMPING_FIELD_NAME be
+#elif NMS_VERSION == v1_9_R2
+    #define IS_JUMPING_FIELD_NAME bd
+#elif NMS_VERSION == v1_9_R1
+    #define IS_JUMPING_FIELD_NAME bc
+#elif NMS_VERSION == v1_8_R3
+    #define IS_JUMPING_FIELD_NAME aY
+#else
+    #error "Unkown entity step height field for version NMS_VERSION"
+#endif
+
 #if NMS_VERSION == v1_10_R1 || NMS_VERSION == v1_9_R2 || NMS_VERSION == v1_9_R1
     #define STEP_HEIGHT P
 #elif NMS_VERSION == v1_8_R3
