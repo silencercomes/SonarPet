@@ -49,7 +49,7 @@ parser.add_argument('--define', '-D', help="Defines an argument for the preproce
                     action="append", dest='definitions', default=[])
 parser.add_argument('--templates', help="The directory to find the template files to generate sources from.",
                     default="templates", dest='template_dir')
-parser.add_argument('--out-dir', help="What to output template files into ", default="$NMS_VERSION/src/main/java")
+parser.add_argument('--out-dir', help="What to output template files into ", default="nms/$NMS_VERSION/src/main/java")
 
 args = parser.parse_args()
 
