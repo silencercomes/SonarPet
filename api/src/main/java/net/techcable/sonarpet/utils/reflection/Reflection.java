@@ -2,7 +2,11 @@ package net.techcable.sonarpet.utils.reflection;
 
 import lombok.*;
 
+import java.lang.invoke.MethodHandle;
+
 import com.google.common.primitives.Primitives;
+
+import org.bukkit.entity.Entity;
 
 import static net.techcable.sonarpet.utils.Versioning.NMS_PACKAGE;
 import static net.techcable.sonarpet.utils.Versioning.OBC_PACKAGE;
@@ -41,5 +45,11 @@ public class Reflection {
         if (first.isPrimitive()) first = Primitives.wrap(first);
         if (second.isPrimitive()) second = Primitives.wrap(second);
         return first.isAssignableFrom(second);
+    }
+
+    private static final MethodHandle GET_HANDLE_METHOD = SonarMethod.getMethod(getObcClass("entity.CraftEntity"), "getHandle").getInvoker();
+    @SneakyThrows
+    public static Object getHandle(Entity entity) {
+        return GET_HANDLE_METHOD.invoke(entity);
     }
 }

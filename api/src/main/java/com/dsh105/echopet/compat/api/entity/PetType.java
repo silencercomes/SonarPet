@@ -17,6 +17,8 @@
 
 package com.dsh105.echopet.compat.api.entity;
 
+import lombok.*;
+
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.wrapper.WrappedEntityType;
@@ -25,6 +27,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+
+import net.techcable.sonarpet.utils.reflection.Reflection;
 
 public enum PetType {
 
@@ -36,7 +40,12 @@ public enum PetType {
     ENDERMAN("Enderman", 58, "Enderman Pet", 40D, 6D, "ENDERMAN", PetData.SCREAMING),
     ENDERMITE("Endermite", 67, "Endermite Pet", 2D, 2D, "ENDERMITE"),
     GHAST("Ghast", 56, "Ghast Pet", 10D, 7D, "GHAST"),
-    GIANT("Giant", 53, "Giant Pet", 100D, 0D, "GIANT"),
+    GIANT("Giant", 53, "Giant Pet", 100D, 0D, "GIANT") {
+        @Override
+        public Class<?> getNmsClass() {
+            return Reflection.getNmsClass("EntityGiantZombie");
+        }
+    },
     GUARDIAN("Guardian", 68, "Guardian Pet", 20D, 10D, "GUARDIAN", PetData.ELDER),
     MAGMACUBE("MagmaCube", 62, "Magma Cube Pet", 20D, 5D, "MAGMA_CUBE", PetData.SMALL, PetData.MEDIUM, PetData.LARGE),
     PIGZOMBIE("PigZombie", 57, "Pig Zombie Pet", 20D, 6D, "PIG_ZOMBIE", PetData.BABY),
@@ -82,22 +91,27 @@ public enum PetType {
 
     HUMAN("Human", 54, "Human Pet", 20D, 6D, "UNKNOWN");
 
-    private Class<? extends IEntityPet> entityClass;
-    private Class<? extends IPet> petClass;
-    private String defaultName;
-    private double maxHealth;
-    private double attackDamage;
-    private WrappedEntityType entityTypeWrapper;
-    private List<PetData> allowedData;
-    private int id;
+    private final Class<? extends IEntityPet> hookClass;
+    private final Class<? extends IPet> petClass;
+    private final String defaultName;
+    private final double maxHealth;
+    private final double attackDamage;
+    private final WrappedEntityType entityTypeWrapper;
+    private final List<PetData> allowedData;
+    private final int id;
+    private final String classIdentifier;
 
+    @SneakyThrows(ClassNotFoundException.class)
     PetType(String classIdentifier, int registrationId, String defaultName, double maxHealth, double attackDamage, String entityTypeName, PetData... allowedData) {
+        this.classIdentifier = classIdentifier;
+        Class<? extends IEntityPet> hookClass;
         try {
-            this.entityClass = (Class<? extends IEntityPet>) Class.forName(ReflectionUtil.COMPAT_NMS_PATH + ".entity.type.Entity" + classIdentifier + "Pet");
+            hookClass = Class.forName("net.techcable.sonarpet.nms.entity.type.Entity" + classIdentifier + "Pet").asSubclass(IEntityPet.class);
         } catch (ClassNotFoundException e) {
-            // do nothing
+            hookClass = null;
         }
-        this.petClass = ReflectionUtil.getClass("com.dsh105.echopet.api.pet.type." + classIdentifier + "Pet");
+        this.hookClass = hookClass;
+        this.petClass = Class.forName("com.dsh105.echopet.api.pet.type." + classIdentifier + "Pet").asSubclass(IPet.class);
         this.id = registrationId;
         this.allowedData = ImmutableList.copyOf(allowedData);
         this.maxHealth = maxHealth;
@@ -138,10 +152,6 @@ public enum PetType {
         return getAllowedDataTypes().contains(data);
     }
 
-    public IEntityPet getNewEntityPetInstance(Object world, IPet pet) {
-        return EchoPet.getPetRegistry().getRegistrationEntry(pet.getPetType()).createEntityPet(world, pet);
-    }
-
     public IPet getNewPetInstance(Player owner) {
         if (owner != null) {
             return EchoPet.getPetRegistry().spawn(this, owner);
@@ -149,11 +159,15 @@ public enum PetType {
         return null;
     }
 
-    public Class<? extends IEntityPet> getEntityClass() {
-        return this.entityClass;
+    public Class<? extends IEntityPet> getHookClass() {
+        return this.hookClass;
     }
 
     public Class<? extends IPet> getPetClass() {
         return this.petClass;
+    }
+
+    public Class<?> getNmsClass() {
+        return Reflection.getNmsClass("Entity" + classIdentifier);
     }
 }

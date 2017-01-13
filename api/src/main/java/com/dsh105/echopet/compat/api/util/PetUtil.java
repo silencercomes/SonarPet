@@ -312,7 +312,7 @@ public class PetUtil {
         }
 
         if (pt.getPetType() == PetType.ZOMBIE) {
-            info.add(ChatColor.GOLD + " - Villager: " + ChatColor.YELLOW + ((IZombiePet) pt).isVillager());
+            info.add(ChatColor.GOLD + " - Type: " + ChatColor.YELLOW + StringUtil.capitalise(((IZombiePet) pt).getZombieType().toString().replace('_', ' ')));
         }
         if (pt.getPetType() == PetType.HORSE) {
             HorseType ht = ((IHorsePet) pt).getHorseType();

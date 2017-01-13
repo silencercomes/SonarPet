@@ -22,13 +22,16 @@ import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityZombiePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IZombiePet;
+
+import net.techcable.sonarpet.nms.switching.ZombieType;
+
 import org.bukkit.entity.Player;
 
 @EntityPetType(petType = PetType.ZOMBIE)
 public class ZombiePet extends Pet implements IZombiePet {
 
     boolean baby = false;
-    boolean villager = false;
+    private ZombieType zombieType = ZombieType.REGULAR;
 
     public ZombiePet(Player owner) {
         super(owner);
@@ -46,14 +49,13 @@ public class ZombiePet extends Pet implements IZombiePet {
     }
 
     @Override
-    public void setVillager(boolean flag) {
-        ((IEntityZombiePet) getEntityPet()).setVillager(flag);
-        this.villager = flag;
+    public ZombieType getZombieType() {
+        return zombieType;
     }
 
     @Override
-    public boolean isVillager() {
-        return this.villager;
+    public void setZombieType(ZombieType type) {
+        ((IEntityZombiePet) getEntityPet()).setZombieType(type);
+        this.zombieType = type;
     }
-
 }

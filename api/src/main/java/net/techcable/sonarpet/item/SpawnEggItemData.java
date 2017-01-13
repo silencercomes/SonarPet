@@ -1,8 +1,6 @@
 package net.techcable.sonarpet.item;
 
-import java.util.Optional;
-
-import com.dsh105.echopet.compat.api.util.INMS;
+import net.techcable.sonarpet.nms.INMS;
 import com.google.common.base.Preconditions;
 
 import org.bukkit.Bukkit;

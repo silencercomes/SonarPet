@@ -1,0 +1,12 @@
+{
+    "metadata": {
+        "ENDERMAN_SCREAMING_METADATA_ID": 18,
+        "WITHER_SHIELDED_METADATA_ID": 20
+    },
+    "obfuscated_methods": {
+        "ENTITY_TICK_METHOD": "t_",
+        "ENTITY_MOVE_METHOD": "g",
+        "ON_STEP_METHOD": "a",
+        "ON_INTERACT_METHOD": "a"
+    }
+}

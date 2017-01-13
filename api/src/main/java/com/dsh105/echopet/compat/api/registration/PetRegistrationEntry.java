@@ -17,39 +17,50 @@
 
 package com.dsh105.echopet.compat.api.registration;
 
+import lombok.*;
+
 import com.dsh105.commodus.StringUtil;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
-import com.dsh105.echopet.compat.api.util.ReflectionUtil;
+
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import net.techcable.sonarpet.nms.NMSInsentientEntity;
+
 public class PetRegistrationEntry {
 
-    private String name;
-    private int registrationId;
-    private Class<? extends IPet> petClass;
-    private Class<? extends IEntityPet> entityClass;
+    @Getter
+    private final PetType petType;
+    private final PetRegistry petRegistry;
+    private final String name;
+    private final int registrationId;
+    private final Class<? extends IPet> petClass;
+    private final Class<? extends IEntityPet> hookClass;
+    private final Class<?> nmsClass;
 
     private Constructor<? extends IPet> petConstructor;
-    private Constructor<? extends IEntityPet> entityPetConstructor;
+    private Constructor<? extends IEntityPet> hookConstructor;
 
-    public PetRegistrationEntry(String name, int registrationId, Class<? extends IPet> petClass, Class<? extends IEntityPet> entityClass) {
-        if (entityClass == null) {
-            throw new PetRegistrationException("Pet type is not supported by this server version.");
+    public PetRegistrationEntry(PetType petType, PetRegistry petRegistry, String name, int registrationId, Class<? extends IPet> petClass, Class<? extends IEntityPet> hookClass, Class<?> nmsClass) {
+        if (hookClass == null) {
+            throw new PetRegistrationException(name + " isn't supported!");
         }
-
+        this.petType = petType;
+        this.petRegistry = petRegistry;
         this.name = name;
         this.registrationId = registrationId;
-        this.entityClass = entityClass;
+        this.hookClass = hookClass;
         this.petClass = petClass;
+        this.nmsClass = nmsClass;
 
         try {
             this.petConstructor = this.petClass.getConstructor(Player.class);
-            this.entityPetConstructor = this.entityClass.getConstructor(ReflectionUtil.getNMSClass("World"), IPet.class);
+            this.hookConstructor = this.hookClass.getDeclaredConstructor(IPet.class, NMSInsentientEntity.class);
+            this.hookConstructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             throw new PetRegistrationException("Failed to create pet constructors!", e);
         }
@@ -67,39 +78,35 @@ public class PetRegistrationEntry {
         return petClass;
     }
 
-    public Class<? extends IEntityPet> getEntityClass() {
-        return entityClass;
+    public Class<? extends IEntityPet> getHookClass() {
+        return hookClass;
     }
 
     public IPet createFor(Player owner) {
-        Throwable throwable;
         try {
             return this.petConstructor.newInstance(owner);
-        } catch (InstantiationException e) {
-            throwable = e;
-        } catch (IllegalAccessException e) {
-            throwable = e;
-        } catch (InvocationTargetException e) {
-            throwable = e;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("Failed to create pet object for " + owner.getName(), e);
         }
-        throw new IllegalStateException("Failed to create pet object for " + owner.getName(), throwable);
     }
 
-    public IEntityPet createEntityPet(Object nmsWorld, IPet pet) {
-        Throwable throwable;
+    public IEntityPet createHookClass(IPet pet, NMSInsentientEntity entity) {
         try {
-            return this.entityPetConstructor.newInstance(nmsWorld, pet);
-        } catch (InstantiationException e) {
-            throwable = e;
-        } catch (IllegalAccessException e) {
-            throwable = e;
-        } catch (InvocationTargetException e) {
-            throwable = e;
+            return this.hookConstructor.newInstance(pet, entity);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("Failed to create EntityPet object for " + pet.getOwner().getName(), e);
         }
-        throw new IllegalStateException("Failed to create EntityPet object for " + pet.getOwner().getName(), throwable);
     }
 
-    public static PetRegistrationEntry create(PetType petType) {
-        return new PetRegistrationEntry(StringUtil.capitalise(petType.toString().toLowerCase().replace("_", " ")).replace(" ", "") + "-Pet", petType.getRegistrationId(), petType.getPetClass(), petType.getEntityClass());
+    public static PetRegistrationEntry create(PetRegistry petRegistry, PetType petType) {
+        return new PetRegistrationEntry(
+                petType,
+                petRegistry,
+                StringUtil.capitalise(petType.toString().toLowerCase().replace("_", " ")).replace(" ", "") + "-Pet",
+                petType.getRegistrationId(),
+                petType.getPetClass(),
+                petType.getHookClass(),
+                petType.getNmsClass()
+        );
     }
 }

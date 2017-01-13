@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import net.techcable.sonarpet.nms.switching.ZombieType;
+
 
 public class PetManager implements IPetManager {
 
@@ -515,12 +517,6 @@ public class PetManager implements IPetManager {
                 ((ISkeletonPet) pet).setWither(b);
             }
 
-            if (pd == PetData.VILLAGER) {
-                if (petType == PetType.ZOMBIE) {
-                    ((IZombiePet) pet).setVillager(b);
-                }
-            }
-
             if (pd == PetData.FIRE) {
                 ((IBlazePet) pet).setOnFire(b);
             }
@@ -625,8 +621,10 @@ public class PetManager implements IPetManager {
                 }
             }
             
-            if (petType == PetType.GUARDIAN) {
-                
+            if (petType == PetType.ZOMBIE) {
+                if (pd.isType(PetData.Type.ZOMBIE_TYPE)) {
+                    ZombieType zombieType = ZombieType.valueOf(pd.toString());
+                }
             }
             
             ListIterator<PetData> i = pet.getPetData().listIterator();

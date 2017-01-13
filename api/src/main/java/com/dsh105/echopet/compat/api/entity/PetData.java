@@ -74,7 +74,8 @@ public enum PetData {
     SMALL("small", Type.SIZE),
     SOCKS("whiteSocks", Type.HORSE_MARKING),
     TAMED("tamed", Type.BOOLEAN),
-    VILLAGER("villager", Type.BOOLEAN),
+    VILLAGER("villager", Type.ZOMBIE_TYPE),
+    HUSK("husk",Type.ZOMBIE_TYPE),
     WHITEPATCH("whitePatch", Type.HORSE_MARKING),
     WHITESPOT("whiteSpot", Type.HORSE_MARKING),
     WHITE("white", Type.COLOUR, Type.HORSE_VARIANT, Type.RABBIT_TYPE),
@@ -105,6 +106,6 @@ public enum PetData {
     }
 
     public enum Type {
-        BOOLEAN, COLOUR, CAT, SIZE, PROF, HORSE_TYPE, HORSE_VARIANT, HORSE_MARKING, HORSE_ARMOUR, RABBIT_TYPE
+        BOOLEAN, COLOUR, CAT, SIZE, PROF, HORSE_TYPE, HORSE_VARIANT, HORSE_MARKING, HORSE_ARMOUR, RABBIT_TYPE, ZOMBIE_TYPE
     }
 }

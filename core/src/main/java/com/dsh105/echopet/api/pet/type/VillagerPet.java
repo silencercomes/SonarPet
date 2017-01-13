@@ -52,13 +52,8 @@ public class VillagerPet extends Pet implements IVillagerPet {
     }
 
     @Override
-    public int getProfessionId() {
-        return profession.getId();
-    }
-
-    @Override
     public void setProfession(Profession prof) {
-        ((IEntityVillagerPet) getEntityPet()).setProfession(prof.getId());
+        ((IEntityVillagerPet) getEntityPet()).setProfession(prof);
         this.profession = prof;
     }
 

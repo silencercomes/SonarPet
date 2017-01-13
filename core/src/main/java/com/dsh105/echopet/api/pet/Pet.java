@@ -30,13 +30,9 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.event.PetTeleportEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
-import com.dsh105.echopet.compat.api.reflection.ReflectionConstants;
-import com.dsh105.echopet.compat.api.reflection.SafeMethod;
 import com.dsh105.echopet.compat.api.util.Lang;
-import com.dsh105.echopet.compat.api.util.INMS;
+import net.techcable.sonarpet.nms.INMS;
 import com.dsh105.echopet.compat.api.util.PetNames;
-import com.dsh105.echopet.compat.api.util.PlayerUtil;
-import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.StringSimplifier;
 
 import net.techcable.sonarpet.particles.Particle;
@@ -44,7 +40,6 @@ import net.techcable.sonarpet.particles.Particle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -70,7 +65,7 @@ public abstract class Pet implements IPet {
             this.ownerIdentification = UUIDMigration.getIdentificationFor(owner);
             this.setPetType();
             this.setPetName(this.getPetType().getDefaultName(this.getNameOfOwner()));
-            this.entityPet = EchoPet.getPlugin().getSpawnUtil().spawn(this, owner);
+            this.entityPet = EchoPet.getPlugin().getPetRegistry().spawnEntity(this, owner);
             if (this.entityPet != null) {
                 this.applyPetName();
                 this.teleportToOwner();

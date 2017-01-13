@@ -5,7 +5,7 @@ import lombok.*;
 import java.util.List;
 import java.util.Optional;
 
-import com.dsh105.echopet.compat.api.util.INMS;
+import net.techcable.sonarpet.nms.INMS;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 

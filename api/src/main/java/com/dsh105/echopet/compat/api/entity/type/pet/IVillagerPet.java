@@ -24,7 +24,5 @@ public interface IVillagerPet extends IAgeablePet {
 
     public Villager.Profession getProfession();
 
-    public int getProfessionId();
-
     public void setProfession(Villager.Profession prof);
 }

@@ -18,6 +18,13 @@
 package com.dsh105.echopet.compat.api.entity;
 
 
+import net.techcable.sonarpet.utils.NmsVersion;
+import net.techcable.sonarpet.utils.Versioning;
+
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 
 public enum HorseType {

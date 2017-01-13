@@ -359,4 +359,8 @@ public final class SonarMethod<T> {
         }
         builder.append(returnType.getTypeName());
     }
+
+    public MethodHandle getInvoker() {
+        return invoker;
+    }
 }

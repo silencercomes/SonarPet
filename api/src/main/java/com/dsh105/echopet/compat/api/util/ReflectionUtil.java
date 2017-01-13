@@ -43,7 +43,7 @@ public class ReflectionUtil {
 //            versionTag = "v1_8_Spigot";
 //        }
 
-        return "com.dsh105.echopet.compat.nms." + versionTag;
+        return "net.techcable.sonarpet.nms.versions." + versionTag;
     }
 
     public static boolean isSpigot1dot8() {

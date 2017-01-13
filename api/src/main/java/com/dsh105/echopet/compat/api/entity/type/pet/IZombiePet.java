@@ -19,9 +19,11 @@ package com.dsh105.echopet.compat.api.entity.type.pet;
 
 import com.dsh105.echopet.compat.api.entity.IAgeablePet;
 
+import net.techcable.sonarpet.nms.switching.ZombieType;
+
 public interface IZombiePet extends IAgeablePet {
 
-    public void setVillager(boolean flag);
+    public ZombieType getZombieType();
 
-    public boolean isVillager();
+    public void setZombieType(ZombieType type);
 }

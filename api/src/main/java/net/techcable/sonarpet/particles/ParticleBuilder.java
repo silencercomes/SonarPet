@@ -86,6 +86,11 @@ public abstract class ParticleBuilder {
         return this;
     }
 
+    public ParticleBuilder offset(double x, double y, double z) {
+        this.offset(new Vector(x, y, z));
+        return this;
+    }
+
     public ParticleBuilder atSpeed(float speed) {
         this.speed = speed;
         return this;

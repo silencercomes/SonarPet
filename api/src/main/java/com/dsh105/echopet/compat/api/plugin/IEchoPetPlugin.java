@@ -22,7 +22,7 @@ import com.dsh105.echopet.compat.api.config.ConfigOptions;
 import com.dsh105.echopet.compat.api.plugin.hook.IVanishProvider;
 import com.dsh105.echopet.compat.api.plugin.hook.IWorldGuardProvider;
 import com.dsh105.echopet.compat.api.registration.PetRegistry;
-import com.dsh105.echopet.compat.api.util.INMS;
+import net.techcable.sonarpet.nms.INMS;
 import com.zaxxer.hikari.HikariDataSource;
 
 import org.bukkit.plugin.Plugin;

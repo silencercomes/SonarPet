@@ -39,6 +39,7 @@ import com.dsh105.echopet.hook.WorldGuardProvider;
 import com.dsh105.echopet.listeners.MenuListener;
 import com.dsh105.echopet.listeners.PetEntityListener;
 import com.dsh105.echopet.listeners.PetOwnerListener;
+import com.dsh105.echopet.registration.PetRegistryImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -56,6 +57,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import net.techcable.sonarpet.BootstrapedPlugin;
+import net.techcable.sonarpet.nms.INMS;
 
 public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
@@ -121,7 +123,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
             return;
         }
 
-        this.petRegistry = new PetRegistry();
+        this.petRegistry = new PetRegistryImpl(this);
 
         this.loadConfiguration();
 
