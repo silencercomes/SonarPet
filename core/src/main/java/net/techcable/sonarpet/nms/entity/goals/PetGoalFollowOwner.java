@@ -105,7 +105,7 @@ public class PetGoalFollowOwner extends APetGoalFollowOwner {
                 return;
             }
 
-            double speed = 0.6F;
+            double speed = 2.0F;
             if (this.pet.getEntity().distanceTo(owner) > (this.teleportDistance) && pet.getPlayerEntity().isOnGround()) {
                 this.pet.getPet().teleportToOwner();
                 return;

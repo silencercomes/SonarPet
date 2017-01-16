@@ -312,14 +312,11 @@ public abstract class EntityInsentientPet implements IEntityPet {
     @SneakyThrows
     public void move(float sideMot, float forwMot, MethodHandle superMoveFunction) {
         Preconditions.checkNotNull(superMoveFunction, "Null superMoveFunction");
+        getEntity().setStepHeight(1); // Give pets the ability to step up full blocks
         if (!isOwnerRiding()) {
             superMoveFunction.invoke(sideMot, forwMot); // moveEntity
-            getEntity().setStepHeight(0.5F); // set the step hight to half a block, like mobs
             return;
         }
-
-        getEntity().setStepHeight(1.0F); // Grant the pet a step height of a full block since they have a player riding them
-
         getEntity().setYaw(getPlayerOwner().getLocation().getYaw());
         getEntity().setPitch(getPlayerOwner().getLocation().getPitch() * 0.5F);
 
