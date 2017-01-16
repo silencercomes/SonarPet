@@ -14,13 +14,13 @@ public class EntityUndeadPetGenerator extends EntityPetGenerator {
     @Override
     protected void generate0() {
         super.generate0();
-        final String livingUpdateMethod = Versioning.NMS_VERSION.getObfuscatedMethod("LIVING_UPDATE_METHOD");
-        // Prevent the pet from burning
+       // Prevent the pet from burning
         generator.generateMethod(
                 (generator) -> {},
                 ACC_PUBLIC,
-                livingUpdateMethod,
-                Type.VOID_TYPE
+                "setOnFire",
+                Type.VOID_TYPE,
+                Type.INT_TYPE
         );
     }
 }

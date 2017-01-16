@@ -6,9 +6,9 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.event.PetMoveEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 
-import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 import net.techcable.sonarpet.nms.Navigation;
 import net.techcable.sonarpet.nms.PathEntity;
+import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 
 import org.bukkit.entity.Player;
 
@@ -53,10 +53,8 @@ public class PetGoalFollowOwner extends APetGoalFollowOwner {
             return false;
         } else if (this.pet.getEntityPetType() == PetType.ENDERDRAGON) {
             return false;
-        } else {
-            return !(this.pet.getEntity().getTarget() != null && !this.pet.getEntity().getTarget().isDead());
         }
-
+        return true;
     }
 
     @Override
@@ -117,17 +115,15 @@ public class PetGoalFollowOwner extends APetGoalFollowOwner {
                 return;
             }
 
-            if (pet.getEntity().getTarget() == null) {
-                PathEntity path;
-                if (pet.getEntityPetType() == PetType.GHAST) {
-                    path = pet.getEntity().getNavigation().getPathToLocation(pet.getPlayerOwner().getLocation().getBlockX(), pet.getPlayerOwner().getLocation().getBlockY() + 5, pet.getPlayerOwner().getLocation().getBlockZ()); // getPathToLocation
-                } else {
-                    path = pet.getEntity().getNavigation().getPathTo(owner); // getPathTo
-                }
-
-                //Smooth path finding to entity instead of location
-                pet.getEntity().getNavigation().navigateTo(path, speed); // Set a new path for the entity to follow
+            PathEntity path;
+            if (pet.getEntityPetType() == PetType.GHAST) {
+                path = pet.getEntity().getNavigation().getPathToLocation(pet.getPlayerOwner().getLocation().getBlockX(), pet.getPlayerOwner().getLocation().getBlockY() + 5, pet.getPlayerOwner().getLocation().getBlockZ()); // getPathToLocation
+            } else {
+                path = pet.getEntity().getNavigation().getPathTo(owner); // getPathTo
             }
+
+            //Smooth path finding to entity instead of location
+            pet.getEntity().getNavigation().navigateTo(path, speed); // Set a new path for the entity to follow
         }
     }
 }

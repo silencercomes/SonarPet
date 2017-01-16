@@ -63,13 +63,11 @@ public abstract class EntityInsentientPet implements IEntityPet {
         return getEntity().getBukkitEntity();
     }
 
-    private boolean fireProof;
     private double jumpHeight, rideSpeed;
 
     @OverridingMethodsMustInvokeSuper
     public void initiateEntityPet() {
         this.resetEntitySize();
-        fireProof = true;
         getBukkitEntity().setMaxHealth(getPet().getPetType().getMaxHealth());
         getBukkitEntity().setHealth((float) getPet().getPetType().getMaxHealth());
         jumpHeight = EchoPet.getOptions().getRideJumpHeight(this.getPet().getPetType());
