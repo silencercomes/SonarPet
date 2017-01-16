@@ -1,8 +1,13 @@
 package net.techcable.sonarpet.nms.entity.generators;
 
 import java.lang.invoke.MethodHandle;
+import java.util.List;
+
+import com.dsh105.echopet.compat.api.entity.IEntityPet;
+import com.google.common.collect.Lists;
 
 import net.techcable.sonarpet.nms.DismountingBlocked;
+import net.techcable.sonarpet.nms.NMSPetEntity;
 import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 import net.techcable.sonarpet.utils.bytecode.ClassGenerator;
@@ -54,13 +59,11 @@ public class EntityPetGenerator {
         checkState(generator == null, "Already generated class!");
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         generator = new ClassGenerator(writer);
-        String[] interfaces;
+        List<String> interfaces = Lists.newArrayList(
+                Type.getInternalName(NMSPetEntity.class)
+        );
         if (isNeedDismountingBlocked()) {
-            interfaces = new String[] {
-                    Type.getInternalName(DismountingBlocked.class)
-            };
-        } else {
-            interfaces = null;
+            interfaces.add(Type.getInternalName(DismountingBlocked.class));
         }
         generator.visit(
                 V1_8,
@@ -68,7 +71,7 @@ public class EntityPetGenerator {
                 currentType.getInternalName(),
                 null,
                 entityType.getInternalName(),
-                interfaces
+                interfaces.toArray(new String[interfaces.size()])
         );
         this.generate0();
         generator.visitEnd();
@@ -80,6 +83,19 @@ public class EntityPetGenerator {
                 ACC_PUBLIC, // Let them set the hook for us
                 "hook",
                 hookType
+        );
+        generator.generateMethod(
+                (generator) -> {
+                    generator.loadThis();
+                    generator.getField(
+                            currentType,
+                            "hook",
+                            hookType
+                    );
+                },
+                ACC_PUBLIC,
+                "getHook",
+                Type.getType(IEntityPet.class)
         );
         generator.generateConstructor(
                 (generator) -> {

@@ -17,10 +17,14 @@
 
 package com.dsh105.echopet.listeners;
 
+import lombok.*;
+
+import com.dsh105.echopet.EchoPetPlugin;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.event.PetDamageEvent;
 import com.dsh105.echopet.compat.api.event.PetInteractEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
+import com.dsh105.echopet.compat.api.plugin.IEchoPetPlugin;
 import com.dsh105.echopet.compat.api.util.Lang;
 import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import org.bukkit.Material;
@@ -33,12 +37,14 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
+@RequiredArgsConstructor
 public class PetEntityListener implements Listener {
+    private final IEchoPetPlugin plugin;
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
+        if (plugin.isPet(e)) {
             event.setCancelled(true);
         }
     }
@@ -46,7 +52,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCreatureSpawnUnBlock(CreatureSpawnEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
+        if (plugin.isPet(e)) {
             if (event.isCancelled()) {
                 event.setCancelled(false);
             }
@@ -56,8 +62,8 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDismount(VehicleExitEvent event) {
         Entity e = event.getVehicle();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
-            IEntityPet entityPet = (IEntityPet) ReflectionUtil.getEntityHandle(e);
+        if (plugin.isPet(e)) {
+            IEntityPet entityPet = plugin.getPetEntity(e);
             if (entityPet.getPet().isOwnerRiding() && !entityPet.getPet().isOwnerInMountingProcess()) {
                 Lang.sendTo(entityPet.getPet().getOwner(), Lang.RIDE_PET_OFF.toString());
                 entityPet.getPet().ownerRidePet(false);
@@ -68,7 +74,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPetEnterPortal(EntityPortalEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
+        if (plugin.isPet(e)) {
             event.setCancelled(true);
         }
     }
@@ -76,8 +82,8 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
-            IEntityPet entityPet = (IEntityPet) ReflectionUtil.getEntityHandle(e);
+        if (plugin.isPet(e)) {
+            IEntityPet entityPet = plugin.getPetEntity(e);
             PetDamageEvent damageEvent = new PetDamageEvent(entityPet.getPet(), event.getCause(), event.getDamage());
             EchoPet.getPlugin().getServer().getPluginManager().callEvent(damageEvent);
             event.setDamage(damageEvent.getDamage());
@@ -88,13 +94,16 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
-            IEntityPet entityPet = (IEntityPet) ReflectionUtil.getEntityHandle(e);
+        if (plugin.isPet(e)) {
+            IEntityPet entityPet = plugin.getPetEntity(e);
             Entity damager = event.getDamager();
             if (damager instanceof Player) {
                 PetInteractEvent iEvent = new PetInteractEvent(entityPet.getPet(), (Player) damager, PetInteractEvent.Action.LEFT_CLICK, true);
                 EchoPet.getPlugin().getServer().getPluginManager().callEvent(iEvent);
-                event.setCancelled(iEvent.isCancelled());
+                if (iEvent.isCancelled()) {
+                    event.setCancelled(true);
+                    event.setDamage(0);
+                }
             }
         }
     }
@@ -102,7 +111,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityInteract(EntityInteractEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet) {
+        if (plugin.isPet(e)) {
             event.setCancelled(true);
         }
     }
@@ -110,7 +119,7 @@ public class PetEntityListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockForm(EntityBlockFormEvent event) {
         Entity e = event.getEntity();
-        if (ReflectionUtil.getEntityHandle(e) instanceof IEntityPet && event.getNewState().getType().equals(Material.SNOW)) {
+        if (plugin.isPet(e) && event.getNewState().getType().equals(Material.SNOW)) {
             event.setCancelled(true);
             event.getNewState().setType(Material.AIR);
         }

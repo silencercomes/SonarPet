@@ -28,6 +28,7 @@ import com.dsh105.echopet.commands.PetCommand;
 import com.dsh105.echopet.commands.util.CommandManager;
 import com.dsh105.echopet.commands.util.DynamicPluginCommand;
 import com.dsh105.echopet.compat.api.config.ConfigOptions;
+import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.plugin.*;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.reflection.utility.CommonReflection;
@@ -47,6 +48,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -56,8 +58,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.annotation.Nullable;
+
 import net.techcable.sonarpet.BootstrapedPlugin;
 import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSPetEntity;
+import net.techcable.sonarpet.utils.reflection.Reflection;
 
 public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
@@ -149,7 +155,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
         // Register listeners
         manager.registerEvents(new MenuListener(), this);
-        manager.registerEvents(new PetEntityListener(), this);
+        manager.registerEvents(new PetEntityListener(this), this);
         manager.registerEvents(new PetOwnerListener(), this);
         //manager.registerEvents(new ChunkListener(), this);
 
@@ -419,5 +425,16 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     @Override
     public long getUpdateSize() {
         return size;
+    }
+
+    @Nullable
+    @Override
+    public IEntityPet getPetEntity(Entity e) {
+        Object handle = Reflection.getHandle(e);
+        if (handle instanceof NMSPetEntity) {
+            return ((NMSPetEntity) handle).getHook();
+        } else {
+            return null;
+        }
     }
 }

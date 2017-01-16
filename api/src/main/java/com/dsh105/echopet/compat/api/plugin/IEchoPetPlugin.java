@@ -17,14 +17,18 @@
 
 package com.dsh105.echopet.compat.api.plugin;
 
+import javax.annotation.Nullable;
+
 import com.dsh105.commodus.config.YAMLConfig;
 import com.dsh105.echopet.compat.api.config.ConfigOptions;
+import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.plugin.hook.IVanishProvider;
 import com.dsh105.echopet.compat.api.plugin.hook.IWorldGuardProvider;
 import com.dsh105.echopet.compat.api.registration.PetRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import com.zaxxer.hikari.HikariDataSource;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 public interface IEchoPetPlugin extends Plugin {
@@ -64,4 +68,11 @@ public interface IEchoPetPlugin extends Plugin {
     public String getUpdateName();
 
     public long getUpdateSize();
+
+    default boolean isPet(Entity e) {
+        return getPetEntity(e) != null;
+    }
+
+    @Nullable
+    public IEntityPet getPetEntity(Entity e);
 }

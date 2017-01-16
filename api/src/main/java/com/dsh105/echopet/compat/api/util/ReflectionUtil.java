@@ -56,6 +56,7 @@ public class ReflectionUtil {
         }
     }
 
+    @Deprecated // No
     public static Object getEntityHandle(Entity entity) {
         return invokeMethod(getMethod(getCBCClass("entity.CraftEntity"), "getHandle"), entity);
     }
