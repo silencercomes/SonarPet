@@ -92,13 +92,6 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
     // Deobfuscated methods :)
     //
 
-
-    @Override
-    public boolean damageEntity(net.techcable.sonarpet.nms.DamageSource rawSource, float amount) {
-        DamageSource damageSource = ((DamageSourceImpl) rawSource).getHandle();
-        return getHandle().damageEntity(damageSource, amount);
-    }
-
     @Override
     public Player findNearbyPlayer(double range) {
         EntityHuman player = getHandle().world.findNearbyPlayer(getHandle(), range);

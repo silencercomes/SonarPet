@@ -27,6 +27,7 @@ import com.google.common.base.Preconditions;
 import net.techcable.sonarpet.nms.DamageSource;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.NMSLivingEntity;
 import net.techcable.sonarpet.nms.NMSPlayer;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalFloat;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalFollowOwner;
@@ -130,7 +131,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
         return getEntity().getTarget();
     }
 
-    public boolean attack(Entity entity) {
+    public boolean  attack(Entity entity) {
         return this.attack(entity, (float) this.getPet().getPetType().getAttackDamage());
     }
 
@@ -139,7 +140,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
     }
 
     public boolean attack(Entity entity, DamageSource damageSource, float damage) {
-        PetAttackEvent attackEvent = new PetAttackEvent(this.getPet(), getBukkitEntity(), damage);
+        PetAttackEvent attackEvent = new PetAttackEvent(this.getPet(), entity, damage);
         EchoPet.getPlugin().getServer().getPluginManager().callEvent(attackEvent);
         if (!attackEvent.isCancelled()) {
             if (entity instanceof Player) {
@@ -147,7 +148,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
                     return false;
                 }
             }
-            return getEntity().damageEntity(damageSource, (float) attackEvent.getDamage());
+            return INMS.getInstance().wrapEntity(entity).damageEntity(damageSource, (float) attackEvent.getDamage());
         }
         return false;
     }

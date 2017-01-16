@@ -17,9 +17,7 @@
 
 package com.dsh105.echopet.registration;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -42,11 +40,11 @@ import com.google.common.base.Preconditions;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
-import net.techcable.sonarpet.nms.entity.EntityPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.EntityPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
 import net.techcable.sonarpet.utils.reflection.Reflection;
 
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.objectweb.asm.Type;
@@ -156,8 +154,19 @@ public class PetRegistryImpl implements PetRegistry {
                 Type generatedType = Type.getObjectType("net/techcable/sonarpet/nms/entities/type/Generated"
                         + type.getHookClass().getSimpleName());
                 plugin.getLogger().fine("Generating " + type.getHookClass().getSimpleName());
-                return new EntityPetGenerator(generatedType, type.getHookClass(), type.getNmsClass())
-                        .generateClass();
+                Class<? extends EntityPetGenerator> generatorClass;
+                if (petType.getHookClass().isAnnotationPresent(GeneratorClass.class)) {
+                    generatorClass = petType.getHookClass().getAnnotation(GeneratorClass.class).value();
+                } else {
+                    generatorClass = EntityPetGenerator.class;
+                }
+                try {
+                    return generatorClass.getConstructor(Type.class, Class.class, Class.class)
+                            .newInstance(generatedType, type.getHookClass(), type.getNmsClass())
+                            .generateClass();
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException("Unable to generate class for " + petType, e);
+                }
             });
         }
     }

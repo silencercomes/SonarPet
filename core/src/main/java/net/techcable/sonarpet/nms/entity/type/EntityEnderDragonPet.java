@@ -8,8 +8,11 @@ import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEnderDragonPet;
 
 import net.techcable.sonarpet.nms.entity.EntityNoClipPet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.generators.EntityEnderdragonPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
 
 @EntityPetType(petType = PetType.ENDERDRAGON)
+@GeneratorClass(EntityEnderdragonPetGenerator.class)
 public class EntityEnderDragonPet extends EntityNoClipPet implements IEntityEnderDragonPet {
     private final NMSInsentientEntity entity;
     protected EntityEnderDragonPet(IPet pet, NMSInsentientEntity entity) {

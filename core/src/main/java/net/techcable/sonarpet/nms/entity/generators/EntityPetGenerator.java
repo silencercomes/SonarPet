@@ -1,4 +1,4 @@
-package net.techcable.sonarpet.nms.entity;
+package net.techcable.sonarpet.nms.entity.generators;
 
 import java.lang.invoke.MethodHandle;
 
@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.*;
 import static org.objectweb.asm.Opcodes.*;
 
 public class EntityPetGenerator {
-    private ClassGenerator generator;
+    protected ClassGenerator generator;
     private final Type currentType;
     private final Class<?> hookClass, entityClass;
     private final Type hookType, entityType;
@@ -75,7 +75,7 @@ public class EntityPetGenerator {
         return writer.toByteArray();
     }
 
-    private void generate0() {
+    protected void generate0() {
         generator.generateField(
                 ACC_PUBLIC, // Let them set the hook for us
                 "hook",

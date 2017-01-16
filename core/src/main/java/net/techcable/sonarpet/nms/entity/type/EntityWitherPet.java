@@ -8,9 +8,13 @@ import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWitherPet;
 
 import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.generators.EntityUndeadPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.EntityWitherPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
 import net.techcable.sonarpet.utils.Versioning;
 
 @EntityPetType(petType = PetType.WITHER)
+@GeneratorClass(EntityWitherPetGenerator.class)
 public class EntityWitherPet extends EntityInsentientPet implements IEntityWitherPet {
     private final NMSInsentientEntity entity;
 

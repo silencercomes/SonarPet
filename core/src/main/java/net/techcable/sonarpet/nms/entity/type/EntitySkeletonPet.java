@@ -11,6 +11,8 @@ import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.SafeSound;
 import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.generators.EntityUndeadPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
 import net.techcable.sonarpet.nms.switching.SkeletonType;
 import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
 import net.techcable.sonarpet.utils.NmsVersion;
@@ -24,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @EntityPetType(petType = PetType.SKELETON)
+@GeneratorClass(EntityUndeadPetGenerator.class)
 public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySkeletonPet {
     private NMSInsentientEntity entity;
 

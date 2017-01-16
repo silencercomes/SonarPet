@@ -8,4 +8,6 @@ public interface NMSEntity {
     Entity getBukkitEntity();
 
     ImmutableList<NMSEntity> getPassengers();
+
+    boolean damageEntity(DamageSource damageSource, float amount);
 }

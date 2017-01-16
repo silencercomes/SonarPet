@@ -7,6 +7,8 @@
         "ENTITY_TICK_METHOD": "t_",
         "ENTITY_MOVE_METHOD": "g",
         "ON_STEP_METHOD": "a",
-        "ON_INTERACT_METHOD": "a"
+        "ON_INTERACT_METHOD": "a",
+        "WITHER_WREAK_HAVOC_METHOD": "E", // EntityLiving.updateAITasks
+        "LIVING_UPDATE_METHOD": "m" // EntityLivingBase.onLivingUpdate
     }
 }

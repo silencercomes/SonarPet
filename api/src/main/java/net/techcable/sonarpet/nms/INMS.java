@@ -89,6 +89,8 @@ public interface INMS {
 
     DamageSource mobAttackDamageSource(LivingEntity entity);
 
+    DamageSource wrapDamageSource(Object handle);
+
     NMSEntity wrapEntity(Entity entity);
 
     default NMSInsentientEntity switchType(NMSInsentientEntity entity, EntitySwitchReason switchReason, Enum newType) {

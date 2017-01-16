@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 public interface NMSLivingEntity extends NMSEntity {
     LivingEntity getBukkitEntity();
 
-    boolean damageEntity(DamageSource damageSource, float amount);
-
     boolean isInWater();
 
     boolean isInLava();

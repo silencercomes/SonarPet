@@ -99,6 +99,11 @@ public class NMSImpl implements INMS {
     }
 
     @Override
+    public net.techcable.sonarpet.nms.DamageSource wrapDamageSource(Object handle) {
+        return new DamageSourceImpl((DamageSource) handle);
+    }
+
+    @Override
     public NMSEntity wrapEntity(Entity entity) {
         net.minecraft.server.v1_9_R1.Entity handle = ((CraftEntity) entity).getHandle();
         if (handle instanceof EntityPlayer) {

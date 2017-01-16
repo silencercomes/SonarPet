@@ -8,6 +8,8 @@ import net.techcable.sonarpet.nms.INMS;
 
 import net.techcable.sonarpet.nms.entity.AbstractEntityZombiePet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.generators.EntityUndeadPetGenerator;
+import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
 import net.techcable.sonarpet.nms.switching.ZombieType;
 import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
 import net.techcable.sonarpet.utils.NmsVersion;
@@ -16,6 +18,7 @@ import net.techcable.sonarpet.utils.Versioning;
 import org.bukkit.Material;
 
 @EntityPetType(petType = PetType.PIGZOMBIE)
+@GeneratorClass(EntityUndeadPetGenerator.class)
 public class EntityZombiePet extends AbstractEntityZombiePet implements IEntityZombiePet {
     public EntityZombiePet(IPet pet, NMSInsentientEntity entity) {
         super(pet, entity);
