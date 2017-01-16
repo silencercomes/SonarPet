@@ -12,7 +12,7 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Wolf;
 
-@EntityPetType(petType = PetType.WITHER)
+@EntityPetType(petType = PetType.WOLF)
 public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
     private final NMSInsentientEntity entity;
 
@@ -23,6 +23,7 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
 
     @Override
     public void initiateEntityPet() {
+        super.initiateEntityPet();
         setTamed(true); // Tame
     }
 

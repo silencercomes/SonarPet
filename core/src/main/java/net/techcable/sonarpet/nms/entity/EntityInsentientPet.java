@@ -6,6 +6,8 @@ import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 import com.dsh105.echopet.compat.api.ai.PetGoalSelector;
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
@@ -64,6 +66,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
     private boolean fireProof;
     private double jumpHeight, rideSpeed;
 
+    @OverridingMethodsMustInvokeSuper
     public void initiateEntityPet() {
         this.resetEntitySize();
         fireProof = true;
@@ -278,11 +281,6 @@ public abstract class EntityInsentientPet implements IEntityPet {
             getBukkitEntity().setVelocity(new Vector(x, y, z).normalize().multiply(0.3F));
         }
 
-
-        if (petGoalSelector == null) {
-            this.remove(false);
-            return;
-        }
         if (getEntity().getPassengers().isEmpty()) {
             petGoalSelector.updateGoals();
         }

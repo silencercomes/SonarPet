@@ -22,6 +22,8 @@ public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPe
 
     @Override
     public void initiateEntityPet() {
+        super.initiateEntityPet();
+        getBukkitEntity().setTamed(true);
         getBukkitEntity().setCatType(Ocelot.Type.BLACK_CAT);
         getBukkitEntity().setOwner(getPlayerOwner());
     }

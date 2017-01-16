@@ -45,6 +45,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     @Override
     public void initiateEntityPet() {
+        super.initiateEntityPet();
         ((Tameable) getBukkitEntity()).setOwner(Bukkit.getOfflinePlayer(getPet().getOwnerUUID()));
     }
 
