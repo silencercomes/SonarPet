@@ -46,9 +46,11 @@ import org.bukkit.util.Vector;
 
 public abstract class EntityInsentientPet implements IEntityPet {
     private final IPet pet;
+    private final NMSInsentientEntity entity;
 
-    protected EntityInsentientPet(IPet pet) {
+    protected EntityInsentientPet(IPet pet, NMSInsentientEntity entity) {
         this.pet = pet;
+        this.entity = entity;
     }
 
     @Override
@@ -56,7 +58,9 @@ public abstract class EntityInsentientPet implements IEntityPet {
         return pet;
     }
 
-    public abstract NMSInsentientEntity getEntity();
+    public NMSInsentientEntity getEntity() {
+        return entity;
+    }
 
     @Override
     public LivingEntity getBukkitEntity() {

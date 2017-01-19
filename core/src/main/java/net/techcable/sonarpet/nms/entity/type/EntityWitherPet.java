@@ -12,13 +12,9 @@ import net.techcable.sonarpet.utils.Versioning;
 
 @EntityPetType(petType = PetType.WITHER)
 public class EntityWitherPet extends EntityInsentientPet implements IEntityWitherPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityWitherPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
-
 
     public static final int SHIELDED_METADATA_ID = Versioning.NMS_VERSION.getMetadataId("WITHER_SHIELDED_METADATA_ID");
 
@@ -30,10 +26,5 @@ public class EntityWitherPet extends EntityInsentientPet implements IEntityWithe
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.LARGE;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

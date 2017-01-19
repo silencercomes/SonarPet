@@ -13,11 +13,8 @@ import org.bukkit.entity.Bat;
 
 @EntityPetType(petType = PetType.BAT)
 public class EntityBatPet extends EntityInsentientPet implements IEntityBatPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityBatPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -34,11 +31,6 @@ public class EntityBatPet extends EntityInsentientPet implements IEntityBatPet {
     @Override
     public void setHanging(boolean flag) {
         getBukkitEntity().setAwake(!flag);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

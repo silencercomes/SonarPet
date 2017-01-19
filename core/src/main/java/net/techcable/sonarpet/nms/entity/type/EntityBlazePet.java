@@ -12,21 +12,13 @@ import org.bukkit.entity.Blaze;
 
 @EntityPetType(petType = PetType.BLAZE)
 public class EntityBlazePet extends EntityInsentientPet implements IEntityBlazePet {
-    private final NMSInsentientEntity entity;
-
     protected EntityBlazePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
     public void setOnFire(boolean flag) {
         getBukkitEntity().setFireTicks(flag ? Integer.MAX_VALUE : 0);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

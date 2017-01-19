@@ -19,7 +19,7 @@ package com.dsh105.echopet.compat.api.entity.type.nms;
 
 import com.dsh105.echopet.compat.api.entity.IEntityAgeablePet;
 
-import net.techcable.sonarpet.nms.switching.ZombieType;
+import com.dsh105.echopet.compat.api.entity.ZombieType;
 
 public interface IEntityZombiePet extends IEntityAgeablePet {
 

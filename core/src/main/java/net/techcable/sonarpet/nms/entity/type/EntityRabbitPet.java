@@ -12,11 +12,8 @@ import org.bukkit.entity.Rabbit;
 
 @EntityPetType(petType = PetType.RABBIT)
 public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityRabbitPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -27,11 +24,6 @@ public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPe
     @Override
     public void setType(Rabbit.Type type) {
         getBukkitEntity().setRabbitType(type);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

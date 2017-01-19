@@ -11,14 +11,13 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
-import net.techcable.sonarpet.nms.INMS;
 
 import net.techcable.sonarpet.SafeSound;
 import net.techcable.sonarpet.nms.BlockSoundData;
+import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSEntityHorse;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.entity.EntityAgeablePet;
-import net.techcable.sonarpet.nms.NMSEntityHorse;
-import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
 import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 
@@ -33,10 +32,8 @@ import org.bukkit.inventory.ItemStack;
 
 @EntityPetType(petType = PetType.GHAST)
 public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet {
-    private NMSEntityHorse entity;
     protected EntityHorsePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = (NMSEntityHorse) entity;
+        super(pet, entity);
     }
 
 
@@ -66,11 +63,7 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
             this.setArmour(HorseArmour.NONE);
         }
         if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
-            entity = (NMSEntityHorse) INMS.getInstance().switchType(
-                    entity,
-                    EntitySwitchReason.HORSE_SWITCH,
-                    newType
-            );
+            throw new UnsupportedOperationException("TODO");
         } else {
             getEntity().setHorseType(newType);
         }
@@ -185,6 +178,6 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     @Override
     public NMSEntityHorse getEntity() {
-        return entity;
+        return (NMSEntityHorse) super.getEntity();
     }
 }

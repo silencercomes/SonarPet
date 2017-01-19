@@ -6,12 +6,14 @@ import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySlimePet;
 import com.dsh105.echopet.compat.api.util.Perm;
 
+import net.techcable.sonarpet.nms.NMSInsentientEntity;
+
 import org.bukkit.entity.Slime;
 
 public abstract class AbstractEntitySlimePet extends EntityInsentientPet implements IEntitySlimePet {
 
-    protected AbstractEntitySlimePet(IPet pet) {
-        super(pet);
+    protected AbstractEntitySlimePet(IPet pet, NMSInsentientEntity entity) {
+        super(pet, entity);
     }
 
     @Override

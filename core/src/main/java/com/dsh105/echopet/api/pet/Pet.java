@@ -46,7 +46,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class Pet implements IPet {
 
-    private IEntityPet entityPet;
+    protected IEntityPet hook;
     private PetType petType;
 
     private Object ownerIdentification;
@@ -65,8 +65,8 @@ public abstract class Pet implements IPet {
             this.ownerIdentification = UUIDMigration.getIdentificationFor(owner);
             this.setPetType();
             this.setPetName(this.getPetType().getDefaultName(this.getNameOfOwner()));
-            this.entityPet = EchoPet.getPlugin().getPetRegistry().spawnEntity(this, owner);
-            if (this.entityPet != null) {
+            this.hook = EchoPet.getPlugin().getPetRegistry().spawnEntity(this, owner);
+            if (this.hook != null) {
                 this.applyPetName();
                 this.teleportToOwner();
             }
@@ -82,7 +82,7 @@ public abstract class Pet implements IPet {
 
     @Override
     public IEntityPet getEntityPet() {
-        return this.entityPet;
+        return this.hook;
     }
 
     @Override

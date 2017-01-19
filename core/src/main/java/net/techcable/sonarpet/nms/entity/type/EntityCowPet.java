@@ -11,20 +11,12 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.COW)
 public class EntityCowPet extends EntityAgeablePet implements IEntityCowPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityCowPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
     public void makeStepSound() {
         getEntity().playSound(SafeSound.COW_STEP, 0.15F, 1.0F);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

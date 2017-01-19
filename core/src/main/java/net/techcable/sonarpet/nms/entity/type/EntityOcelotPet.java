@@ -12,11 +12,8 @@ import org.bukkit.entity.Ocelot;
 
 @EntityPetType(petType = PetType.OCELOT)
 public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityOcelotPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
 
@@ -31,10 +28,6 @@ public class EntityOcelotPet extends EntityAgeablePet implements IEntityOcelotPe
     @Override
     public void setCatType(int type) {
         getBukkitEntity().setCatType(Ocelot.Type.getType(type));
-    }
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

@@ -13,11 +13,8 @@ import org.bukkit.entity.Pig;
 
 @EntityPetType(petType = PetType.PIG)
 public class EntityPigPet extends EntityAgeablePet implements IEntityPigPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityPigPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -28,10 +25,5 @@ public class EntityPigPet extends EntityAgeablePet implements IEntityPigPet {
     @Override
     public void makeStepSound() {
         getEntity().playSound(SafeSound.PIG_STEP, 0.15F, 1.0F);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

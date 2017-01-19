@@ -6,15 +6,13 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntitySkeletonPet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import net.techcable.sonarpet.nms.INMS;
 
 import net.techcable.sonarpet.SafeSound;
-import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 import net.techcable.sonarpet.nms.entity.generators.EntityUndeadPetGenerator;
 import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
-import net.techcable.sonarpet.nms.switching.SkeletonType;
-import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
+import com.dsh105.echopet.compat.api.entity.SkeletonType;
 import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 
@@ -28,11 +26,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 @EntityPetType(petType = PetType.SKELETON)
 @GeneratorClass(EntityUndeadPetGenerator.class)
 public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySkeletonPet {
-    private NMSInsentientEntity entity;
-
     protected EntitySkeletonPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -84,11 +79,7 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
     @Override
     public void setWither(boolean flag) {
         if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
-            entity = INMS.getInstance().switchType(
-                    entity,
-                    EntitySwitchReason.SKELETON_SWITCH,
-                    flag ? SkeletonType.WITHER : SkeletonType.REGULAR
-            );
+            throw new UnsupportedOperationException("TODO");
         } else {
             getBukkitEntity().setSkeletonType(flag ? Skeleton.SkeletonType.WITHER : Skeleton.SkeletonType.NORMAL);
         }
@@ -110,11 +101,6 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
             default:
                 throw new AssertionError("Unknown skeleton type: " + getSkeletonType());
         }
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

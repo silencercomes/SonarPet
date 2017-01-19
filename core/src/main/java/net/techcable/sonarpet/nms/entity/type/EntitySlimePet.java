@@ -10,15 +10,7 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.SLIME)
 public class EntitySlimePet extends AbstractEntitySlimePet implements IEntitySlimePet {
-    private final NMSInsentientEntity entity;
-
     protected EntitySlimePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
+        super(pet, entity);
     }
 }

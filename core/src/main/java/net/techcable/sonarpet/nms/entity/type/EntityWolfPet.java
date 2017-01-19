@@ -14,11 +14,8 @@ import org.bukkit.entity.Wolf;
 
 @EntityPetType(petType = PetType.WOLF)
 public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityWolfPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -65,11 +62,6 @@ public class EntityWolfPet extends EntityAgeablePet implements IEntityWolfPet {
     @Override
     public void setCollarColor(DyeColor dc) {
         getBukkitEntity().setCollarColor(dc);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

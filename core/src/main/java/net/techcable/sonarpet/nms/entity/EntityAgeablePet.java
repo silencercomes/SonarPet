@@ -6,12 +6,14 @@ import com.dsh105.echopet.compat.api.entity.IEntityAgeablePet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 
+import net.techcable.sonarpet.nms.NMSInsentientEntity;
+
 import org.bukkit.entity.Ageable;
 
 public abstract class EntityAgeablePet extends EntityInsentientPet implements IEntityAgeablePet{
 
-    public EntityAgeablePet(IPet pet) {
-        super(pet);
+    public EntityAgeablePet(IPet pet, NMSInsentientEntity entity) {
+        super(pet, entity);
     }
 
     @Override

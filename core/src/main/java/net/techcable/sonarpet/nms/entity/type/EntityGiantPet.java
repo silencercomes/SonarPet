@@ -12,10 +12,8 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.GHAST)
 public class EntityGiantPet extends EntityInsentientPet implements IEntityGhastPet {
-    private final NMSInsentientEntity entity;
     protected EntityGiantPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
 
@@ -27,10 +25,5 @@ public class EntityGiantPet extends EntityInsentientPet implements IEntityGhastP
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.OVERSIZE;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

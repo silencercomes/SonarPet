@@ -14,19 +14,12 @@ import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
 @EntityPetType(petType = PetType.ENDERDRAGON)
 @GeneratorClass(EntityEnderdragonPetGenerator.class)
 public class EntityEnderDragonPet extends EntityNoClipPet implements IEntityEnderDragonPet {
-    private final NMSInsentientEntity entity;
     protected EntityEnderDragonPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.GIANT;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

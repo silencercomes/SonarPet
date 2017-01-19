@@ -12,11 +12,8 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.SILVERFISH)
 public class EntitySilverfishPet extends EntityInsentientPet implements IEntitySilverfishPet {
-    private final NMSInsentientEntity entity;
-
     protected EntitySilverfishPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -27,10 +24,5 @@ public class EntitySilverfishPet extends EntityInsentientPet implements IEntityS
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.TINY;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

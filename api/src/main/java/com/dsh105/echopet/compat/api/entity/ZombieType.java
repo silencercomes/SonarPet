@@ -1,4 +1,4 @@
-package net.techcable.sonarpet.nms.switching;
+package com.dsh105.echopet.compat.api.entity;
 
 import lombok.*;
 
@@ -6,10 +6,10 @@ import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 
 @RequiredArgsConstructor
-public enum SkeletonType {
+public enum  ZombieType {
+    VILLAGER(NmsVersion.EARLIEST),
     REGULAR(NmsVersion.EARLIEST),
-    WITHER(NmsVersion.EARLIEST),
-    STRAY(NmsVersion.v1_11_R1);
+    HUSK(NmsVersion.v1_11_R1);
 
     private final NmsVersion firstVersion;
 

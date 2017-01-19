@@ -12,20 +12,12 @@ import org.bukkit.entity.Villager;
 
 @EntityPetType(petType = PetType.VILLAGER)
 public class EntityVillagerPet extends EntityAgeablePet implements IEntityVillagerPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityVillagerPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
     public void setProfession(Villager.Profession profession) {
         ((Villager) getBukkitEntity()).setProfession(profession);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

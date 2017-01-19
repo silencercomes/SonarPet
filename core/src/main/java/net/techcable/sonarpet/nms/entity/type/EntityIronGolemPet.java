@@ -14,10 +14,8 @@ import org.bukkit.entity.Entity;
 
 @EntityPetType(petType = PetType.IRONGOLEM)
 public class EntityIronGolemPet extends EntityInsentientPet implements IEntityIronGolemPet {
-    private final NMSInsentientEntity entity;
     protected EntityIronGolemPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -40,10 +38,5 @@ public class EntityIronGolemPet extends EntityInsentientPet implements IEntityIr
     @Override
     public SizeCategory getSizeCategory() {
         return SizeCategory.LARGE;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

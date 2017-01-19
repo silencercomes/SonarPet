@@ -12,11 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class AbstractEntityZombiePet extends EntityInsentientPet {
-    protected NMSInsentientEntity entity;
-
     protected AbstractEntityZombiePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -46,11 +43,6 @@ public abstract class AbstractEntityZombiePet extends EntityInsentientPet {
         } else {
             return SizeCategory.REGULAR;
         }
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

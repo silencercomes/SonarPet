@@ -10,15 +10,7 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.SNOWMAN)
 public class EntitySnowmanPet extends EntityInsentientPet implements IEntitySnowmanPet {
-    private final NMSInsentientEntity entity;
-
     protected EntitySnowmanPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
+        super(pet, entity);
     }
 }

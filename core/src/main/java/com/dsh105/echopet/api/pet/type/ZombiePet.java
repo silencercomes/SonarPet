@@ -23,7 +23,7 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityZombiePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IZombiePet;
 
-import net.techcable.sonarpet.nms.switching.ZombieType;
+import com.dsh105.echopet.compat.api.entity.ZombieType;
 
 import org.bukkit.entity.Player;
 

@@ -12,11 +12,8 @@ import org.bukkit.entity.Creeper;
 
 @EntityPetType(petType = PetType.COW)
 public class EntityCreeperPet extends EntityInsentientPet implements IEntityCreeperPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityCreeperPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -27,12 +24,6 @@ public class EntityCreeperPet extends EntityInsentientPet implements IEntityCree
     @Override
     public void setPowered(boolean flag) {
         getBukkitEntity().setPowered(flag);
-    }
-
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

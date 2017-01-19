@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.techcable.sonarpet.nms.switching.ZombieType;
+import com.dsh105.echopet.compat.api.entity.ZombieType;
 
 
 public class PetManager implements IPetManager {

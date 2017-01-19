@@ -10,16 +10,7 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.WITCH)
 public class EntityWitchPet extends EntityInsentientPet implements IEntityWitchPet {
-    private final NMSInsentientEntity entity;
-
     protected EntityWitchPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
-    }
-
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
+        super(pet, entity);
     }
 }

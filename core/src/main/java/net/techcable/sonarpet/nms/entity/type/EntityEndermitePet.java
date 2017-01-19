@@ -15,10 +15,8 @@ import org.bukkit.Location;
 
 @EntityPetType(petType = PetType.ENDERMITE)
 public class EntityEndermitePet extends EntityNoClipPet implements IEntityEndermitePet {
-    private final NMSInsentientEntity entity;
     protected EntityEndermitePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
@@ -49,10 +47,5 @@ public class EntityEndermitePet extends EntityNoClipPet implements IEntityEnderm
                     )
                     .show();
         }
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

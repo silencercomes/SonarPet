@@ -25,7 +25,6 @@ import com.google.common.base.Preconditions;
 
 import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.item.SpawnEggItemData;
-import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
 import net.techcable.sonarpet.utils.Versioning;
 
 import org.bukkit.Location;
@@ -88,33 +87,6 @@ public interface INMS {
     DamageSource wrapDamageSource(Object handle);
 
     NMSEntity wrapEntity(Entity entity);
-
-    default NMSInsentientEntity switchType(NMSInsentientEntity entity, EntitySwitchReason switchReason, Enum newType) {
-        Preconditions.checkArgument(
-                switchReason.getSwitchTypeClass().isInstance(newType),
-                "Invalid newType must be a %s: %s",
-                switchReason.getSwitchTypeClass().getSimpleName(),
-                newType
-        );
-        if (switchReason.getVersion().compareTo(Versioning.NMS_VERSION) >= 0) {
-            throw new UnsupportedOperationException(
-                    "Switching a "
-                    + entity.getBukkitEntity().getType()
-                    + " into a "
-                    + newType
-                    + " isn't currently supported!"
-            );
-        } else {
-            throw new IllegalArgumentException(
-                    "Switching a "
-                    + entity.getBukkitEntity().getType()
-                    + " into a "
-                    + newType
-                    + " isn't needed on versions less than "
-                    + switchReason.getVersion()
-            );
-        }
-    }
 
     BlockSoundData getBlockSoundData(Material material);
 

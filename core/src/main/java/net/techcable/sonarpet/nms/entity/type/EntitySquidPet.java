@@ -11,20 +11,12 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 @EntityPetType(petType = PetType.SNOWMAN)
 public class EntitySquidPet extends EntityInsentientPet implements IEntitySpiderPet {
-    private final NMSInsentientEntity entity;
-
     protected EntitySquidPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+        super(pet, entity);
     }
 
     @Override
     public void makeStepSound() {
         getEntity().playSound(SafeSound.SPIDER_STEP, 0.15F, 1.0F);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }
