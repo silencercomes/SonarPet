@@ -3,6 +3,7 @@ package net.techcable.sonarpet.nms.versions.v1_8_R3;
 import lombok.*;
 
 import java.lang.invoke.MethodHandle;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
@@ -52,11 +53,11 @@ public class NMSEntityInsentientImpl extends NMSLivingEntityImpl implements NMSI
     @Override
     public void clearGoals() {
         PathfinderGoalSelector goalSelector = getHandle().goalSelector;
-        ImmutableList<SonarField<Set>> fieldsToClear = SonarField.findFieldsWithType(PathfinderGoalSelector.class, Set.class);
+        ImmutableList<SonarField<List>> fieldsToClear = SonarField.findFieldsWithType(PathfinderGoalSelector.class, List.class);
         if (fieldsToClear.size() != 2) {
             throw new AssertionError("Unexpected number of fields to clear: " + fieldsToClear);
         }
-        for (SonarField<Set> field : fieldsToClear) {
+        for (SonarField<List> field : fieldsToClear) {
             field.getValue(goalSelector).clear();
         }
     }
