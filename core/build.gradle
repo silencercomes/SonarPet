@@ -1,0 +1,17 @@
+group = 'net.techcable.sonarpet'
+description = 'SonarPet'
+dependencies {
+    compile(project(':api'))
+    compile(project(':nms-v1_8_R3')) {
+        exclude module: "craftbukkit"
+    }
+    compile(project(':nms-v1_9_R1')) {
+        exclude module: "craftbukkit"
+    }
+    compile(project(':nms-v1_9_R2')) {
+        exclude module: "craftbukkit"
+    }
+    compile(project(':nms-v1_10_R1')) {
+        exclude module: "craftbukkit"
+    }
+}

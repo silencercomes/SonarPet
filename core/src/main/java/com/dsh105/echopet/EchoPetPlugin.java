@@ -34,7 +34,6 @@ import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.reflection.utility.CommonReflection;
 import com.dsh105.echopet.compat.api.registration.PetRegistry;
 import com.dsh105.echopet.compat.api.util.*;
-import com.dsh105.echopet.compatibility.SpigotProtocolHackPacketListener;
 import com.dsh105.echopet.hook.VanishProvider;
 import com.dsh105.echopet.hook.WorldGuardProvider;
 import com.dsh105.echopet.listeners.MenuListener;
@@ -44,7 +43,6 @@ import com.dsh105.echopet.registration.PetRegistryImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -96,8 +94,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
     public String cmdString = "pet";
     public String adminCmdString = "petadmin";
-
-    private SpigotProtocolHackPacketListener spigotProtocolHackPacketListener = null;
 
     // Update data
     public boolean update = false;
@@ -162,8 +158,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
         this.vanishProvider = new VanishProvider(this);
         this.worldGuardProvider = new WorldGuardProvider(this);
 
-        this.setupSpigotProtocolHackCompatibilityIfNeeded();
-
         try {
             Metrics metrics = new Metrics(this);
             metrics.start();
@@ -180,10 +174,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
         if (dbPool != null) {
             dbPool.close();
         }
-        if (this.spigotProtocolHackPacketListener != null) {
-            this.spigotProtocolHackPacketListener.shutdown();
-        }
-
         // Unregister the commands
         this.COMMAND_MANAGER.unregister();
     }
@@ -287,23 +277,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
         // Make sure to convert those UUIDs!
 
-    }
-
-    private void setupSpigotProtocolHackCompatibilityIfNeeded() {
-        if (ReflectionUtil.MC_VERSION_NUMERIC != 174) {
-            return;
-        }
-        try {
-            Class.forName("org.spigotmc.SpigotConfig");
-        } catch (Throwable throwable) {
-            return;
-        }
-        if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            EchoPet.LOG.log(ChatColor.RED + "Spigot 1.7.x-1.8.x ProtocolHack detected, however ProtocolLib not installed. Some pets may crash 1.8 clients!");
-            return;
-        }
-        EchoPet.LOG.log(ChatColor.GREEN + "Spigot 1.7.x-1.8.x ProtocolHack and ProtocolLib detected! Adding 1.8 compatibility!");
-        this.spigotProtocolHackPacketListener = new SpigotProtocolHackPacketListener(this);
     }
 
     @Override

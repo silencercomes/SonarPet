@@ -1,0 +1,16 @@
+rootProject.name = 'SonarPet'
+include ':api'
+include ':nms-v1_8_R3'
+include ':nms-v1_9_R1'
+include ':nms-v1_9_R2'
+include ':nms-v1_10_R1'
+include ':core'
+include ':bootstrap'
+
+project(':api').projectDir = "$rootDir/api" as File
+project(':nms-v1_8_R3').projectDir = "$rootDir/nms/v1_8_R3" as File
+project(':nms-v1_9_R1').projectDir = "$rootDir/nms/v1_9_R1" as File
+project(':nms-v1_9_R2').projectDir = "$rootDir/nms/v1_9_R2" as File
+project(':nms-v1_10_R1').projectDir = "$rootDir/nms/v1_10_R1" as File
+project(':core').projectDir = "$rootDir/core" as File
+project(':bootstrap').projectDir = "$rootDir/bootstrap" as File
