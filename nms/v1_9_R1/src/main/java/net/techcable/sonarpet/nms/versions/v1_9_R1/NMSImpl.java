@@ -2,6 +2,7 @@ package net.techcable.sonarpet.nms.versions.v1_9_R1;
 
 import net.minecraft.server.v1_9_R1.EntityHorse;
 import net.minecraft.server.v1_9_R1.EntityInsentient;
+import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.nms.DismountingBlocked;
 import net.techcable.sonarpet.nms.INMS;
 import com.google.common.collect.ImmutableMap;
@@ -20,8 +21,6 @@ import net.techcable.sonarpet.nms.BlockSoundData;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.versions.v1_9_R1.data.NMSSpawnEggItemData;
-import net.techcable.sonarpet.nms.versions.v1_9_R1.data.NMSSpawnEggItemData;
-import net.techcable.sonarpet.utils.reflection.SonarField;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -119,11 +118,11 @@ public class NMSImpl implements INMS {
         }
     }
 
-    private SonarField<SoundEffectType> STEP_SOUND_FIELD = SonarField.getField(Block.class, "stepSound", SoundEffectType.class);
+    private PineappleField<Block, SoundEffectType> STEP_SOUND_FIELD = PineappleField.create(Block.class, "stepSound", SoundEffectType.class);
     @Override
     @SuppressWarnings("deprecation") // I know about ur stupid magic value warning mom
     public BlockSoundData getBlockSoundData(Material material) {
-        return new BlockSoundDataImpl(STEP_SOUND_FIELD.getValue(Block.getById(material.getId())));
+        return new BlockSoundDataImpl(STEP_SOUND_FIELD.get(Block.getById(material.getId())));
     }
 
     @Override

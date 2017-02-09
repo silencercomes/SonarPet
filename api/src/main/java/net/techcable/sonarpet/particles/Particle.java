@@ -1,16 +1,13 @@
 package net.techcable.sonarpet.particles;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 
-import net.techcable.sonarpet.utils.Versioning;
-import net.techcable.sonarpet.utils.reflection.Reflection;
-import net.techcable.sonarpet.utils.reflection.SonarField;
+import net.techcable.pineapple.reflection.PineappleField;
+import net.techcable.pineapple.reflection.Reflection;
 
 import org.bukkit.Location;
 
-import static net.techcable.sonarpet.utils.reflection.Reflection.*;
-import static net.techcable.sonarpet.utils.reflection.SonarField.findFieldWithType;
+import static net.techcable.sonarpet.utils.reflection.MinecraftReflection.*;
 
 public enum Particle {
     DEATH_CLOUD(0, "explode", 0.1F, 10),
@@ -111,10 +108,11 @@ public enum Particle {
     private static Object getInternalObject(String internalName) {
         Preconditions.checkArgument(!internalName.endsWith("_"), "%s ends with an underscore.", internalName);
         // Normally i'd make these constants, but we can't as its called before fields are initalized
-        Class<? extends Enum> enumParticleClass = getNmsClass("EnumParticle", Enum.class);
-        SonarField<String> enumParticleInternalNameField = findFieldWithType(enumParticleClass, String.class);
+        Class<? extends Enum> enumParticleClass = getNmsClass("EnumParticle").asSubclass(Enum.class);
+        @SuppressWarnings("unchecked")
+        PineappleField<Object, String> enumParticleInternalNameField = (PineappleField) PineappleField.findFieldWithType(enumParticleClass, String.class);
         for (Enum particle : enumParticleClass.getEnumConstants()) {
-            String particleInternalName = enumParticleInternalNameField.getValue(particle);
+            String particleInternalName = enumParticleInternalNameField.get(particle);
             // 1.8 has some crazy stuff
             if (particleInternalName.endsWith("_")) {
                 particleInternalName = particleInternalName.substring(0, particleInternalName.length() - 1);

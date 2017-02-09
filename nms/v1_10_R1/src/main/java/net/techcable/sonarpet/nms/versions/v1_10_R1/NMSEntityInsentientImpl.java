@@ -13,9 +13,9 @@ import net.minecraft.server.v1_10_R1.GenericAttributes;
 import net.minecraft.server.v1_10_R1.Navigation;
 import net.minecraft.server.v1_10_R1.PathfinderGoalSelector;
 import net.minecraft.server.v1_10_R1.SoundEffect;
+import net.techcable.pineapple.reflection.PineappleField;
+import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
-import net.techcable.sonarpet.utils.reflection.SonarField;
-import net.techcable.sonarpet.utils.reflection.SonarMethod;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftEntity;
@@ -30,10 +30,10 @@ public class NMSEntityInsentientImpl extends NMSLivingEntityImpl implements NMSI
     // Check these every minor update!
     //
 
-    private static final MethodHandle GET_DEATH_SOUND_METHOD_HANDLE = SonarMethod.getMethod(
+    private static final MethodHandle GET_DEATH_SOUND_METHOD_HANDLE = Reflection.getMethod(
             EntityLiving.class,
             "bV"
-    ).getInvoker();
+    );
 
 
     //
@@ -53,12 +53,12 @@ public class NMSEntityInsentientImpl extends NMSLivingEntityImpl implements NMSI
     @Override
     public void clearGoals() {
         PathfinderGoalSelector goalSelector = getHandle().goalSelector;
-        ImmutableList<SonarField<Set>> fieldsToClear = SonarField.findFieldsWithType(PathfinderGoalSelector.class, Set.class);
+        ImmutableList<PineappleField<PathfinderGoalSelector, Set>> fieldsToClear = PineappleField.findFieldsWithType(PathfinderGoalSelector.class, Set.class);
         if (fieldsToClear.size() != 2) {
             throw new AssertionError("Unexpected number of fields to clear: " + fieldsToClear);
         }
-        for (SonarField<Set> field : fieldsToClear) {
-            field.getValue(goalSelector).clear();
+        for (PineappleField<PathfinderGoalSelector, Set> field : fieldsToClear) {
+            field.get(goalSelector).clear();
         }
     }
 

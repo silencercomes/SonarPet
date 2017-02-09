@@ -20,7 +20,6 @@ package com.dsh105.echopet.compat.api.entity;
 import lombok.*;
 
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.wrapper.WrappedEntityType;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.EntityType;
@@ -28,7 +27,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import net.techcable.sonarpet.utils.reflection.Reflection;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 public enum PetType {
 
@@ -43,7 +42,7 @@ public enum PetType {
     GIANT("Giant", 53, "Giant Pet", 100D, 0D, "GIANT") {
         @Override
         public Class<?> getNmsClass() {
-            return Reflection.getNmsClass("EntityGiantZombie");
+            return MinecraftReflection.getNmsClass("EntityGiantZombie");
         }
     },
     GUARDIAN("Guardian", 68, "Guardian Pet", 20D, 10D, "GUARDIAN", PetData.ELDER),
@@ -168,6 +167,6 @@ public enum PetType {
     }
 
     public Class<?> getNmsClass() {
-        return Reflection.getNmsClass("Entity" + classIdentifier);
+        return MinecraftReflection.getNmsClass("Entity" + classIdentifier);
     }
 }

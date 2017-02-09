@@ -18,6 +18,8 @@ import com.dsh105.echopet.compat.api.event.PetAttackEvent;
 import com.dsh105.echopet.compat.api.event.PetRideJumpEvent;
 import com.dsh105.echopet.compat.api.event.PetRideMoveEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
+
+import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.nms.INMS;
 import com.dsh105.echopet.compat.api.util.Logger;
 import com.dsh105.echopet.compat.api.util.MenuUtil;
@@ -29,13 +31,11 @@ import com.google.common.base.Preconditions;
 import net.techcable.sonarpet.nms.DamageSource;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
-import net.techcable.sonarpet.nms.NMSLivingEntity;
 import net.techcable.sonarpet.nms.NMSPlayer;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalFloat;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalFollowOwner;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalLookAtPlayer;
-import net.techcable.sonarpet.utils.reflection.Reflection;
-import net.techcable.sonarpet.utils.reflection.SonarField;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -99,10 +99,10 @@ public abstract class EntityInsentientPet implements IEntityPet {
         return getPet().getLocation();
     }
 
-    private static final Class<?> NMS_ENTITY_CLASS = Reflection.getNmsClass("Entity");
-    private static final SonarField<Random> RANDOM_SONAR_FIELD = SonarField.getField(NMS_ENTITY_CLASS, "random", Random.class);
+    private static final Class<?> NMS_ENTITY_CLASS = MinecraftReflection.getNmsClass("Entity");
+    private static final PineappleField<Object, Random> RANDOM_SONAR_FIELD = PineappleField.create(NMS_ENTITY_CLASS, "random", Random.class);
     public Random random() {
-        return RANDOM_SONAR_FIELD.getValue(Reflection.getHandle(getBukkitEntity()));
+        return RANDOM_SONAR_FIELD.get(MinecraftReflection.getHandle(getBukkitEntity()));
     }
 
     private PetGoalSelector petGoalSelector;

@@ -4,7 +4,6 @@ import lombok.*;
 
 import java.lang.invoke.MethodHandle;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
@@ -13,9 +12,9 @@ import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.Navigation;
 import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
+import net.techcable.pineapple.reflection.PineappleField;
+import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
-import net.techcable.sonarpet.utils.reflection.SonarField;
-import net.techcable.sonarpet.utils.reflection.SonarMethod;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
@@ -30,10 +29,10 @@ public class NMSEntityInsentientImpl extends NMSLivingEntityImpl implements NMSI
     // Check these every minor update!
     //
 
-    private static final MethodHandle GET_DEATH_SOUND_METHOD_HANDLE = SonarMethod.getMethod(
+    private static final MethodHandle GET_DEATH_SOUND_METHOD_HANDLE = Reflection.getMethod(
             EntityLiving.class,
             "bo"
-    ).getInvoker();
+    );
 
 
     //
@@ -53,12 +52,12 @@ public class NMSEntityInsentientImpl extends NMSLivingEntityImpl implements NMSI
     @Override
     public void clearGoals() {
         PathfinderGoalSelector goalSelector = getHandle().goalSelector;
-        ImmutableList<SonarField<List>> fieldsToClear = SonarField.findFieldsWithType(PathfinderGoalSelector.class, List.class);
+        ImmutableList<PineappleField<PathfinderGoalSelector, List>> fieldsToClear = PineappleField.findFieldsWithType(PathfinderGoalSelector.class, List.class);
         if (fieldsToClear.size() != 2) {
             throw new AssertionError("Unexpected number of fields to clear: " + fieldsToClear);
         }
-        for (SonarField<List> field : fieldsToClear) {
-            field.getValue(goalSelector).clear();
+        for (PineappleField<PathfinderGoalSelector, List> field : fieldsToClear) {
+            field.get(goalSelector).clear();
         }
     }
 

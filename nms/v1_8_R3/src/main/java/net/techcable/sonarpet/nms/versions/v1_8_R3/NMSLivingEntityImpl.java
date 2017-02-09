@@ -1,11 +1,10 @@
 package net.techcable.sonarpet.nms.versions.v1_8_R3;
 
-import net.minecraft.server.v1_8_R3.DamageSource;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.nms.DataWatcher;
 import net.techcable.sonarpet.nms.NMSLivingEntity;
-import net.techcable.sonarpet.utils.reflection.SonarField;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
@@ -170,11 +169,11 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
     // Utility methods and wrappers
     //
 
-    private static final SonarField<Boolean> IS_JUMPING_FIELD = SonarField.getField(EntityLiving.class, IS_JUMPING_FIELD_NAME, boolean.class);
+    private static final PineappleField<EntityLiving, Boolean> IS_JUMPING_FIELD = PineappleField.create(EntityLiving.class, IS_JUMPING_FIELD_NAME, boolean.class);
 
     @Override
     public boolean isJumping() {
-        return IS_JUMPING_FIELD.getValue(getHandle());
+        return IS_JUMPING_FIELD.getBoxed(getHandle());
     }
 
     @Override

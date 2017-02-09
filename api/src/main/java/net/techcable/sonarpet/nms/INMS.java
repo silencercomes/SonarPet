@@ -21,26 +21,22 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-import com.dsh105.echopet.compat.api.entity.IEntityPet;
-import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.registration.PetRegistrationEntry;
 import com.google.common.base.Preconditions;
 
+import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.item.SpawnEggItemData;
 import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
 import net.techcable.sonarpet.utils.Versioning;
-import net.techcable.sonarpet.utils.reflection.Reflection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.SpawnEgg;
 
-import static net.techcable.sonarpet.utils.Versioning.NMS_VERSION;
+import static net.techcable.sonarpet.utils.Versioning.*;
 
 @SuppressWarnings("deprecation")
 public interface INMS {

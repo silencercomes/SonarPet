@@ -61,7 +61,7 @@ import javax.annotation.Nullable;
 import net.techcable.sonarpet.BootstrapedPlugin;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSPetEntity;
-import net.techcable.sonarpet.utils.reflection.Reflection;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
@@ -403,7 +403,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     @Nullable
     @Override
     public IEntityPet getPetEntity(Entity e) {
-        Object handle = Reflection.getHandle(e);
+        Object handle = MinecraftReflection.getHandle(e);
         if (handle instanceof NMSPetEntity) {
             return ((NMSPetEntity) handle).getHook();
         } else {

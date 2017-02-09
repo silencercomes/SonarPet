@@ -2,7 +2,6 @@ package net.techcable.sonarpet.particles;
 
 import lombok.*;
 
-import com.captainbern.minecraft.wrapper.WrappedPacket;
 import com.dsh105.commodus.reflection.Reflection;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -22,10 +21,10 @@ public class v18ParticleBuilder extends PacketParticleBuilder {
     }
 
     @Override
-    protected void setupPacket(WrappedPacket packet) {
+    protected void setupPacket(Object packet) {
         super.setupPacket(packet);
-        packet.getIntegerArrays().write(0, createData());
-        packet.getBooleans().write(0, isForced());
+        PARTICLE_PACKET_TYPE.putObject(packet, 1, createData());
+        PARTICLE_PACKET_TYPE.putBoolean(packet, 0, isForced());
     }
 
     private int[] createData() {

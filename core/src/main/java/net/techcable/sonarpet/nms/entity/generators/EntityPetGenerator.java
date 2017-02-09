@@ -11,7 +11,7 @@ import net.techcable.sonarpet.nms.NMSPetEntity;
 import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 import net.techcable.sonarpet.utils.bytecode.ClassGenerator;
-import net.techcable.sonarpet.utils.reflection.Reflection;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 import org.bukkit.entity.Player;
 import org.objectweb.asm.ClassWriter;
@@ -290,11 +290,11 @@ public class EntityPetGenerator {
     // Type constants
     //
     private static final Type METHOD_HANDLE_TYPE = Type.getType(MethodHandle.class);
-    private static final Type BLOCK_POSITION_TYPE = Type.getType(Reflection.getNmsClass("BlockPosition"));
-    private static final Type BLOCK_TYPE = Type.getType(Reflection.getNmsClass("Block"));
-    private static final Type ENTITY_TYPE = Type.getType(Reflection.getNmsClass("Entity"));
-    private static final Type ENTITY_HUMAN_TYPE = Type.getType(Reflection.getNmsClass("EntityHuman"));
-    private static final Type CRAFT_HUMAN_ENTITY_TYPE = Type.getType(Reflection.getObcClass("entity.CraftHumanEntity"));
-    private static final Type WORLD_TYPE = Type.getType(Reflection.getNmsClass("World"));
+    private static final Type BLOCK_POSITION_TYPE = Type.getType(MinecraftReflection.getNmsClass("BlockPosition"));
+    private static final Type BLOCK_TYPE = Type.getType(MinecraftReflection.getNmsClass("Block"));
+    private static final Type ENTITY_TYPE = Type.getType(MinecraftReflection.getNmsClass("Entity"));
+    private static final Type ENTITY_HUMAN_TYPE = Type.getType(MinecraftReflection.getNmsClass("EntityHuman"));
+    private static final Type CRAFT_HUMAN_ENTITY_TYPE = Type.getType(MinecraftReflection.getObcClass("entity.CraftHumanEntity"));
+    private static final Type WORLD_TYPE = Type.getType(MinecraftReflection.getNmsClass("World"));
 
 }

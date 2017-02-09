@@ -14,6 +14,7 @@ subprojects {
     }
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven { url "https://repo.techcable.net/content/groups/public/" }
         maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
@@ -28,6 +29,7 @@ subprojects {
 
 
     dependencies {
+        compile "net.techcable:pineapple:0.1.0-beta2-SNAPSHOT"
         compile("com.dsh105:Commodus:1.0.5") {
             exclude(module: 'Minecraft-Reflection')
         }
@@ -35,7 +37,6 @@ subprojects {
             exclude(module: 'Commodus')
         }
         compile "org.ow2.asm:asm-all:5.1"
-        compile "com.captainbern:Minecraft-Reflection:1.0.0"
         compile "org.slf4j:slf4j-jdk14:1.7.5"
         compile "com.zaxxer:HikariCP:2.4.5"
         compileOnly "org.bukkit:bukkit:1.11-R0.1-SNAPSHOT"

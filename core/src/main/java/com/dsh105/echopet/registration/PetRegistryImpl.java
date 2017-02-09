@@ -42,7 +42,7 @@ import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 import net.techcable.sonarpet.nms.entity.generators.EntityPetGenerator;
 import net.techcable.sonarpet.nms.entity.generators.GeneratorClass;
-import net.techcable.sonarpet.utils.reflection.Reflection;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -184,11 +184,11 @@ public class PetRegistryImpl implements PetRegistry {
         Class<?> entityType = getPetEntityClass(pet.getPetType());
         try {
             Field hookField = entityType.getField("hook");
-            Object worldHandle = Reflection.getObcClass("CraftWorld").getMethod("getHandle")
+            Object worldHandle = MinecraftReflection.getObcClass("CraftWorld").getMethod("getHandle")
                     .invoke(owner.getWorld());
-            Object rawEntity = entityType.getConstructor(Reflection.getNmsClass("World"))
+            Object rawEntity = entityType.getConstructor(MinecraftReflection.getNmsClass("World"))
                     .newInstance(worldHandle);
-            Entity bukkitEntity = (Entity) Reflection.getNmsClass("Entity").getDeclaredMethod("getBukkitEntity")
+            Entity bukkitEntity = (Entity) MinecraftReflection.getNmsClass("Entity").getDeclaredMethod("getBukkitEntity")
                     .invoke(rawEntity);
             NMSInsentientEntity entity = (NMSInsentientEntity) INMS.getInstance().wrapEntity(bukkitEntity);
             IEntityPet hook = entry.createHookClass(pet, entity);
