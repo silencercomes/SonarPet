@@ -4,7 +4,7 @@ description: >
   SonarPet is an advanced, easy to use plugin, designed to handle custom-tailored pets with more unique behaviours than vanilla Minecraft entities. Perfect for donation perks.
 
 authors: [Techcable, DSH105]
-website: ${project.url}
+website: "https://www.spigotmc.org/resources/sonarpets.20523/"
 main: net.techcable.sonarpet.Bootstrap
 # If EchoPet is installed we want to be loaded after them so we can error
 softdepend: [WorldGuard, VanishNoPacket, ProtocolLib, EchoPet]
