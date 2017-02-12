@@ -1,7 +1,12 @@
 package net.techcable.sonarpet.nms.entity.generators;
 
+import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSEntity;
+import net.techcable.sonarpet.nms.NMSLivingEntity;
 import net.techcable.sonarpet.utils.Versioning;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
+import org.bukkit.entity.Entity;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;

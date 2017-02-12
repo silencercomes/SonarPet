@@ -168,38 +168,6 @@ public abstract class EntityInsentientPet implements IEntityPet {
         }
     }
 
-    // well then...it's now 'final'
-
-    /*
-    // Overriden from EntityInsentient - Most importantly overrides pathfinding selectors
-    @Override
-    protected final void doTick() {
-        super.doTick();
-        ++this.ticksFarFromPlayer;
-
-        this.D();
-
-        this.getEntitySenses().a();
-
-        // If this ever happens...
-        if (this.petGoalSelector == null) {
-            this.remove(false);
-            return;
-        }
-        this.petGoalSelector.updateGoals();
-
-        this.navigation.k();
-
-        this.E();
-
-        this.getControllerMove().c();
-
-        this.getControllerLook().a();
-
-        this.getControllerJump().b();
-    }
-    */
-
     @Override
     public boolean onInteract(Player p) {
         if (p.getUniqueId().equals(getPlayerOwner().getUniqueId())) {

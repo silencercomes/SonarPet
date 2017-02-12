@@ -23,9 +23,9 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class EntityPetGenerator {
     protected ClassGenerator generator;
-    private final Type currentType;
-    private final Class<?> hookClass, entityClass;
-    private final Type hookType, entityType;
+    protected final Type currentType;
+    protected final Class<?> hookClass, entityClass;
+    protected final Type hookType, entityType;
 
     public EntityPetGenerator(Type currentType, Class<?> hookClass, Class<?> entityClass) {
         this.currentType = currentType;
@@ -124,6 +124,7 @@ public class EntityPetGenerator {
         final String entityMoveMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_MOVE_METHOD");
         final String onStepMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ON_STEP_METHOD");
         final String onInteractMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ON_INTERACT_METHOD");
+        final String proceduralAIMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_PROCEDURAL_AI_METHOD");
         generator.generateMethod(
                 (generator) -> {
                     generator.loadThis();
@@ -252,6 +253,16 @@ public class EntityPetGenerator {
                 onInteractMethodName,
                 Type.VOID_TYPE,
                 ENTITY_HUMAN_TYPE
+        );
+        /*
+         * Block the 'procedural' AI system too, which is different from the usual API.
+         * This prevents stuff like bat flying, villager trading, and wither chaos.
+         */
+        generator.generateMethod(
+                (generator) -> {},
+                ACC_PUBLIC,
+                proceduralAIMethodName,
+                Type.VOID_TYPE
         );
         if (isNeedDismountingBlocked()) {
             // Pets are being secretly dismounted, so we have to block it here

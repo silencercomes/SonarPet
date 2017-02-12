@@ -14,7 +14,7 @@ public class DataWatcherImpl implements net.techcable.sonarpet.nms.DataWatcher {
 
     @Override
     public void setBoolean(int id, boolean value) {
-        dataWatcher.watch(id, value);
+        dataWatcher.watch(id, (byte) (value ? 1 : 0));
     }
 
     @Override

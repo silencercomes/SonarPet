@@ -20,6 +20,11 @@ public class EntityBatPet extends EntityInsentientPet implements IEntityBatPet {
         this.entity = entity;
     }
 
+    @Override
+    public void initiateEntityPet() {
+        super.initiateEntityPet();
+        this.getBukkitEntity().setAwake(true);
+    }
 
     @Override
     public SizeCategory getSizeCategory() {

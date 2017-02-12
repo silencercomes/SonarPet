@@ -16,6 +16,9 @@ dependencies {
 }
 
 shadowJar {
+    baseName = "SonarPet"
+    classifier = null
+    version = null
     configurations = [project.configurations.compile]
     dependencies {
         // Only include sonarpet

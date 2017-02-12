@@ -4,15 +4,16 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class MethodGenerator extends MethodVisitor {
+public class MethodGenerator extends LocalVariablesSorter {
     private final int access;
     private final String name;
     private final Type methodType;
     public MethodGenerator(MethodVisitor methodVisitor, int access, String name, String desc) {
-        super(ASM5, methodVisitor);
+        super(ASM5, access, desc, methodVisitor);
         this.access = access;
         this.name = name;
         this.methodType = Type.getMethodType(desc);
@@ -48,6 +49,16 @@ public class MethodGenerator extends MethodVisitor {
         );
     }
 
+    public void invokeStatic(String name, Type ownerType, Type returnType, Type... parameterTypes) {
+        super.visitMethodInsn(
+                INVOKESTATIC,
+                ownerType.getInternalName(),
+                name,
+                Type.getMethodDescriptor(returnType, parameterTypes),
+                false
+        );
+    }
+
     public void invokeVirtual(String name, Type ownerType, Type returnType, Type... parameterTypes) {
         super.visitMethodInsn(
                 INVOKEVIRTUAL,
@@ -55,6 +66,16 @@ public class MethodGenerator extends MethodVisitor {
                 name,
                 Type.getMethodDescriptor(returnType, parameterTypes),
                 false
+        );
+    }
+
+    public void invokeInterface(String name, Type ownerType, Type returnType, Type... parameterTypes) {
+        super.visitMethodInsn(
+                INVOKEINTERFACE,
+                ownerType.getInternalName(),
+                name,
+                Type.getMethodDescriptor(returnType, parameterTypes),
+                true
         );
     }
 
