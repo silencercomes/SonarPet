@@ -22,33 +22,31 @@
  */
 package net.techcable.sonarpet;
 
+import lombok.*;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.invoke.WrongMethodTypeException;
+import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.nio.file.CopyOption;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -100,6 +98,7 @@ public final class LibraryLoader {
          * @throws IOException if unable to download libraries
          * @throws IllegalArgumentException if any of the libraries don't exist
          */
+        @SneakyThrows
         public LibraryLoadingClassLoader(
                 ClassLoader parent,
                 Set<LibraryArtifact> libraryArtifacts,
@@ -107,9 +106,13 @@ public final class LibraryLoader {
         ) throws IOException {
             super(
                     libraryArtifacts.stream()
-                            .map((libraryArtifact) -> sneakyThrow(() -> {
-                                return downloadArtifact(libraryArtifact, repositories);
-                            }))
+                            .map((libraryArtifact) -> {
+                                try {
+                                    return downloadArtifact(libraryArtifact, repositories);
+                                } catch (IOException e) {
+                                    throw sneakyThrow(e);
+                                }
+                            })
                             .map(LibraryLoader::toUrl)
                             .toArray(URL[]::new),
                     parent
@@ -128,6 +131,7 @@ public final class LibraryLoader {
          * @throws IllegalArgumentException if there is no method with the specified name
          * @throws WrongMethodTypeException if the arguments don't correspond to the specified method type
          */
+        @SneakyThrows
         public Object invokeStaticMethod(
                 String className,
                 String methodName,
@@ -147,7 +151,7 @@ public final class LibraryLoader {
                         methodName,
                         methodType
                 );
-                return sneakyThrow(() -> handle.invokeWithArguments(args));
+                return handle.invokeWithArguments(args);
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException(
                         "Can't find static method "
@@ -156,8 +160,6 @@ public final class LibraryLoader {
                                 + " in class"
                                 + className
                 );
-            } catch (ClassNotFoundException | IllegalAccessException e) {
-                throw sneakyThrow(e);
             } finally {
                 Thread.currentThread().setContextClassLoader(previousContextClassLoader);
             }
@@ -170,8 +172,7 @@ public final class LibraryLoader {
          * and only downloads libraries if they aren't in the local repository.
          * </p>
          *
-         * @param libraryArtifacts the libraries to load classes from
-         * @param repositories the repositories to download the libraries from
+         * @param libraries the libraries to load classes from
          * @throws IOException if unable to download libraries
          * @throws IllegalArgumentException if any of the libraries don't exist
          */
@@ -317,6 +318,7 @@ public final class LibraryLoader {
      * @throws IOException if an error occurs downloading the dependency
      * @throws IllegalArgumentException if the specified artifact doesn't exist, or there are no repositories to search
      */
+    @SneakyThrows(URISyntaxException.class)
     public static void downloadArtifactTo(
             LibraryArtifact artifact,
             Set<URL> repositories,
@@ -332,7 +334,7 @@ public final class LibraryLoader {
         }
         Objects.requireNonNull(destFile, "Null destination file");
         repositorySearch: for (URL repository : repositoriesArray) {
-            URLConnection connection = repository.openConnection();
+            URLConnection connection = repository.toURI().resolve(artifact.getRelativePath()).toURL().openConnection();
             if (connection instanceof HttpURLConnection) {
                 connection.setRequestProperty("User-Agent", USER_AGENT);
                 ((HttpURLConnection) connection).setRequestMethod("GET");
@@ -450,24 +452,17 @@ public final class LibraryLoader {
         }
 
         public String getRelativePath() {
-            StringBuilder builder = new StringBuilder(
-                    groupId.length()
-                            + artifactId.length() * 2
-                            + version.length() * 2
-                            + extension.length()
-                            + 5);
-            builder.append(groupId.replace('.', '/'));
-            builder.append('/');
-            builder.append(artifactId);
-            builder.append('/');
-            builder.append(version);
-            builder.append('/');
-            builder.append(artifactId);
-            builder.append('-');
-            builder.append(version);
-            builder.append('.');
-            builder.append(extension);
-            return builder.toString();
+            return groupId.replace('.', '/') +
+                    '/' +
+                    artifactId +
+                    '/' +
+                    version +
+                    '/' +
+                    artifactId +
+                    '-' +
+                    version +
+                    '.' +
+                    extension;
         }
 
         public boolean isInLocalRepo() {
@@ -478,20 +473,6 @@ public final class LibraryLoader {
             return LOCAL_REPOSITORY.resolve(getRelativePath());
         }
 
-        public URL relativeTo(URL other) {
-            try {
-                URI otherUri = Objects.requireNonNull(other, "Null url").toURI();
-                return otherUri.resolve(getRelativePath()).toURL();
-            } catch (MalformedURLException | URISyntaxException e) {
-                throw new IllegalArgumentException(
-                        "Invalid url "
-                                + other
-                                + " relative to "
-                                + this.getRelativePath()
-                );
-            }
-        }
-
         @Override
         public String toString() {
             return groupId + ":" + artifactId + ":" + version;
@@ -500,12 +481,14 @@ public final class LibraryLoader {
 
     // Internal Utilities
 
+    @SafeVarargs
     private static <T> T[] joinArrays(T[] first, T... second) {
         Objects.requireNonNull(first, "Null first array");
         final int firstLength = first.length;
         Class<?> componentType = first.getClass().getComponentType();
         Objects.requireNonNull(second, "Null second array");
         final int secondLength = second.length;
+        @SuppressWarnings("unchecked")
         T[] result = (T[]) Array.newInstance(componentType, firstLength + secondLength);
         System.arraycopy(first, 0, result, 0, firstLength);
         System.arraycopy(second, 0, result, firstLength, secondLength);
@@ -516,7 +499,7 @@ public final class LibraryLoader {
             T[] array,
             BiFunction<T[], T, E> errorMsgFunction
     ) throws E {
-        Set<T> result = new HashSet(array.length);
+        Set<T> result = new HashSet<>(array.length);
         for (T element : array) {
             if (!result.add(element)) {
                 throw errorMsgFunction.apply(array, element);
@@ -525,39 +508,18 @@ public final class LibraryLoader {
         return result;
     }
 
-    private static URL toUrl(Path path) {
-        return sneakyThrow(() -> {
-            URI uri = Objects.requireNonNull(path, "Null path").toUri();
-            return uri.toURL();
-        });
-    }
-
-    private static URL createUrl(String str) {
-        return sneakyThrow(() -> new URL(str));
-    }
-
-    @FunctionalInterface
-    private static interface CheckedSupplier<T> {
-        public T run() throws Throwable;
-
-        public default Supplier<T> toSupplier() {
-            return () -> sneakyThrow(this::run);
-        }
-    }
-
-    private static <T> T sneakyThrow(CheckedSupplier<T> code) {
-        try {
-            return code.run();
-        } catch (Throwable t) {
-            throw sneakyThrow(t);
-        }
-    }
-
+    @SneakyThrows
     private static AssertionError sneakyThrow(Throwable t) {
-        return LibraryLoader.<RuntimeException>sneakyThrow0(t);
+        throw t;
     }
 
-    private static <T extends Throwable> AssertionError sneakyThrow0(Throwable t) throws T {
-        throw (T) t;
+    @SneakyThrows
+    private static URL toUrl(Path path) {
+        return path.toUri().toURL();
+    }
+
+    @SneakyThrows
+    private static URL createUrl(String str) {
+        return new URL(str);
     }
 }
