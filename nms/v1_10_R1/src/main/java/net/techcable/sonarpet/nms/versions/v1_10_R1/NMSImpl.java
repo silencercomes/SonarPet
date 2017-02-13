@@ -4,6 +4,7 @@ import net.minecraft.server.v1_10_R1.EntityHorse;
 import net.minecraft.server.v1_10_R1.EntityInsentient;
 import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.nms.DismountingBlocked;
+import net.techcable.sonarpet.nms.EntityRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import com.google.common.collect.ImmutableMap;
 
@@ -128,6 +129,11 @@ public class NMSImpl implements INMS {
     @SuppressWarnings("deprecation") // I know about ur stupid magic value warning mom
     public boolean isLiquid(Material block) {
         return Block.getById(block.getId()).getBlockData().getMaterial().isLiquid();
+    }
+
+    @Override
+    public EntityRegistry getEntityRegistry() {
+        return new NMSEntityRegistry();
     }
 
     //

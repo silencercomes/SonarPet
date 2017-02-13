@@ -91,6 +91,8 @@ public interface INMS {
     BlockSoundData getBlockSoundData(Material material);
 
     boolean isLiquid(Material block);
+
+    EntityRegistry getEntityRegistry();
 }
 
 /**

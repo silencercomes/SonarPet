@@ -5,7 +5,6 @@ import lombok.*;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,12 +16,10 @@ import com.dsh105.echopet.EchoPetPlugin;
 import com.google.common.collect.ImmutableSet;
 
 import net.techcable.sonarpet.LibraryLoader.LibraryArtifact;
-import net.techcable.sonarpet.LibraryLoader.LibraryLoadingClassLoader;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static net.techcable.sonarpet.LibraryLoader.LibraryArtifact.*;
