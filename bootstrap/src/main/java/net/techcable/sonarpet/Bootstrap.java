@@ -36,10 +36,13 @@ public class Bootstrap extends JavaPlugin {
             parseJarSpecifier("org.ow2.asm:asm-all:5.1"),
             parseJarSpecifier("org.slf4j:slf4j-api:1.7.5"),
             parseJarSpecifier("org.slf4j:slf4j-jdk14:1.7.5"),
-            parseJarSpecifier("com.zaxxer:HikariCP:2.4.5")
+            parseJarSpecifier("com.zaxxer:HikariCP:2.4.5"),
+            parseJarSpecifier("org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.0-rc-91"),
+            parseJarSpecifier("org.jetbrains.kotlin:kotlin-stdlib:1.1.0-rc-91")
     );
     private static final ImmutableSet<URL> REPOSITORIES = ImmutableSet.of(
-            createUrl("https://repo.techcable.net/content/groups/public/")
+            createUrl("https://repo.techcable.net/content/groups/public/"),
+            createUrl("https://dl.bintray.com/kotlin/kotlin-eap-1.1/")
     );
     private static final MethodHandle ADD_URL_METHOD;
     static {

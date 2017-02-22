@@ -1,19 +1,19 @@
 package net.techcable.sonarpet.nms.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityBlazePet;
 
-import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.EntityInsentientPet;
 
 import org.bukkit.entity.Blaze;
 
-@EntityPetType(petType = PetType.BLAZE)
+@EntityHook(EntityHookType.BLAZE)
 public class EntityBlazePet extends EntityInsentientPet implements IEntityBlazePet {
-    protected EntityBlazePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet, entity);
+    protected EntityBlazePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
     @Override

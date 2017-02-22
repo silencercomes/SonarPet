@@ -27,13 +27,17 @@ import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.event.PetTeleportEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.util.Lang;
+
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.INMS;
 import com.dsh105.echopet.compat.api.util.PetNames;
 import com.dsh105.echopet.compat.api.util.StringSimplifier;
+import com.google.common.base.Preconditions;
 
 import net.techcable.sonarpet.particles.Particle;
 
@@ -43,6 +47,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import static com.google.common.base.Preconditions.*;
 
 public abstract class Pet implements IPet {
 
@@ -65,12 +71,32 @@ public abstract class Pet implements IPet {
             this.ownerIdentification = UUIDMigration.getIdentificationFor(owner);
             this.setPetType();
             this.setPetName(this.getPetType().getDefaultName(this.getNameOfOwner()));
-            this.hook = EchoPet.getPlugin().getPetRegistry().spawnEntity(this, owner);
-            if (this.hook != null) {
-                this.applyPetName();
-                this.teleportToOwner();
+            spawnPet(owner, getPetType().getPrimaryHookType(), false);
+        }
+    }
+
+    private void spawnPet(Player owner, EntityHookType hookType, boolean forced) {
+        checkState(this.hook == null, "Pet already spawned");
+        if (!forced) {
+            PetPreSpawnEvent spawnEvent = new PetPreSpawnEvent(this, owner.getLocation());
+            EchoPet.getPlugin().getServer().getPluginManager().callEvent(spawnEvent);
+            if (spawnEvent.isCancelled()) {
+                owner.sendMessage(EchoPet.getPrefix() + ChatColor.YELLOW + "Pet spawn was cancelled externally.");
+                EchoPet.getManager().removePet(this, true);
+                return;
             }
         }
+        this.hook = EchoPet.getPlugin().getHookRegistry().spawnEntity(this, hookType, owner.getLocation());
+        this.applyPetName();
+        this.teleportToOwner();
+    }
+
+    protected void switchHookType(Player owner, EntityHookType newHookType) {
+        if (newHookType == hook.getHookType())
+        checkState(this.hook != null, "Pet isn't spawned yet!");
+        EchoPet.getManager().removePet(this, false);
+        this.hook = null;
+        spawnPet(owner, newHookType, true);
     }
 
     protected void setPetType() {

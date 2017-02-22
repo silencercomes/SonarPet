@@ -5,7 +5,6 @@ import lombok.*;
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import com.dsh105.echopet.compat.api.ai.PetGoalSelector;
@@ -18,9 +17,6 @@ import com.dsh105.echopet.compat.api.event.PetAttackEvent;
 import com.dsh105.echopet.compat.api.event.PetRideJumpEvent;
 import com.dsh105.echopet.compat.api.event.PetRideMoveEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-
-import net.techcable.pineapple.reflection.PineappleField;
-import net.techcable.sonarpet.nms.INMS;
 import com.dsh105.echopet.compat.api.util.Logger;
 import com.dsh105.echopet.compat.api.util.MenuUtil;
 import com.dsh105.echopet.compat.api.util.Perm;
@@ -28,7 +24,10 @@ import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.google.common.base.Preconditions;
 
+import net.techcable.pineapple.reflection.PineappleField;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.DamageSource;
+import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.NMSPlayer;
@@ -47,10 +46,12 @@ import org.bukkit.util.Vector;
 public abstract class EntityInsentientPet implements IEntityPet {
     private final IPet pet;
     private final NMSInsentientEntity entity;
+    private final EntityHookType hookType;
 
-    protected EntityInsentientPet(IPet pet, NMSInsentientEntity entity) {
+    protected EntityInsentientPet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
         this.pet = pet;
         this.entity = entity;
+        this.hookType = hookType;
     }
 
     @Override
@@ -68,6 +69,11 @@ public abstract class EntityInsentientPet implements IEntityPet {
     }
 
     private double jumpHeight, rideSpeed;
+
+    @Override
+    public EntityHookType getHookType() {
+        return hookType;
+    }
 
     @OverridingMethodsMustInvokeSuper
     public void initiateEntityPet() {

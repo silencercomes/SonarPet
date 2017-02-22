@@ -19,15 +19,25 @@ package com.dsh105.echopet.compat.api.entity;
 
 import lombok.*;
 
+import java.lang.invoke.MethodHandle;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.wrapper.WrappedEntityType;
 import com.google.common.collect.ImmutableList;
+
+import net.techcable.pineapple.reflection.Reflection;
+import net.techcable.sonarpet.EntityHookType;
+import net.techcable.sonarpet.utils.MoreCollectors;
+import net.techcable.sonarpet.utils.Versioning;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
+import static com.google.common.base.Preconditions.*;
 
 public enum PetType {
 
@@ -90,8 +100,8 @@ public enum PetType {
 
     HUMAN("Human", 54, "Human Pet", 20D, 6D, "UNKNOWN");
 
-    private final Class<? extends IEntityPet> hookClass;
     private final Class<? extends IPet> petClass;
+    private final MethodHandle petConstructor;
     private final String defaultName;
     private final double maxHealth;
     private final double attackDamage;
@@ -103,14 +113,8 @@ public enum PetType {
     @SneakyThrows(ClassNotFoundException.class)
     PetType(String classIdentifier, int registrationId, String defaultName, double maxHealth, double attackDamage, String entityTypeName, PetData... allowedData) {
         this.classIdentifier = classIdentifier;
-        Class<? extends IEntityPet> hookClass;
-        try {
-            hookClass = Class.forName("net.techcable.sonarpet.nms.entity.type.Entity" + classIdentifier + "Pet").asSubclass(IEntityPet.class);
-        } catch (ClassNotFoundException e) {
-            hookClass = null;
-        }
-        this.hookClass = hookClass;
         this.petClass = Class.forName("com.dsh105.echopet.api.pet.type." + classIdentifier + "Pet").asSubclass(IPet.class);
+        this.petConstructor = Reflection.getConstructor(petClass, Player.class);
         this.id = registrationId;
         this.allowedData = ImmutableList.copyOf(allowedData);
         this.maxHealth = maxHealth;
@@ -151,15 +155,11 @@ public enum PetType {
         return getAllowedDataTypes().contains(data);
     }
 
+    @SneakyThrows
     public IPet getNewPetInstance(Player owner) {
-        if (owner != null) {
-            return EchoPet.getPetRegistry().spawn(this, owner);
-        }
-        return null;
-    }
-
-    public Class<? extends IEntityPet> getHookClass() {
-        return this.hookClass;
+        checkState(isSupported(), "%s is not supported on %s", this, Versioning.NMS_VERSION);
+        checkNotNull(owner, "Null owner");
+        return (IPet) petConstructor.invoke(owner);
     }
 
     public Class<? extends IPet> getPetClass() {
@@ -169,4 +169,42 @@ public enum PetType {
     public Class<?> getNmsClass() {
         return MinecraftReflection.getNmsClass("Entity" + classIdentifier);
     }
+    // NOTE: Lazy-load hookType information to avoid circular dependency issues
+    private ImmutableList<EntityHookType> hookTypes;
+    private EntityHookType primaryHookType;
+    private void computeHookTypes() {
+        this.hookTypes = Arrays.stream(EntityHookType.values())
+                .filter((hookType) -> hookType.getPetType() == PetType.this)
+                .filter(EntityHookType::isActive)
+                .collect(MoreCollectors.toImmutableList());
+        if (hookTypes.isEmpty()) {
+            this.primaryHookType = null;
+        } else {
+            this.primaryHookType = hookTypes.stream()
+                    .filter((hookType) -> hookType.getNmsName().equals(classIdentifier))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Couldn't find primary hook type for "
+                                    + this
+                                    + " in "
+                                    + hookTypes.stream()
+                                    .map(EntityHookType::toString)
+                                    .collect(Collectors.joining(",", "[", "]"))
+                    ));
+        }
+    }
+    public boolean isSupported() {
+        return !getHookTypes().isEmpty();
+    }
+
+    public EntityHookType getPrimaryHookType() {
+        if (isSupported() && primaryHookType == null) computeHookTypes();
+        return primaryHookType;
+    }
+
+    public ImmutableList<EntityHookType> getHookTypes() {
+        if (hookTypes == null) computeHookTypes();
+        return this.hookTypes;
+    }
+
 }

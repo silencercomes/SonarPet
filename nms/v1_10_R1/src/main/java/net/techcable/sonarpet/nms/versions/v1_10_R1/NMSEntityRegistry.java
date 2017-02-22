@@ -46,6 +46,16 @@ public class NMSEntityRegistry implements EntityRegistry {
     }
 
     @Override
+    public int getEntityId(Class<?> entityClass) {
+        return CLASS_TO_ID_FIELD.getStatic().get(entityClass);
+    }
+
+    @Override
+    public String getEntityName(Class<?> entityClass) {
+        return CLASS_TO_NAME_FIELD.getStatic().get(entityClass);
+    }
+
+    @Override
     public void registerEntityId(int id, Class<?> entityClass) {
         ID_TO_CLASS_FIELD.getStatic().put(id, entityClass);
     }

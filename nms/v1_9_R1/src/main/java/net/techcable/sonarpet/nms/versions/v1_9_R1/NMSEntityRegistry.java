@@ -13,6 +13,7 @@ public class NMSEntityRegistry implements EntityRegistry {
     private static final PineappleField<?, Map<Class<?>, String>> CLASS_TO_NAME_FIELD;
     private static final PineappleField<?, Map<Integer, Class<?>>> ID_TO_CLASS_FIELD;
     private static final PineappleField<?, Map<Class<?>, Integer>> CLASS_TO_ID_FIELD;
+
     static {
         ImmutableList<PineappleField<EntityTypes, Map>> mapFields = PineappleField.findFieldsWithType(EntityTypes.class, Map.class);
         assert mapFields.size() == 5;
@@ -44,6 +45,16 @@ public class NMSEntityRegistry implements EntityRegistry {
     @Override
     public Class<?> getEntityClass(int id) {
         return ID_TO_CLASS_FIELD.getStatic().get(id);
+    }
+
+    @Override
+    public int getEntityId(Class<?> entityClass) {
+        return CLASS_TO_ID_FIELD.getStatic().get(entityClass);
+    }
+
+    @Override
+    public String getEntityName(Class<?> entityClass) {
+        return CLASS_TO_NAME_FIELD.getStatic().get(entityClass);
     }
 
     @Override

@@ -1,21 +1,21 @@
 package net.techcable.sonarpet.nms.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityPigZombiePet;
 
-import net.techcable.sonarpet.nms.entity.AbstractEntityZombiePet;
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.AbstractEntityZombiePet;
 import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 
 import org.bukkit.Material;
 
-@EntityPetType(petType = PetType.PIGZOMBIE)
+@EntityHook(EntityHookType.PIG_ZOMBIE)
 public class EntityPigZombiePet extends AbstractEntityZombiePet implements IEntityPigZombiePet {
-    public EntityPigZombiePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet, entity);
+    public EntityPigZombiePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
     @SuppressWarnings("deprecation") // We only do it when it's safe

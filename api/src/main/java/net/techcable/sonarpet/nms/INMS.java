@@ -23,6 +23,7 @@ import java.lang.invoke.MethodType;
 
 import com.google.common.base.Preconditions;
 
+import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.item.SpawnEggItemData;
 import net.techcable.sonarpet.utils.Versioning;

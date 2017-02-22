@@ -2,16 +2,16 @@ package net.techcable.sonarpet.nms.entity.type;
 
 import java.lang.invoke.MethodHandle;
 
-import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
 import com.dsh105.echopet.compat.api.entity.HorseMarking;
 import com.dsh105.echopet.compat.api.entity.HorseType;
 import com.dsh105.echopet.compat.api.entity.HorseVariant;
 import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
 
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.SafeSound;
 import net.techcable.sonarpet.nms.BlockSoundData;
 import net.techcable.sonarpet.nms.INMS;
@@ -30,10 +30,10 @@ import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-@EntityPetType(petType = PetType.GHAST)
+@EntityHook(EntityHookType.HORSE)
 public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet {
-    protected EntityHorsePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet, entity);
+    protected EntityHorsePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
 

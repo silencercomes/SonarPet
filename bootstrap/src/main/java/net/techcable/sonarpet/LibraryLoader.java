@@ -379,6 +379,7 @@ public final class LibraryLoader {
                 );
             }
         }
+        throw new IOException("Couldn't find artifact: " + artifact);
     }
 
     //

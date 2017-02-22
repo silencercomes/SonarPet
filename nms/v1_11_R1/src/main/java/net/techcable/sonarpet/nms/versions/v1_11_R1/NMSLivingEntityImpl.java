@@ -41,16 +41,6 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
     }
 
     @Override
-    public float getSidewaysMotion() {
-        return getHandle().be; // EntityLivingBase.moveStrafing
-    }
-
-    @Override
-    public float getForwardsMotion() {
-        return getHandle().bf; // EntityLivingBase.moveForward
-    }
-
-    @Override
     public boolean isInLava() {
         return getHandle().ao(); // Entity.isInLava
     }

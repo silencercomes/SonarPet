@@ -41,16 +41,6 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
     }
 
     @Override
-    public float getSidewaysMotion() {
-        return getHandle().be;
-    }
-
-    @Override
-    public float getForwardsMotion() {
-        return getHandle().bf;
-    }
-
-    @Override
     public boolean isInLava() {
         return getHandle().an();
     }

@@ -19,9 +19,12 @@ package com.dsh105.echopet.compat.api.entity.type.nms;
 
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
 
+import org.bukkit.entity.Guardian;
+
 public interface IEntityGuardianPet extends IEntityPet {
 
     boolean isElder();
 
-    void setElder(boolean flag);
+    @Override
+    Guardian getBukkitEntity();
 }

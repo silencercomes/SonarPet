@@ -39,6 +39,10 @@ public class MethodGenerator extends LocalVariablesSorter {
         visitFieldInsn(GETFIELD, ownerType.getInternalName(), name, fieldType.getDescriptor());
     }
 
+    public void putField(Type ownerType, String name, Type fieldType) {
+        visitFieldInsn(PUTFIELD, ownerType.getInternalName(), name, fieldType.getDescriptor());
+    }
+
     public void invokeSpecial(String name, Type ownerType, Type returnType, Type... parameterTypes) {
         super.visitMethodInsn(
                 INVOKESPECIAL,
