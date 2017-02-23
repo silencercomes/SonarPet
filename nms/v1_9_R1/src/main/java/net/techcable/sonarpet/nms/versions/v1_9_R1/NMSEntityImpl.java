@@ -10,6 +10,8 @@ import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSLivingEntity;
 
+import org.bukkit.entity.Player;
+
 @RequiredArgsConstructor
 public class NMSEntityImpl implements NMSEntity {
     @Getter
@@ -36,5 +38,31 @@ public class NMSEntityImpl implements NMSEntity {
                 .map(Entity::getBukkitEntity)
                 .map(INMS.getInstance()::wrapEntity)
                 .toArray(NMSEntity[]::new));
+    }
+
+    @Override
+    public int hashCode() {
+        return handle.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof NMSEntityImpl && ((NMSEntityImpl) obj).handle.equals(this.handle);
+    }
+
+    @Override
+    public String toString() {
+        if (getBukkitEntity() instanceof Player) {
+            return "NMSPlayer(" + getBukkitEntity().getName() + ")";
+        } else {
+            StringBuilder builder = new StringBuilder("NMSEntity(");
+            builder.append(getBukkitEntity().getType());
+            if (getBukkitEntity().getCustomName() != null) {
+                builder.append(":");
+                builder.append(getBukkitEntity().getCustomName());
+            }
+            builder.append(')');
+            return builder.toString();
+        }
     }
 }

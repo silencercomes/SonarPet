@@ -2,7 +2,6 @@ package net.techcable.sonarpet.nms.versions.v1_11_R1;
 
 import com.dsh105.echopet.compat.api.entity.HorseType;
 
-import net.minecraft.server.v1_11_R1.EntityHorse;
 import net.minecraft.server.v1_11_R1.EntityHorseAbstract;
 import net.techcable.sonarpet.nms.NMSEntityHorse;
 
@@ -15,6 +14,21 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
         super(handle);
     }
 
+    //
+    // !!!!! Highly version-dependent !!!!!
+    // Check these every minor update!
+    //
+
+    @Override
+    public void setSaddled(boolean saddled) {
+        getHandle().t(saddled); // AbstractHorse.setHorseSaddled
+    }
+
+    @Override
+    public boolean isSaddled() {
+        return getHandle().dB(); // AbstractHorse.isHorseSaddled
+    }
+
     // Deobfuscated methods
 
     @Override
@@ -24,12 +38,16 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
 
     @Override
     public void setStyle(Horse.Style bukkitStyle) {
-        ((Horse) getBukkitEntity()).setStyle(bukkitStyle);
+        if (getBukkitEntity() instanceof Horse) {
+            ((Horse) getBukkitEntity()).setStyle(bukkitStyle);
+        }
     }
 
     @Override
     public void setColor(Horse.Color color) {
-        ((Horse) getHandle()).setColor(color);
+        if (getBukkitEntity() instanceof Horse) {
+            ((Horse) getBukkitEntity()).setColor(color);
+        }
     }
 
     @Override
@@ -39,7 +57,9 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
 
     @Override
     public void setCarryingChest(boolean flag) {
-        ((ChestedHorse) getBukkitEntity()).setCarryingChest(flag);
+        if (getBukkitEntity() instanceof ChestedHorse) {
+            ((ChestedHorse) getBukkitEntity()).setCarryingChest(flag);
+        }
     }
 
     @Override
@@ -49,6 +69,6 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
 
     @Override
     public AbstractHorse getBukkitEntity() {
-        return (Horse) super.getBukkitEntity();
+        return (AbstractHorse) super.getBukkitEntity();
     }
 }

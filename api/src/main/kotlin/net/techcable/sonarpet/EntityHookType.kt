@@ -31,6 +31,7 @@ enum class EntityHookType(
     DONKEY("HorseDonkey", PetType.HORSE, earliestVersion = NmsVersion.v1_11_R1),
     ZOMBIE_HORSE("HorseZombie", PetType.HORSE, earliestVersion = NmsVersion.v1_11_R1),
     SKELETON_HORSE("HorseSkeleton", PetType.HORSE, earliestVersion = NmsVersion.v1_11_R1),
+    LLAMA("Llama", PetType.HORSE, earliestVersion = NmsVersion.v1_11_R1),
     IRON_GOLEM("IronGolem", PetType.IRONGOLEM),
     MAGMA_CUBE("MagmaCube", PetType.MAGMACUBE),
     MUSHROOM_COW("MushroomCow", PetType.MUSHROOMCOW),

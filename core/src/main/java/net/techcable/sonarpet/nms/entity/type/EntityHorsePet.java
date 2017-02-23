@@ -15,6 +15,7 @@ import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.SafeSound;
 import net.techcable.sonarpet.nms.BlockSoundData;
 import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSEntityHorse;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.entity.EntityAgeablePet;
@@ -30,12 +31,18 @@ import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-@EntityHook(EntityHookType.HORSE)
+@EntityHook({
+        EntityHookType.HORSE,
+        EntityHookType.MULE,
+        EntityHookType.DONKEY,
+        EntityHookType.ZOMBIE_HORSE,
+        EntityHookType.SKELETON_HORSE,
+        EntityHookType.LLAMA
+})
 public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet {
     protected EntityHorsePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
         super(pet, entity, hookType);
     }
-
 
     private int rearingCounter = 0;
     int stepSoundCount = 0;
@@ -48,25 +55,11 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     @Override
     public void setSaddled(boolean flag) {
-        ((HorseInventory) ((InventoryHolder) getBukkitEntity()).getInventory())
-                .setSaddle(flag ? new ItemStack(Material.SADDLE, 1) : null);
+        getEntity().setSaddled(flag);
     }
 
     public HorseType getHorseType() {
         return getEntity().getHorseType();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void setHorseType(HorseType newType) {
-        if (newType != HorseType.NORMAL) {
-            this.setArmour(HorseArmour.NONE);
-        }
-        if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
-            throw new UnsupportedOperationException("TODO");
-        } else {
-            getEntity().setHorseType(newType);
-        }
     }
 
     @Override
@@ -149,6 +142,26 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
         super.move(sideMot, forwMot, superMoveFunction);
         if (forwMot <= 0.0F) {
             this.stepSoundCount = 0;
+        }
+    }
+
+    private boolean previouslySaddled;
+    @Override
+    public void onMounted(NMSEntity passenger) {
+        super.onMounted(passenger);
+        if (passenger.equals(getPlayerEntity())) {
+            // When the owner starts to ride, give them a saddle
+            previouslySaddled = getEntity().isSaddled();
+            setSaddled(true);
+        }
+    }
+
+    @Override
+    public void onDismounted(NMSEntity passenger) {
+        super.onDismounted(passenger);
+        if (passenger.equals(getPlayerEntity())) {
+            // Reset to our previous saddle-state once the owner dismounts
+            setSaddled(previouslySaddled);
         }
     }
 

@@ -4,7 +4,7 @@
         "WITHER_SHIELDED_METADATA_ID": 15
     },
     "obfuscated_methods": {
-        "ENTITY_TICK_METHOD": "m",
+        "ENTITY_TICK_METHOD": "A_", // Entity.onUpdate
         "ENTITY_MOVE_METHOD": "g",
         "ON_STEP_METHOD": "a",
         "ON_INTERACT_METHOD": "a",

@@ -13,6 +13,21 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
     }
 
     //
+    // !!!!! Highly version-dependent !!!!!
+    // Check these every minor update!
+    //
+
+    @Override
+    public void setSaddled(boolean saddled) {
+        getHandle().u(saddled); // EntityHorse.setHorseSaddled
+    }
+
+    @Override
+    public boolean isSaddled() {
+        return getHandle().dz(); // EntityHorse.isHorseSaddled
+    }
+
+    //
     // Breakage likely, check for bugs here
     //
 

@@ -4,7 +4,10 @@ import lombok.*;
 
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import com.dsh105.echopet.compat.api.ai.PetGoalSelector;
@@ -23,6 +26,8 @@ import com.dsh105.echopet.compat.api.util.Perm;
 import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.EntityHookType;
@@ -256,11 +261,27 @@ public abstract class EntityInsentientPet implements IEntityPet {
 
             getBukkitEntity().setVelocity(new Vector(x, y, z).normalize().multiply(0.3F));
         }
-
-        if (getEntity().getPassengers().isEmpty()) {
+        ImmutableSet<NMSEntity> passengers = ImmutableSet.copyOf(getEntity().getPassengers());
+        if (passengers.isEmpty()) {
             petGoalSelector.updateGoals();
         }
+        // Check for mounts
+        for (NMSEntity passenger : passengers) {
+            if (!knownMountedEntities.contains(passenger)) {
+                onMounted(passenger);
+                knownMountedEntities.add(passenger);
+            }
+        }
+        // Check for dismounts
+        knownMountedEntities.removeIf((entity) -> {
+            if (!passengers.contains(entity)) {
+                onDismounted(entity);
+                return true;
+            }
+            return false;
+        });
     }
+    private Set<NMSEntity> knownMountedEntities = new HashSet<>();
 
     /**
      * Return if the pet's owner is currently riding the pet
@@ -275,6 +296,9 @@ public abstract class EntityInsentientPet implements IEntityPet {
         }
         return false;
     }
+
+    public void onMounted(NMSEntity passenger) {}
+    public void onDismounted(NMSEntity passenger) {}
 
     // EntityLiving
 
