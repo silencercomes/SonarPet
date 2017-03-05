@@ -57,14 +57,13 @@ public enum PetType {
     },
     GUARDIAN("Guardian", 68, "Guardian Pet", 20D, 10D, "GUARDIAN", PetData.ELDER),
     MAGMACUBE("MagmaCube", 62, "Magma Cube Pet", 20D, 5D, "MAGMA_CUBE", PetData.SMALL, PetData.MEDIUM, PetData.LARGE),
-    PIGZOMBIE("PigZombie", 57, "Pig Zombie Pet", 20D, 6D, "PIG_ZOMBIE", PetData.BABY),
     SILVERFISH("Silverfish", 60, "Silverfish Pet", 8D, 4D, "SILVERFISH"),
     SKELETON("Skeleton", 51, "Skeleton Pet", 20D, 5D, "SKELETON", PetData.WITHER),
     SLIME("Slime", 55, "Slime Pet", 20D, 4D, "SLIME", PetData.SMALL, PetData.MEDIUM, PetData.LARGE),
     SPIDER("Spider", 52, "Spider Pet", 16D, 5D, "SPIDER"),
     WITCH("Witch", 66, "Witch Pet", 26D, 5D, "WITCH"),
     WITHER("Wither", 64, "Wither Pet", 300D, 8D, "WITHER", PetData.SHIELD),
-    ZOMBIE("Zombie", 54, "Zombie Pet", 20D, 5D, "ZOMBIE", PetData.BABY, PetData.VILLAGER),
+    ZOMBIE("Zombie", 54, "Zombie Pet", 20D, 5D, "ZOMBIE", PetData.BABY, PetData.VILLAGER, PetData.HUSK, PetData.ZOMBIE, PetData.PIGMAN),
 
     // Passive mobs
     BAT("Bat", 65, "Bat Pet", 6D, 3D, "BAT"),

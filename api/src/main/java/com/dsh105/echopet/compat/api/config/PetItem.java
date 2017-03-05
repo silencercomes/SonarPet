@@ -51,7 +51,6 @@ public enum PetItem {
     MUSHROOMCOW(PetType.MUSHROOMCOW, SpawnEggItemData.create(EntityType.MUSHROOM_COW), "Mushroom Cow Pet", "mushroomcow"),
     OCELOT(PetType.OCELOT, SpawnEggItemData.create(EntityType.OCELOT), "Ocelot Pet", "ocelot"),
     PIG(PetType.PIG, SpawnEggItemData.create(EntityType.PIG), "Pig Pet", "pig"),
-    PIGZOMBIE(PetType.PIGZOMBIE, SpawnEggItemData.create(EntityType.PIG_ZOMBIE), "PigZombie Pet", "pigzombie"),
     RABBIT(PetType.RABBIT, SpawnEggItemData.create(EntityType.RABBIT), "Rabbit Pet", "rabbit"),
     SHEEP(PetType.SHEEP, SpawnEggItemData.create(EntityType.SHEEP), "Sheep Pet", "sheep"),
     SILVERFISH(PetType.SILVERFISH, SpawnEggItemData.create(EntityType.SILVERFISH), "Silverfish Pet", "silverfish"),

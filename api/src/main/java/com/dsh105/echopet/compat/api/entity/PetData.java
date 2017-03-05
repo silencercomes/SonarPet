@@ -76,13 +76,14 @@ public enum PetData {
     TAMED("tamed", Type.BOOLEAN),
     VILLAGER("villager", Type.ZOMBIE_TYPE),
     HUSK("husk",Type.ZOMBIE_TYPE),
+    PIGMAN("pigman",Type.ZOMBIE_TYPE),
     WHITEPATCH("whitePatch", Type.HORSE_MARKING),
     WHITESPOT("whiteSpot", Type.HORSE_MARKING),
     WHITE("white", Type.COLOUR, Type.HORSE_VARIANT, Type.RABBIT_TYPE),
     WILD("wild", Type.CAT),
     WITHER("wither", Type.BOOLEAN),
     YELLOW("yellow", Type.COLOUR),
-    ZOMBIE("zombie", Type.HORSE_TYPE);
+    ZOMBIE("zombie", Type.HORSE_TYPE, Type.ZOMBIE_TYPE);
 
 
     private String configOptionString;

@@ -37,7 +37,7 @@ enum class EntityHookType(
     MUSHROOM_COW("MushroomCow", PetType.MUSHROOMCOW),
     OCELOT("Ocelot", PetType.OCELOT),
     PIG("Pig", PetType.PIG),
-    PIG_ZOMBIE("PigZombie", PetType.PIGZOMBIE),
+    PIG_ZOMBIE("PigZombie", PetType.ZOMBIE),
     RABBIT("Rabbit", PetType.RABBIT),
     SHEEP("Sheep", PetType.SHEEP),
     SILVERFISH("Silverfish", PetType.SILVERFISH),
@@ -53,7 +53,7 @@ enum class EntityHookType(
     WITHER("Wither", PetType.WITHER),
     WOLF("Wolf", PetType.WOLF),
     // Zombies were split up into different entity types as of 1.11
-    ZOMBIE("Zombie", PetType.ZOMBIE, latestVersion = NmsVersion.v1_10_R1),
+    ZOMBIE("Zombie", PetType.ZOMBIE),
     HUSK_ZOMBIE("ZombieHusk", PetType.ZOMBIE, earliestVersion = NmsVersion.v1_11_R1),
     VILLAGER_ZOMBIE("ZombieVillager", PetType.ZOMBIE, earliestVersion = NmsVersion.v1_11_R1),
     GIANT_ZOMBIE("GiantZombie", PetType.ZOMBIE);

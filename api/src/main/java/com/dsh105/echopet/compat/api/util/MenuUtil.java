@@ -42,9 +42,6 @@ public class MenuUtil {
         if (pt == PetType.MAGMACUBE) {
             options.add(new MenuOption(i++, MenuItem.SIZE));
         }
-        if (pt == PetType.PIGZOMBIE) {
-            options.add(new MenuOption(i++, MenuItem.BABY));
-        }
         if (pt == PetType.SKELETON) {
             options.add(new MenuOption(i++, MenuItem.WITHER));
         }
@@ -59,7 +56,7 @@ public class MenuUtil {
         }
         if (pt == PetType.ZOMBIE) {
             options.add(new MenuOption(i++, MenuItem.BABY));
-            options.add(new MenuOption(i++, MenuItem.VILLAGER));
+            options.add(new MenuOption(i++, MenuItem.ZOMBIE_TYPE));
         }
         if (pt == PetType.CHICKEN) {
             options.add(new MenuOption(i++, MenuItem.BABY));

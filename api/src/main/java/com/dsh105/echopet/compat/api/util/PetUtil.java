@@ -228,9 +228,6 @@ public class PetUtil {
         if (pt.getPetType() == PetType.ZOMBIE) {
             info.add(ChatColor.GOLD + " - Baby: " + ChatColor.YELLOW + ((IZombiePet) pt).isBaby());
         }
-        if (pt.getPetType() == PetType.PIGZOMBIE) {
-            info.add(ChatColor.GOLD + " - Baby: " + ChatColor.YELLOW + ((IPigZombiePet) pt).isBaby());
-        }
         info.addAll(generatePetDataInfo(pt));
 
         if (pt.getRider() != null) {

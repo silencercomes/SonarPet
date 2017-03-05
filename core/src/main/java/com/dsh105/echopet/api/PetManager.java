@@ -445,8 +445,6 @@ public class PetManager implements IPetManager {
             if (pd == PetData.BABY) {
                 if (petType == PetType.ZOMBIE) {
                     ((IZombiePet) pet).setBaby(b);
-                } else if (petType == PetType.PIGZOMBIE) {
-                    ((IPigZombiePet) pet).setBaby(b);
                 } else {
                     ((IAgeablePet) pet).setBaby(b);
                 }
@@ -624,6 +622,7 @@ public class PetManager implements IPetManager {
             if (petType == PetType.ZOMBIE) {
                 if (pd.isType(PetData.Type.ZOMBIE_TYPE)) {
                     ZombieType zombieType = ZombieType.valueOf(pd.toString());
+                    ((IZombiePet) pet).setZombieType(zombieType);
                 }
             }
             

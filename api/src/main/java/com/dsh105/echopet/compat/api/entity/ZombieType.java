@@ -9,7 +9,8 @@ import net.techcable.sonarpet.utils.Versioning;
 public enum  ZombieType {
     VILLAGER(NmsVersion.EARLIEST),
     REGULAR(NmsVersion.EARLIEST),
-    HUSK(NmsVersion.v1_11_R1);
+    HUSK(NmsVersion.v1_11_R1),
+    PIGMAN(NmsVersion.EARLIEST);
 
     private final NmsVersion firstVersion;
 

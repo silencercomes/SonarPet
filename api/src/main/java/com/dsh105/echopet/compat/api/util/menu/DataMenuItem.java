@@ -106,6 +106,11 @@ public enum DataMenuItem {
     SALT_AND_PEPPER_RABBIT(DataMenuType.RABBIT_TYPE, PetData.SALT_AND_PEPPER, WoolItemData.create(DyeColor.YELLOW), 1, "Salt and Pepper", "Bunny type"),
     KILLER_BUNNY(DataMenuType.RABBIT_TYPE, PetData.THE_KILLER_BUNNY, WoolItemData.create(DyeColor.RED), 1, "Killer Bunny", "Bunny type"),
 
+    REGULAR_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.ZOMBIE, Material.ROTTEN_FLESH, 1, "Regular", "Zombie Type"),
+    VILLAGER_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.VILLAGER, Material.EMERALD, 1, "Villager", "Zombie Type"),
+    HUSK_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.HUSK, Material.LEATHER_HELMET, 1, "Husk", "Zombie Type"),
+    PIGMAN_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.PIGMAN, Material.GOLD_NUGGET, 1, "Pigman", "Zombie Type"),
+
     BACK(DataMenuType.OTHER, null, Material.BOOK, 1, "Back", "Return to the main menu."),
     CLOSE(DataMenuType.OTHER, null, Material.BOOK, 1, "Close", "Close the Pet Menu");
 

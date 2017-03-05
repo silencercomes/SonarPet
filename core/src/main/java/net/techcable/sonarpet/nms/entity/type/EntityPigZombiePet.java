@@ -1,7 +1,6 @@
 package net.techcable.sonarpet.nms.entity.type;
 
 import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.entity.type.nms.IEntityPigZombiePet;
 
 import net.techcable.sonarpet.EntityHook;
 import net.techcable.sonarpet.EntityHookType;
@@ -13,7 +12,7 @@ import net.techcable.sonarpet.utils.Versioning;
 import org.bukkit.Material;
 
 @EntityHook(EntityHookType.PIG_ZOMBIE)
-public class EntityPigZombiePet extends AbstractEntityZombiePet implements IEntityPigZombiePet {
+public class EntityPigZombiePet extends AbstractEntityZombiePet {
     public EntityPigZombiePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
         super(pet, entity, hookType);
     }

@@ -1,9 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.1.0-rc-91'
+    ext.kotlin_version = '1.1.0'
 
     repositories {
         mavenCentral()
-        maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1/" }
     }
 
     dependencies {
@@ -37,7 +36,6 @@ subprojects {
         mavenCentral()
         maven { url "https://repo.techcable.net/content/groups/public/" }
         maven { url "https://hub.spigotmc.org/nexus/content/groups/public/" }
-        maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1/" }
         maven { url "http://repo.dmulloy2.net/content/groups/public/" }
         maven { url "http://repo.md-5.net/content/groups/public/" }
         maven { url "http://ci.hawkfalcon.com/plugin/repository/everything/" }
