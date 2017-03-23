@@ -63,7 +63,6 @@ class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
 
     private fun generateEntityClass(type: EntityHookType, hookClass: Class<out IEntityPet>): Class<*> {
         val generatedType = Type.getObjectType("net/techcable/sonarpet/nms/entities/type/Generated" +  hookClass.simpleName)
-        plugin.logger.fine("Generating " + hookClass.simpleName)
         val generatorClass: Class<out EntityPetGenerator>
         if (hookClass.isAnnotationPresent(GeneratorClass::class.java)) {
             generatorClass = hookClass.getAnnotation(GeneratorClass::class.java).value.java
@@ -71,8 +70,8 @@ class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
             generatorClass = EntityPetGenerator::class.java
         }
         try {
-            return generatorClass.getConstructor(Type::class.java, Class::class.java, Class::class.java)
-                    .newInstance(generatedType, hookClass, type.nmsType)
+            return generatorClass.getConstructor(IEchoPetPlugin::class.java, Type::class.java, Class::class.java, Class::class.java)
+                    .newInstance(plugin, generatedType, hookClass, type.nmsType)
                     .generateClass()
         } catch (e: ReflectiveOperationException) {
             throw RuntimeException("Unable to generate class for " + type, e)

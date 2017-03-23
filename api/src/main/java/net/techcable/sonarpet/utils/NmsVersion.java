@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import com.dsh105.commodus.StringUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -38,6 +40,7 @@ public enum NmsVersion {
         }
         return id;
     }
+    @Nonnull
     public String getObfuscatedMethod(String id) {
         if (obfuscatedMethods == null) loadData();
         String name = obfuscatedMethods.get(id);

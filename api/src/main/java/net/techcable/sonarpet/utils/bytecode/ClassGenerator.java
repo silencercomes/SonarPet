@@ -1,12 +1,9 @@
 package net.techcable.sonarpet.utils.bytecode;
 
-import java.io.PrintWriter;
 import java.util.function.Consumer;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.TraceMethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -43,7 +40,6 @@ public class ClassGenerator extends ClassVisitor {
             Type... parameterTypes
     ) {
         String desc = Type.getMethodDescriptor(returnType, parameterTypes);
-        Textifier textifier = new Textifier();
         MethodGenerator generatorInstance = new MethodGenerator(
                 super.visitMethod(access, name, desc, null, null),
                 access,

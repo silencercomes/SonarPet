@@ -21,8 +21,14 @@ shadowJar {
     version = null
     configurations = [project.configurations.compile]
     dependencies {
-        // Only include sonarpet
-        exclude { it.moduleGroup != "net.techcable.sonarpet" }
+        /*
+         * Only include sonarpet and ASM in the shaded jar.
+         * All other dependencies are dynamically loaded at runtime.
+         * We can't use ASM because our (updated) version of ASM conflicts with Paper's.
+         */
+        exclude { it.moduleGroup != "net.techcable.sonarpet" && it.moduleGroup != "org.ow2.asm" }
+        // Relocate ASM so it doesn't conflict
+        relocate 'org.objectweb.asm', 'net.techcable.sonarpet.libs.asm'
     }
 }
 

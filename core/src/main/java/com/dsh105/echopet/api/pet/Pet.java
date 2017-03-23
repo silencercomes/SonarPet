@@ -92,9 +92,10 @@ public abstract class Pet implements IPet {
     }
 
     protected void switchHookType(Player owner, EntityHookType newHookType) {
-        if (newHookType == hook.getHookType())
+        if (newHookType == hook.getHookType()) return;
         checkState(this.hook != null, "Pet isn't spawned yet!");
-        EchoPet.getManager().removePet(this, false);
+        this.removePet(false);
+        assert hook.getBukkitEntity().isDead();
         this.hook = null;
         spawnPet(owner, newHookType, true);
     }
@@ -245,7 +246,7 @@ public abstract class Pet implements IPet {
 
     @Override
     public void removePet(boolean makeSound) {
-        if (this.getCraftPet() != null) {
+        if (this.getCraftPet() != null && makeSound) {
             Particle.CLOUD.show(getLocation());
             Particle.LAVA_SPARK.show(getLocation());
         }
