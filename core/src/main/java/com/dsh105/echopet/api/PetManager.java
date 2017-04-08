@@ -626,20 +626,16 @@ public class PetManager implements IPetManager {
                 }
             }
             
-            ListIterator<PetData> i = pet.getPetData().listIterator();
-            while (i.hasNext()) {
-                PetData petData = i.next();
+            pet.getPetData().removeIf(petData -> {
                 if (petData != pd) {
-                    ListIterator<PetData.Type> i2 = pd.getTypes().listIterator();
-                    while (i2.hasNext()) {
-                        PetData.Type type = i2.next();
-                        if (type != PetData.Type.BOOLEAN && petData.isType(type)) {
-                            i.remove();
-                            break;
+                    for (PetData.Type dataType : pd.getTypes()) {
+                        if (dataType != PetData.Type.BOOLEAN && petData.isType(dataType)) {
+                            return true;
                         }
                     }
                 }
-            }
+                return false;
+            });
 
             if (b) {
                 if (!pet.getPetData().contains(pd)) {
