@@ -22,7 +22,9 @@ import lombok.*;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.wrapper.WrappedEntityType;
@@ -206,4 +208,31 @@ public enum PetType {
         return this.hookTypes;
     }
 
+    /**
+     * Get the pet type for the specified name, properly converting legacy pet types into their new representation.
+     *
+     * This should be preferred to {@link #valueOf(String)} when loading from storage, since it handles legacy formats.
+     * However, {@link #valueOf(String)} should be preferred for the user interface as it enforces the modern representation.
+     *
+     * @param petTypeName the name of the pet's type
+     * @param petData the list of pet data, to add attributes to if needed.
+     * @return the pet's data type
+     */
+    @Nonnull
+    public static PetType fromDataString(String petTypeName, List<PetData> petData) {
+        Objects.requireNonNull(petTypeName, "Null petTypeName!");
+        Objects.requireNonNull(petData, "Null petData!");
+        final PetType petType;
+        switch (petTypeName) {
+            case "PIGZOMBIE": // Convert the old pigman type to a zombie with a pigman attribute
+                petData.add(PetData.PIGMAN);
+                return PetType.ZOMBIE;
+            default:
+                try {
+                    return PetType.valueOf(petTypeName);
+                } catch (IllegalArgumentException ignored) {
+                    throw new IllegalArgumentException("Unknown petType: " + petTypeName);
+                }
+        }
+    }
 }
