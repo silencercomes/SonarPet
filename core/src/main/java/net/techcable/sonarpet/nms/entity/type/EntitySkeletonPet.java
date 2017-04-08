@@ -38,7 +38,7 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
             public void run() {
                 switch (getSkeletonType()) {
                     case STRAY:
-                    case REGULAR:
+                    case NORMAL:
                         getBukkitEntity().getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
                         break;
                     case WITHER:
@@ -51,7 +51,8 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
         }.runTaskLater(EchoPet.getPlugin(), 5L);
     }
 
-    @SuppressWarnings("deprecation")
+    @Override
+    @SuppressWarnings("deprecation") // We do a version check ;)
     public SkeletonType getSkeletonType() {
         if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
             if (getBukkitEntity() instanceof WitherSkeleton) {
@@ -59,7 +60,7 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
             } else if (getBukkitEntity() instanceof Stray) {
                 return SkeletonType.STRAY;
             } else {
-                return SkeletonType.REGULAR;
+                return SkeletonType.NORMAL;
             }
         } else {
             switch (getBukkitEntity().getSkeletonType()) {
@@ -68,20 +69,10 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
                 case STRAY:
                     return SkeletonType.STRAY;
                 case NORMAL:
-                    return SkeletonType.REGULAR;
+                    return SkeletonType.NORMAL;
                 default:
                     throw new AssertionError("Unknown skeleton type!");
             }
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void setWither(boolean flag) {
-        if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
-            throw new UnsupportedOperationException("TODO");
-        } else {
-            getBukkitEntity().setSkeletonType(flag ? Skeleton.SkeletonType.WITHER : Skeleton.SkeletonType.NORMAL);
         }
     }
 
@@ -94,7 +85,7 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
     public SizeCategory getSizeCategory() {
         switch (getSkeletonType()) {
             case STRAY:
-            case REGULAR:
+            case NORMAL:
                 return SizeCategory.REGULAR;
             case WITHER:
                 return SizeCategory.LARGE;

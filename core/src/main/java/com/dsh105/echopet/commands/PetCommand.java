@@ -94,7 +94,7 @@ public class PetCommand implements CommandExecutor {
                         }
                         pet.getRider().setPetName(name);
                         Lang.sendTo(sender, Lang.NAME_RIDER.toString()
-                                .replace("%type%", StringUtil.capitalise(pet.getPetType().toString().replace("_", " ")))
+                                .replace("%type%", pet.getPetType().toPrettyString())
                                 .replace("%name%", name));
                     }
                     return true;
@@ -109,7 +109,7 @@ public class PetCommand implements CommandExecutor {
                         }
                         pet.setPetName(name);
                         Lang.sendTo(sender, Lang.NAME_PET.toString()
-                                .replace("%type%", StringUtil.capitalise(pet.getPetType().toString().replace("_", " ")))
+                                .replace("%type%", pet.getPetType().toPrettyString())
                                 .replace("%name%", name));
                     }
                     return true;
@@ -168,7 +168,7 @@ public class PetCommand implements CommandExecutor {
                             return true;
                         }
                         if (WorldUtil.allowPets(player.getLocation())) {
-                            Lang.sendTo(sender, Lang.SHOW_PET.toString().replace("%type%", StringUtil.capitalise(pet.getPetType().toString())));
+                            Lang.sendTo(sender, Lang.SHOW_PET.toString().replace("%type%", pet.getPetType().toPrettyString()));
                             return true;
                         } else {
                             Lang.sendTo(sender, Lang.PETS_DISABLED_HERE.toString().replace("%world%", player.getWorld().getName()));
@@ -211,7 +211,7 @@ public class PetCommand implements CommandExecutor {
                         return true;
                     }
                     if (WorldUtil.allowPets(player.getLocation())) {
-                        Lang.sendTo(sender, Lang.SHOW_PET.toString().replace("%type%", StringUtil.capitalise(pet.getPetType().toString())));
+                        Lang.sendTo(sender, Lang.SHOW_PET.toString().replace("%type%", pet.getPetType().toPrettyString()));
                         return true;
                     } else {
                         Lang.sendTo(sender, Lang.PETS_DISABLED_HERE.toString().replace("%world%", player.getWorld().getName()));
@@ -315,7 +315,7 @@ public class PetCommand implements CommandExecutor {
                         boolean access = Perm.hasTypePerm(sender, false, Perm.BASE_PETTYPE, true, type);
                         ChatColor format = access ? ChatColor.DARK_GREEN : ChatColor.DARK_RED;
                         ChatColor highlight = access ? ChatColor.GREEN : ChatColor.RED;
-                        message.then(highlight + StringUtil.capitalise(type.toString().replace("_", " ")));
+                        message.then(highlight + type.toPrettyString());
 
                         List<PetData> registeredData = type.getAllowedDataTypes();
                         List<String> registeredStringData = new ArrayList<String>();
@@ -324,10 +324,10 @@ public class PetCommand implements CommandExecutor {
                         dataBuilder.append(format).append("Valid data types: ");
                         int length = 0;
                         for (PetData data : registeredData) {
-                            String dataName = StringUtil.capitalise(data.toString().replace("_", " "));
+                            String dataName = data.toPrettyString();
                             boolean dataAccess = Perm.hasDataPerm(sender, false, type, data, true);
                             if (dataAccess) {
-                                registeredStringData.add(StringUtil.capitalise(data.toString().replace("_", " ")));
+                                registeredStringData.add(data.toPrettyString());
                                 if (length >= 35) {
                                     dataBuilder.append("\n");
                                     length = 0;
@@ -427,7 +427,7 @@ public class PetCommand implements CommandExecutor {
                     EchoPet.getManager().saveFileData("autosave", pi);
                     EchoPet.getSqlManager().saveToDatabase(pi, false);
                     Lang.sendTo(sender, Lang.CREATE_PET.toString()
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                            .replace("%type%", petType.toPrettyString()));
                     return true;
                 } else {
                     return true;
@@ -482,7 +482,7 @@ public class PetCommand implements CommandExecutor {
 
                     if (!EchoPet.getOptions().allowRidersFor(petType)) {
                         Lang.sendTo(sender, Lang.RIDERS_DISABLED.toString()
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", " "))));
+                                .replace("%type%", petType.toPrettyString()));
                         return true;
                     }
 
@@ -506,7 +506,7 @@ public class PetCommand implements CommandExecutor {
                         EchoPet.getManager().saveFileData("autosave", pi);
                         EchoPet.getSqlManager().saveToDatabase(pi, false);
                         Lang.sendTo(sender, Lang.CHANGE_RIDER.toString()
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                                .replace("%type%", petType.toPrettyString()));
                         return true;
                     } else {
                         return true;
@@ -622,8 +622,8 @@ public class PetCommand implements CommandExecutor {
                     EchoPet.getManager().saveFileData("autosave", pi);
                     EchoPet.getSqlManager().saveToDatabase(pi, false);
                     Lang.sendTo(sender, Lang.CREATE_PET_WITH_RIDER.toString()
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", "")))
-                            .replace("%mtype%", StringUtil.capitalise(riderType.toString().replace("_", ""))));
+                            .replace("%type%", petType.toPrettyString())
+                            .replace("%mtype%", riderType.toPrettyString()));
                     return true;
                 } else {
                     return true;
@@ -662,7 +662,7 @@ public class PetCommand implements CommandExecutor {
                         if (Perm.hasTypePerm(sender, true, Perm.BASE_DEFAULT_SET_PETTYPE, false, petType)) {
                             EchoPet.getManager().saveFileData("default", (Player) sender, UPD);
                             Lang.sendTo(sender, Lang.SET_DEFAULT.toString()
-                                    .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                                    .replace("%type%", petType.toPrettyString()));
                             return true;
                         } else {
                             return true;
@@ -694,8 +694,8 @@ public class PetCommand implements CommandExecutor {
                     if (Perm.hasTypePerm(sender, true, Perm.BASE_DEFAULT_SET_PETTYPE, false, petType) && Perm.hasTypePerm(sender, true, Perm.BASE_DEFAULT_SET_PETTYPE, false, petType)) {
                         EchoPet.getManager().saveFileData("default", (Player) sender, UPD, UMD);
                         Lang.sendTo(sender, Lang.SET_DEFAULT_WITH_RIDER.toString()
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", "")))
-                                .replace("%mtype%", StringUtil.capitalise(riderType.toString().replace("_", ""))));
+                                .replace("%type%", petType.toPrettyString())
+                                .replace("%mtype%", riderType.toPrettyString()));
                         return true;
                     } else {
                         return true;

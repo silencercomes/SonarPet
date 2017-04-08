@@ -26,12 +26,13 @@ import com.google.common.collect.ImmutableList;
 import net.techcable.sonarpet.item.ItemData;
 import net.techcable.sonarpet.item.SkullItemData;
 import net.techcable.sonarpet.item.SkullItemData.SkullType;
+import net.techcable.sonarpet.utils.PrettyEnum;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public enum MenuItem {
+public enum MenuItem implements PrettyEnum {
 
     HORSE_TYPE(Material.HAY_BLOCK, 1, DataMenuType.HORSE_TYPE, "Type", "Horse"),
     HORSE_VARIANT(Material.LEASH, 1, DataMenuType.HORSE_VARIANT, "Variant", "Horse"),

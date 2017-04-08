@@ -23,11 +23,15 @@ import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.pet.*;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.PetStorage;
+
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+
+import net.techcable.sonarpet.utils.PrettyEnum;
 
 public class PetUtil {
 
@@ -65,12 +69,12 @@ public class PetUtil {
                         }
                         if (singlePetData == null) {
                             Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                                    .replace("%data%", StringUtil.capitalise(dataString)));
+                                    .replace("%data%", WordUtils.capitalizeFully(dataString)));
                             return null;
                         }
                     } else {
                         Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                                .replace("%data%", StringUtil.capitalise(dataString)));
+                                .replace("%data%", WordUtils.capitalizeFully(dataString)));
                         return null;
                     }
                 }
@@ -91,12 +95,12 @@ public class PetUtil {
                         }
                         if (singlePetData == null) {
                             Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                                    .replace("%data%", StringUtil.capitalise(dataString)));
+                                    .replace("%data%", WordUtils.capitalizeFully(dataString)));
                             return null;
                         }
                     } else {
                         Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                                .replace("%data%", StringUtil.capitalise(dataString)));
+                                .replace("%data%", WordUtils.capitalizeFully(dataString)));
                         return null;
                     }
                 }
@@ -120,12 +124,12 @@ public class PetUtil {
                     }
                     if (singlePetData == null) {
                         Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                                .replace("%data%", StringUtil.capitalise(dataString)));
+                                .replace("%data%", WordUtils.capitalizeFully(dataString)));
                         return null;
                     }
                 } else {
                     Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                            .replace("%data%", StringUtil.capitalise(dataString)));
+                            .replace("%data%", WordUtils.capitalizeFully(dataString)));
                     return null;
                 }
             }
@@ -138,7 +142,7 @@ public class PetUtil {
         }
         if (petType == null) {
             Lang.sendTo(sender, Lang.INVALID_PET_TYPE.toString()
-                    .replace("%type%", StringUtil.capitalise(petString)));
+                    .replace("%type%", WordUtils.capitalizeFully(petString)));
             return null;
         }
 
@@ -150,11 +154,11 @@ public class PetUtil {
                         petDataList.add(dataTemp);
                     } else {
                         Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                                .replace("%data%", StringUtil.capitalise(dataTypeString)));
+                                .replace("%data%", WordUtils.capitalizeFully(dataTypeString)));
                     }
                 } else {
                     Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE.toString()
-                            .replace("%data%", StringUtil.capitalise(dataTypeString)));
+                            .replace("%data%", WordUtils.capitalizeFully(dataTypeString)));
                     return null;
                 }
             }
@@ -169,13 +173,13 @@ public class PetUtil {
                 if (dataTemp != null) {
                     if (!petType.isDataAllowed(dataTemp)) {
                         Lang.sendTo(sender, Lang.INVALID_PET_DATA_TYPE_FOR_PET.toString()
-                                .replace("%data%", StringUtil.capitalise(dataTemp.toString().replace("_", "")))
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", " "))));
+                                .replace("%data%", dataTemp.toPrettyString())
+                                .replace("%type%", petType.toPrettyString()));
                         return null;
                     }
                     if (!EchoPet.getOptions().allowData(petType, dataTemp)) {
                         Lang.sendTo(sender, Lang.DATA_TYPE_DISABLED.toString()
-                                .replace("%data%", StringUtil.capitalise(dataTemp.toString().replace("_", ""))));
+                                .replace("%data%", dataTemp.toPrettyString()));
                         return null;
                     }
                 }
@@ -184,7 +188,7 @@ public class PetUtil {
 
         if (!EchoPet.getOptions().allowPetType(petType)) {
             Lang.sendTo(sender, Lang.PET_TYPE_DISABLED.toString()
-                    .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                    .replace("%type%", PrettyEnum.toPrettyString(petType)));
             return null;
         }
 
@@ -220,7 +224,7 @@ public class PetUtil {
 
     public static ArrayList<String> generatePetInfo(IPet pt) {
         ArrayList<String> info = new ArrayList<String>();
-        info.add(ChatColor.GOLD + " - Pet Type: " + ChatColor.YELLOW + StringUtil.capitalise(pt.getPetType().toString()));
+        info.add(ChatColor.GOLD + " - Pet Type: " + ChatColor.YELLOW + pt.getPetType().toPrettyString());
         info.add(ChatColor.GOLD + " - Name: " + ChatColor.YELLOW + pt.getPetName());
         if (pt instanceof IAgeablePet) {
             info.add(ChatColor.GOLD + " - Baby: " + ChatColor.YELLOW + ((IAgeablePet) pt).isBaby());
@@ -254,19 +258,19 @@ public class PetUtil {
 
         if (pt.getPetType() == PetType.SHEEP) {
             String color = "";
-            color = ((ISheepPet) pt).getColor() == null ? "Default" : StringUtil.capitalise(((ISheepPet) pt).getColor().toString().replace("_", " "));
+            color = ((ISheepPet) pt).getColor() == null ? "Default" : PrettyEnum.toPrettyString(((ISheepPet) pt).getColor());
             info.add(ChatColor.GOLD + " - Wool Colour: " + ChatColor.YELLOW + color);
         }
 
         if (pt.getPetType() == PetType.VILLAGER) {
             String prof = "";
-            prof = ((IVillagerPet) pt).getProfession() == null ? "Farmer" : StringUtil.capitalise(((IVillagerPet) pt).getProfession().toString().replace("_", " "));
+            prof = ((IVillagerPet) pt).getProfession() == null ? "Farmer" : PrettyEnum.toPrettyString(((IVillagerPet) pt).getProfession());
             info.add(ChatColor.GOLD + " - Profession: " + ChatColor.YELLOW + prof);
         }
 
         if (pt.getPetType() == PetType.OCELOT) {
             String oType = "";
-            oType = ((IOcelotPet) pt).getCatType() == null ? "Default" : StringUtil.capitalise(((IOcelotPet) pt).getCatType().toString().replace("_", " "));
+            oType = ((IOcelotPet) pt).getCatType() == null ? "Default" : PrettyEnum.toPrettyString(((IOcelotPet) pt).getCatType());
             info.add(ChatColor.GOLD + " - Ocelot Type: " + ChatColor.YELLOW + oType);
         }
 
@@ -276,7 +280,7 @@ public class PetUtil {
 
         if (pt.getPetType() == PetType.SLIME) {
             String size = "";
-            size = StringUtil.capitalise(((ISlimePet) pt).getSize() + "");
+            size = WordUtils.capitalizeFully(((ISlimePet) pt).getSize() + "");
             String s = " (Small)";
             if (size.equals("2")) s = " (Medium)";
             if (size.equals("4")) s = " (Large)";
@@ -285,7 +289,7 @@ public class PetUtil {
 
         if (pt.getPetType() == PetType.MAGMACUBE) {
             String size = "";
-            size = StringUtil.capitalise(((IMagmaCubePet) pt).getSize() + "");
+            size = WordUtils.capitalizeFully(((IMagmaCubePet) pt).getSize() + "");
             String s = " (Small)";
             if (size.equals("2")) s = " (Medium)";
             if (size.equals("4")) s = " (Large)";
@@ -296,12 +300,12 @@ public class PetUtil {
             info.add(ChatColor.GOLD + " - Tamed (Wolf): " + ChatColor.YELLOW + ((IWolfPet) pt).isTamed());
             info.add(ChatColor.GOLD + " - Angry (Wolf): " + ChatColor.YELLOW + ((IWolfPet) pt).isAngry());
             String color = "";
-            color = ((IWolfPet) pt).getCollarColor() == null ? "Red" : StringUtil.capitalise(((IWolfPet) pt).getCollarColor().toString().replace("_", " "));
+            color = ((IWolfPet) pt).getCollarColor() == null ? "Red" : PrettyEnum.toPrettyString(((IWolfPet) pt).getCollarColor());
             info.add(ChatColor.GOLD + " - Collar Colour: " + ChatColor.YELLOW + color);
         }
 
         if (pt.getPetType() == PetType.SKELETON) {
-            info.add(ChatColor.GOLD + " - Wither: " + ChatColor.YELLOW + ((ISkeletonPet) pt).isWither());
+            info.add(ChatColor.GOLD + " - Type: " + ChatColor.YELLOW + ((ISkeletonPet) pt).getSkeletonType().toPrettyString());
         }
 
         if (pt.getPetType() == PetType.WITHER) {
@@ -309,15 +313,15 @@ public class PetUtil {
         }
 
         if (pt.getPetType() == PetType.ZOMBIE) {
-            info.add(ChatColor.GOLD + " - Type: " + ChatColor.YELLOW + StringUtil.capitalise(((IZombiePet) pt).getZombieType().toString().replace('_', ' ')));
+            info.add(ChatColor.GOLD + " - Type: " + ChatColor.YELLOW + ((IZombiePet) pt).getZombieType().toPrettyString());
         }
         if (pt.getPetType() == PetType.HORSE) {
             HorseType ht = ((IHorsePet) pt).getHorseType();
             info.add(ChatColor.GOLD + " - Saddled: " + ChatColor.YELLOW + ((IHorsePet) pt).isSaddled());
-            info.add(ChatColor.GOLD + " - Type: " + ChatColor.YELLOW + StringUtil.capitalise(ht.toString().replace("_", " ")));
+            info.add(ChatColor.GOLD + " - Type: " + ChatColor.YELLOW + ht.toPrettyString());
             if (ht == HorseType.NORMAL) {
-                info.add(ChatColor.GOLD + " - Variant: " + ChatColor.YELLOW + StringUtil.capitalise(((IHorsePet) pt).getVariant().toString().replace("_", " ")));
-                info.add(ChatColor.GOLD + " - Marking: " + ChatColor.YELLOW + StringUtil.capitalise(((IHorsePet) pt).getMarking().toString().replace("_", " ")));
+                info.add(ChatColor.GOLD + " - Variant: " + ChatColor.YELLOW + PrettyEnum.toPrettyString(((IHorsePet) pt).getVariant()));
+                info.add(ChatColor.GOLD + " - Marking: " + ChatColor.YELLOW + PrettyEnum.toPrettyString(((IHorsePet) pt).getMarking()));
             }
             info.add(ChatColor.GOLD + " - Chested: " + ChatColor.YELLOW + ((IHorsePet) pt).isChested());
         }
@@ -341,12 +345,12 @@ public class PetUtil {
 
                 StringBuilder builder = new StringBuilder();
 
-                builder.append(color1).append("- ").append(StringUtil.capitalise(pt.toString().toLowerCase().replace("_", " ")));
+                builder.append(color1).append("- ").append(pt.toPrettyString());
 
                 if (!pt.getAllowedDataTypes().isEmpty()) {
                     builder.append(color2).append("    ");
                     for (PetData data : pt.getAllowedDataTypes()) {
-                        builder.append(color2).append(StringUtil.capitalise(data.toString().toLowerCase().replace("_", "")));
+                        builder.append(color2).append(data.toPrettyString());
                         builder.append(separator);
                     }
                     builder.deleteCharAt(builder.length() - separator.length());
@@ -356,13 +360,13 @@ public class PetUtil {
             } else {
                 StringBuilder builder = new StringBuilder();
 
-                builder.append(color1).append("- ").append(StringUtil.capitalise(pt.toString().toLowerCase().replace("_", " ")));
+                builder.append(color1).append("- ").append(pt.toPrettyString());
 
                 if (!pt.getAllowedDataTypes().isEmpty()) {
                     builder.append(color2).append(" (");
                     for (PetData data : pt.getAllowedDataTypes()) {
                         builder.append(separator);
-                        builder.append(color2).append(StringUtil.capitalise(data.toString().toLowerCase().replace("_", "")));
+                        builder.append(color2).append(data.toPrettyString());
                     }
                     builder.deleteCharAt(builder.length() - separator.length());
                     builder.append(color2).append(")");

@@ -35,7 +35,7 @@ import org.bukkit.entity.Zombie;
 public class ZombiePet extends Pet implements IZombiePet {
 
     boolean baby = false;
-    private ZombieType zombieType = ZombieType.REGULAR;
+    private ZombieType zombieType = ZombieType.NORMAL;
 
     public ZombiePet(Player owner) {
         super(owner);
@@ -64,7 +64,7 @@ public class ZombiePet extends Pet implements IZombiePet {
         if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
             final EntityHookType hookType;
             switch (newType) {
-                case REGULAR:
+                case NORMAL:
                     hookType = EntityHookType.ZOMBIE;
                     break;
                 case HUSK:
@@ -90,7 +90,7 @@ public class ZombiePet extends Pet implements IZombiePet {
                     // Pigmen are considered a seperate entity type, even on old versions
                     switchHookType(getOwner(), EntityHookType.PIG_ZOMBIE);
                     break;
-                case REGULAR:
+                case NORMAL:
                     ((Zombie) getEntityPet().getBukkitEntity()).setVillager(false);
                     break;
                 case VILLAGER:

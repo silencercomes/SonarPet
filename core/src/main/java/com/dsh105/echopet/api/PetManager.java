@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.dsh105.commodus.GeneralUtil;
-import com.dsh105.commodus.StringUtil;
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
 import com.dsh105.echopet.compat.api.entity.HorseMarking;
 import com.dsh105.echopet.compat.api.entity.HorseType;
@@ -30,6 +29,7 @@ import com.dsh105.echopet.compat.api.entity.IAgeablePet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SkeletonType;
 import com.dsh105.echopet.compat.api.entity.ZombieType;
 import com.dsh105.echopet.compat.api.entity.type.pet.IBlazePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.ICreeperPet;
@@ -58,6 +58,7 @@ import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.WorldUtil;
 import com.google.common.base.Strings;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -136,20 +137,20 @@ public class PetManager implements IPetManager {
         removePets(owner, true);
         if (!WorldUtil.allowPets(owner.getLocation())) {
             if (sendMessageOnFail) {
-                Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", StringUtil.capitalise(owner.getWorld().getName())));
+                Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", WordUtils.capitalizeFully(owner.getWorld().getName())));
             }
             return null;
         }
         if (!EchoPet.getOptions().allowPetType(petType)) {
             if (sendMessageOnFail) {
-                Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+                Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
         IPet pi = petType.getNewPetInstance(owner);
         if (pi == null) {
             if (sendMessageOnFail) {
-                Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+                Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
@@ -166,16 +167,16 @@ public class PetManager implements IPetManager {
         }
         removePets(owner, true);
         if (!WorldUtil.allowPets(owner.getLocation())) {
-            Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", StringUtil.capitalise(owner.getWorld().getName())));
+            Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", WordUtils.capitalizeFully(owner.getWorld().getName())));
             return null;
         }
         if (!EchoPet.getOptions().allowPetType(petType)) {
-            Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+            Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
         IPet pi = petType.getNewPetInstance(owner);
         if (pi == null) {
-            Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+            Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
         pi.createRider(riderType, true);
@@ -535,8 +536,9 @@ public class PetManager implements IPetManager {
                 }
             }
 
-            if (pd == PetData.WITHER) {
-                ((ISkeletonPet) pet).setWither(b);
+            if (pd.isType(PetData.Type.SKELETON_TYPE)) {
+                SkeletonType skeletonType = SkeletonType.valueOf(pd.toString());
+                ((ISkeletonPet) pet).setSkeletonType(skeletonType);
             }
 
             if (pd == PetData.FIRE) {

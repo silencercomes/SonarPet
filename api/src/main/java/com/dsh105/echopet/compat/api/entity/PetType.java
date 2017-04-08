@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableList;
 import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.utils.MoreCollectors;
+import net.techcable.sonarpet.utils.PrettyEnum;
 import net.techcable.sonarpet.utils.Versioning;
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
@@ -41,7 +42,7 @@ import org.bukkit.entity.Player;
 
 import static com.google.common.base.Preconditions.*;
 
-public enum PetType {
+public enum PetType implements PrettyEnum {
 
     // Aggressive mobs
     BLAZE("Blaze", 61, "Blaze Pet", 20D, 6D, "BLAZE", PetData.FIRE),

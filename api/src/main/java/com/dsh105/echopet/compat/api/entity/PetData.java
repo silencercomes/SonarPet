@@ -19,13 +19,15 @@ package com.dsh105.echopet.compat.api.entity;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.techcable.sonarpet.utils.PrettyEnum;
+
 /**
  * A data attribute a pet can have, stored as an on/off flag.
  *
  * A pet's data is stored in a bit vector, so <b>the enum must never be reordered</b>.
  * New types can only be added at the end, not at the beginning.
  */
-public enum PetData {
+public enum PetData implements PrettyEnum {
 
     ANGRY("angry", Type.BOOLEAN),
     BABY("baby", Type.BOOLEAN),
@@ -60,7 +62,7 @@ public enum PetData {
     MULE("mule", Type.HORSE_TYPE),
     NOARMOUR("noarmour", Type.HORSE_ARMOUR),
     NONE("noMarking", Type.HORSE_MARKING),
-    NORMAL("normal", Type.HORSE_TYPE),
+    NORMAL("normal", Type.HORSE_TYPE, Type.ZOMBIE_TYPE, Type.SKELETON_TYPE),
     ORANGE("orange", Type.COLOUR),
     PINK("pink", Type.COLOUR),
     POWER("powered", Type.BOOLEAN),
@@ -83,11 +85,12 @@ public enum PetData {
     WHITESPOT("whiteSpot", Type.HORSE_MARKING),
     WHITE("white", Type.COLOUR, Type.HORSE_VARIANT, Type.RABBIT_TYPE),
     WILD("wild", Type.CAT),
-    WITHER("wither", Type.BOOLEAN),
+    WITHER("wither", Type.SKELETON_TYPE),
     YELLOW("yellow", Type.COLOUR),
-    ZOMBIE("zombie", Type.HORSE_TYPE, Type.ZOMBIE_TYPE),
-    HUSK("husk",Type.ZOMBIE_TYPE),
-    PIGMAN("pigman",Type.ZOMBIE_TYPE);
+    ZOMBIE("zombie", Type.HORSE_TYPE),
+    HUSK("husk", Type.ZOMBIE_TYPE),
+    PIGMAN("pigman", Type.ZOMBIE_TYPE),
+    STRAY("stray", Type.SKELETON_TYPE);
 
     private final String configOptionString;
     private final ImmutableSet<Type> types;
@@ -118,6 +121,9 @@ public enum PetData {
         HORSE_TYPE,
         HORSE_VARIANT,
         HORSE_MARKING,
-        HORSE_ARMOUR, RABBIT_TYPE, ZOMBIE_TYPE
+        HORSE_ARMOUR,
+        RABBIT_TYPE,
+        ZOMBIE_TYPE,
+        SKELETON_TYPE
     }
 }

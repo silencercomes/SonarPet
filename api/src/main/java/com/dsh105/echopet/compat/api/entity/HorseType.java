@@ -18,9 +18,11 @@
 package com.dsh105.echopet.compat.api.entity;
 
 
+import net.techcable.sonarpet.utils.PrettyEnum;
+
 import org.bukkit.entity.Horse;
 
-public enum HorseType {
+public enum HorseType implements PrettyEnum {
 
     NORMAL(Horse.Variant.HORSE),
     DONKEY(Horse.Variant.DONKEY),

@@ -20,7 +20,6 @@ package com.dsh105.echopet.api.pet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.dsh105.commodus.StringUtil;
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IEntityNoClipPet;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
@@ -32,13 +31,11 @@ import com.dsh105.echopet.compat.api.event.PetTeleportEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.util.Lang;
+import com.dsh105.echopet.compat.api.util.PetNames;
+import com.dsh105.echopet.compat.api.util.StringSimplifier;
 
 import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.INMS;
-import com.dsh105.echopet.compat.api.util.PetNames;
-import com.dsh105.echopet.compat.api.util.StringSimplifier;
-import com.google.common.base.Preconditions;
-
 import net.techcable.sonarpet.particles.Particle;
 
 import org.bukkit.Bukkit;
@@ -404,13 +401,13 @@ public abstract class Pet implements IPet {
     public Pet createRider(final PetType pt, boolean sendFailMessage) {
         if (pt == PetType.HUMAN) {
             if (sendFailMessage) {
-                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", StringUtil.capitalise(this.getPetType().toString())));
+                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
         if (!EchoPet.getOptions().allowRidersFor(this.getPetType())) {
             if (sendFailMessage) {
-                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", StringUtil.capitalise(this.getPetType().toString())));
+                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
@@ -423,7 +420,7 @@ public abstract class Pet implements IPet {
         IPet newRider = pt.getNewPetInstance(this.getOwner());
         if (newRider == null) {
             if (sendFailMessage) {
-                Lang.sendTo(getOwner(), Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", StringUtil.capitalise(getPetType().toString())));
+                Lang.sendTo(getOwner(), Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }

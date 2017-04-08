@@ -70,7 +70,7 @@ public class EchoPetAPI {
                 return null;
             }
             if (sendMessage) {
-                Lang.sendTo(player, Lang.CREATE_PET.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+                Lang.sendTo(player, Lang.CREATE_PET.toString().replace("%type%", petType.toPrettyString()));
             }
             return pet;
         }

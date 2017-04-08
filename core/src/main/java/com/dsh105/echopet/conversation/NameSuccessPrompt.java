@@ -46,11 +46,11 @@ public class NameSuccessPrompt extends MessagePrompt {
         if (success) {
             return this.admin ? Lang.ADMIN_NAME_PET.toString()
                     .replace("%player%", this.pet.getNameOfOwner())
-                    .replace("%type%", StringUtil.capitalise(this.pet.getPetType().toString().replace("_", " ")))
+                    .replace("%type%", this.pet.getPetType().toPrettyString())
                     .replace("%name%", name)
 
                     : Lang.NAME_PET.toString()
-                    .replace("%type%", StringUtil.capitalise(this.pet.getPetType().toString().replace("_", " ")))
+                    .replace("%type%", this.pet.getPetType().toPrettyString())
                     .replace("%name%", name);
         } else {
             return Lang.NAME_NOT_ALLOWED.toString().replace("%name%", name);

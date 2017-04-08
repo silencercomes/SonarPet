@@ -31,16 +31,14 @@ import org.bukkit.entity.Player
 @EntityPetType(petType = PetType.GUARDIAN)
 class GuardianPet(owner: Player) : Pet(owner), IGuardianPet {
 
-    override fun isElder(): Boolean {
-        return (entityPet as IEntityGuardianPet).isElder
-    }
-
-    override fun setElder(flag: Boolean) {
-        if (Versioning.NMS_VERSION >= NmsVersion.v1_11_R1) {
-            switchHookType(owner, if (flag) EntityHookType.ELDER_GUARDIAN else EntityHookType.GUARDIAN)
-        } else {
-            @Suppress("DEPRECATION")
-            (entityPet.bukkitEntity as Guardian).isElder = true
+    override var elder: Boolean
+        get() = (entityPet as IEntityGuardianPet).isElder
+        set(flag) {
+            if (Versioning.NMS_VERSION >= NmsVersion.v1_11_R1) {
+                switchHookType(owner, if (flag) EntityHookType.ELDER_GUARDIAN else EntityHookType.GUARDIAN)
+            } else {
+                @Suppress("DEPRECATION")
+                (entityPet.bukkitEntity as Guardian).isElder = true
+            }
         }
-    }
 }
