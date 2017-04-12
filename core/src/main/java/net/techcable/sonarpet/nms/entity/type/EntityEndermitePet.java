@@ -1,24 +1,22 @@
 package net.techcable.sonarpet.nms.entity.type;
 
-import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityEndermitePet;
 
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.SafeSound;
-import net.techcable.sonarpet.nms.entity.EntityNoClipPet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.entity.EntityNoClipPet;
 import net.techcable.sonarpet.particles.Particle;
 
 import org.bukkit.Location;
 
-@EntityPetType(petType = PetType.ENDERMITE)
+@EntityHook(EntityHookType.ENDERMITE)
 public class EntityEndermitePet extends EntityNoClipPet implements IEntityEndermitePet {
-    private final NMSInsentientEntity entity;
-    protected EntityEndermitePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+    protected EntityEndermitePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
     @Override
@@ -49,10 +47,5 @@ public class EntityEndermitePet extends EntityNoClipPet implements IEntityEnderm
                     )
                     .show();
         }
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 }

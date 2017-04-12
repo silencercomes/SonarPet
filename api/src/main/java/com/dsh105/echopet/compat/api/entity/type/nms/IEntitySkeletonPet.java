@@ -18,8 +18,9 @@
 package com.dsh105.echopet.compat.api.entity.type.nms;
 
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
+import com.dsh105.echopet.compat.api.entity.SkeletonType;
 
 public interface IEntitySkeletonPet extends IEntityPet {
 
-    public void setWither(boolean flag);
+    SkeletonType getSkeletonType();
 }

@@ -21,8 +21,9 @@ public class Versioning {
             OBC_PACKAGE = "org.bukkit.craftbukkit";
             NMS_VERSION_STRING = NmsVersion.LATEST.toString();
         }
-        NMS_VERSION = NmsVersion.getVersion(NMS_VERSION_STRING);
-        if (NMS_VERSION == null) {
+        try {
+            NMS_VERSION = NmsVersion.valueOf(NMS_VERSION_STRING);
+        } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Unknown version: " + NMS_VERSION_STRING);
         }
         MAJOR_VERSION = NMS_VERSION.getMajorVersion();

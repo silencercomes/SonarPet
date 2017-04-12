@@ -4,6 +4,7 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 import org.bukkit.Material;
@@ -12,11 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class AbstractEntityZombiePet extends EntityInsentientPet {
-    protected NMSInsentientEntity entity;
-
-    protected AbstractEntityZombiePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+    protected AbstractEntityZombiePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
     @Override
@@ -46,11 +44,6 @@ public abstract class AbstractEntityZombiePet extends EntityInsentientPet {
         } else {
             return SizeCategory.REGULAR;
         }
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

@@ -17,6 +17,14 @@
 
 package com.dsh105.echopet;
 
+import lombok.*;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.annotation.Nullable;
+
 import com.dsh105.commodus.config.YAMLConfig;
 import com.dsh105.commodus.config.YAMLConfigManager;
 import com.dsh105.commodus.data.Metrics;
@@ -29,19 +37,35 @@ import com.dsh105.echopet.commands.util.CommandManager;
 import com.dsh105.echopet.commands.util.DynamicPluginCommand;
 import com.dsh105.echopet.compat.api.config.ConfigOptions;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
-import com.dsh105.echopet.compat.api.plugin.*;
+import com.dsh105.echopet.compat.api.plugin.EchoPet;
+import com.dsh105.echopet.compat.api.plugin.IEchoPetPlugin;
+import com.dsh105.echopet.compat.api.plugin.IPetManager;
+import com.dsh105.echopet.compat.api.plugin.ISqlPetManager;
+import com.dsh105.echopet.compat.api.plugin.ModuleLogger;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.reflection.utility.CommonReflection;
-import com.dsh105.echopet.compat.api.registration.PetRegistry;
-import com.dsh105.echopet.compat.api.util.*;
+import com.dsh105.echopet.compat.api.util.Lang;
+import com.dsh105.echopet.compat.api.util.Logger;
+import com.dsh105.echopet.compat.api.util.ReflectionUtil;
+import com.dsh105.echopet.compat.api.util.TableMigrationUtil;
+import com.dsh105.echopet.compat.api.util.VersionIncompatibleCommand;
 import com.dsh105.echopet.hook.VanishProvider;
 import com.dsh105.echopet.hook.WorldGuardProvider;
 import com.dsh105.echopet.listeners.MenuListener;
 import com.dsh105.echopet.listeners.PetEntityListener;
 import com.dsh105.echopet.listeners.PetOwnerListener;
-import com.dsh105.echopet.registration.PetRegistryImpl;
+import com.google.common.reflect.ClassPath;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import net.techcable.sonarpet.BootstrapedPlugin;
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
+import net.techcable.sonarpet.HookRegistry;
+import net.techcable.sonarpet.HookRegistryImpl;
+import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSPetEntity;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -50,18 +74,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.annotation.Nullable;
-
-import net.techcable.sonarpet.BootstrapedPlugin;
-import net.techcable.sonarpet.nms.INMS;
-import net.techcable.sonarpet.nms.NMSPetEntity;
-import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
@@ -80,7 +92,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     public static final ModuleLogger LOGGER = new ModuleLogger("SonarPet");
     public static final ModuleLogger LOGGER_REFLECTION = LOGGER.getModule("Reflection");
 
-    private PetRegistry petRegistry;
+    private final HookRegistry hookRegistry = new HookRegistryImpl(this);
 
     private CommandManager COMMAND_MANAGER;
     private YAMLConfigManager configManager;
@@ -102,6 +114,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     public boolean updateChecked = false;
 
     @Override
+    @SneakyThrows(IOException.class)
     public void onEnable() {
         EchoPet.setPlugin(this);
         isUsingNetty = CommonReflection.isUsingNetty();
@@ -125,8 +138,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
             return;
         }
 
-        this.petRegistry = new PetRegistryImpl(this);
-
         this.loadConfiguration();
 
         PluginManager manager = getServer().getPluginManager();
@@ -148,6 +159,15 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
         petCmd.setTabCompleter(new CommandComplete());
         COMMAND_MANAGER.register(petCmd);
         COMMAND_MANAGER.register(new DynamicPluginCommand(this.adminCmdString, new String[0], "Create and manage the pets of other players.", "Use /" + this.adminCmdString + " help to see the command list.", new PetAdminCommand(this.adminCmdString), null, this));
+
+        // Initialize hook classes
+        for (ClassPath.ClassInfo hookType : ClassPath.from(getClass().getClassLoader()).getTopLevelClasses("net.techcable.sonarpet.nms.entity.type")) {
+            if (!hookType.load().isAnnotationPresent(EntityHook.class)) continue;
+            for (EntityHookType type : hookType.load().getAnnotation(EntityHook.class).value()) {
+                if (!type.isActive()) continue;
+                hookRegistry.registerHookClass(type, hookType.load().asSubclass(IEntityPet.class));
+            }
+        }
 
         // Register listeners
         manager.registerEvents(new MenuListener(), this);
@@ -174,6 +194,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
         if (dbPool != null) {
             dbPool.close();
         }
+        hookRegistry.shutdown();
         // Unregister the commands
         this.COMMAND_MANAGER.unregister();
     }
@@ -346,8 +367,8 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     }
 
     @Override
-    public PetRegistry getPetRegistry() {
-        return this.petRegistry;
+    public HookRegistry getHookRegistry() {
+        return this.hookRegistry;
     }
 
     @Override

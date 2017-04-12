@@ -49,4 +49,8 @@ public interface NMSEntityHorse extends NMSInsentientEntity {
     }
 
     void setCarryingChest(boolean flag);
+
+    void setSaddled(boolean saddled);
+
+    boolean isSaddled();
 }

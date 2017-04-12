@@ -17,6 +17,14 @@
 
 package com.dsh105.echopet.api;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
@@ -26,14 +34,8 @@ import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.util.Logger;
 import com.dsh105.echopet.compat.api.util.SQLUtil;
 import com.dsh105.echopet.compat.api.util.TableMigrationUtil;
-import org.bukkit.entity.Player;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import org.bukkit.entity.Player;
 
 public class SqlPetManager implements ISqlPetManager {
 
@@ -109,7 +111,6 @@ public class SqlPetManager implements ISqlPetManager {
 
             IPet pet = null;
             Player owner;
-            PetType pt;
             String name;
 
             if (EchoPet.getPlugin().getDbPool() != null) {
@@ -124,15 +125,13 @@ public class SqlPetManager implements ISqlPetManager {
                             return null;
                         }
 
-                        pt = findPetType(rs.getString("PetType"));
-                        if (pt == null) {
-                            return null;
-                        }
+                        List<PetData> dataList = new ArrayList<>();
+                        final PetType petType = PetType.fromDataString(rs.getString("PetType"), dataList);
                         name = rs.getString("PetName").replace("\'", "'");
 
-                        List<PetData> dataList = SQLUtil.deserializePetData(rs.getLong("PetData"));
+                        dataList.addAll(SQLUtil.deserializePetData(rs.getLong("PetData")));
 
-                        pet = EchoPet.getManager().createPet(owner, pt, false);
+                        pet = EchoPet.getManager().createPet(owner, petType, false);
                         if (pet == null) {
                             return null;
                         }
@@ -141,13 +140,11 @@ public class SqlPetManager implements ISqlPetManager {
                             EchoPet.getManager().setData(pet, data, true);
                         }
                         if (rs.getString("RiderPetType") != null) {
-                            PetType mt = findPetType(rs.getString("RiderPetType"));
-                            if (mt == null) {
-                                return null;
-                            }
+                            List<PetData> riderDataList = new ArrayList<>();
+                            PetType mt = PetType.fromDataString(rs.getString("RiderPetType"), riderDataList);
                             String mName = rs.getString("RiderPetName").replace("\'", "'");
 
-                            List<PetData> riderDataList = SQLUtil.deserializePetData(rs.getLong("RiderPetData"));
+                            riderDataList.addAll(SQLUtil.deserializePetData(rs.getLong("RiderPetData")));
 
                             IPet rider = pet.createRider(mt, false);
                             if (rider != null) {
@@ -177,14 +174,6 @@ public class SqlPetManager implements ISqlPetManager {
             return pet;
         }
         return null;
-    }
-
-    private PetType findPetType(String s) {
-        try {
-            return PetType.valueOf(s.toUpperCase());
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     @Override

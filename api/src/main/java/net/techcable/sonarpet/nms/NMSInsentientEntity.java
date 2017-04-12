@@ -27,4 +27,6 @@ public interface NMSInsentientEntity extends NMSLivingEntity {
     void jump();
 
     float getVerticalFaceSpeed();
+
+    Object getHandle();
 }

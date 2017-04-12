@@ -18,11 +18,18 @@
 package com.dsh105.echopet.compat.api.entity;
 
 import com.dsh105.echopet.compat.api.ai.IPetGoalSelector;
+
+import net.techcable.sonarpet.EntityHookType;
+
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public interface IEntityPet {
+
+    public EntityHookType getHookType();
+
+    public void initiateEntityPet();
 
     public IPetGoalSelector getPetGoalSelector();
 

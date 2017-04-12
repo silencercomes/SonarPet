@@ -19,17 +19,30 @@ package com.dsh105.echopet.compat.api.entity;
 
 import lombok.*;
 
+import java.lang.invoke.MethodHandle;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.util.wrapper.WrappedEntityType;
 import com.google.common.collect.ImmutableList;
+
+import net.techcable.pineapple.reflection.Reflection;
+import net.techcable.sonarpet.EntityHookType;
+import net.techcable.sonarpet.utils.MoreCollectors;
+import net.techcable.sonarpet.utils.PrettyEnum;
+import net.techcable.sonarpet.utils.Versioning;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import static com.google.common.base.Preconditions.*;
 
-import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
-
-public enum PetType {
+public enum PetType implements PrettyEnum {
 
     // Aggressive mobs
     BLAZE("Blaze", 61, "Blaze Pet", 20D, 6D, "BLAZE", PetData.FIRE),
@@ -47,14 +60,13 @@ public enum PetType {
     },
     GUARDIAN("Guardian", 68, "Guardian Pet", 20D, 10D, "GUARDIAN", PetData.ELDER),
     MAGMACUBE("MagmaCube", 62, "Magma Cube Pet", 20D, 5D, "MAGMA_CUBE", PetData.SMALL, PetData.MEDIUM, PetData.LARGE),
-    PIGZOMBIE("PigZombie", 57, "Pig Zombie Pet", 20D, 6D, "PIG_ZOMBIE", PetData.BABY),
     SILVERFISH("Silverfish", 60, "Silverfish Pet", 8D, 4D, "SILVERFISH"),
     SKELETON("Skeleton", 51, "Skeleton Pet", 20D, 5D, "SKELETON", PetData.WITHER),
     SLIME("Slime", 55, "Slime Pet", 20D, 4D, "SLIME", PetData.SMALL, PetData.MEDIUM, PetData.LARGE),
     SPIDER("Spider", 52, "Spider Pet", 16D, 5D, "SPIDER"),
     WITCH("Witch", 66, "Witch Pet", 26D, 5D, "WITCH"),
     WITHER("Wither", 64, "Wither Pet", 300D, 8D, "WITHER", PetData.SHIELD),
-    ZOMBIE("Zombie", 54, "Zombie Pet", 20D, 5D, "ZOMBIE", PetData.BABY, PetData.VILLAGER),
+    ZOMBIE("Zombie", 54, "Zombie Pet", 20D, 5D, "ZOMBIE", PetData.BABY, PetData.VILLAGER, PetData.HUSK, PetData.ZOMBIE, PetData.PIGMAN),
 
     // Passive mobs
     BAT("Bat", 65, "Bat Pet", 6D, 3D, "BAT"),
@@ -90,8 +102,8 @@ public enum PetType {
 
     HUMAN("Human", 54, "Human Pet", 20D, 6D, "UNKNOWN");
 
-    private final Class<? extends IEntityPet> hookClass;
     private final Class<? extends IPet> petClass;
+    private final MethodHandle petConstructor;
     private final String defaultName;
     private final double maxHealth;
     private final double attackDamage;
@@ -103,14 +115,8 @@ public enum PetType {
     @SneakyThrows(ClassNotFoundException.class)
     PetType(String classIdentifier, int registrationId, String defaultName, double maxHealth, double attackDamage, String entityTypeName, PetData... allowedData) {
         this.classIdentifier = classIdentifier;
-        Class<? extends IEntityPet> hookClass;
-        try {
-            hookClass = Class.forName("net.techcable.sonarpet.nms.entity.type.Entity" + classIdentifier + "Pet").asSubclass(IEntityPet.class);
-        } catch (ClassNotFoundException e) {
-            hookClass = null;
-        }
-        this.hookClass = hookClass;
         this.petClass = Class.forName("com.dsh105.echopet.api.pet.type." + classIdentifier + "Pet").asSubclass(IPet.class);
+        this.petConstructor = Reflection.getConstructor(petClass, Player.class);
         this.id = registrationId;
         this.allowedData = ImmutableList.copyOf(allowedData);
         this.maxHealth = maxHealth;
@@ -151,15 +157,11 @@ public enum PetType {
         return getAllowedDataTypes().contains(data);
     }
 
+    @SneakyThrows
     public IPet getNewPetInstance(Player owner) {
-        if (owner != null) {
-            return EchoPet.getPetRegistry().spawn(this, owner);
-        }
-        return null;
-    }
-
-    public Class<? extends IEntityPet> getHookClass() {
-        return this.hookClass;
+        checkState(isSupported(), "%s is not supported on %s", this, Versioning.NMS_VERSION);
+        checkNotNull(owner, "Null owner");
+        return (IPet) petConstructor.invoke(owner);
     }
 
     public Class<? extends IPet> getPetClass() {
@@ -168,5 +170,70 @@ public enum PetType {
 
     public Class<?> getNmsClass() {
         return MinecraftReflection.getNmsClass("Entity" + classIdentifier);
+    }
+    // NOTE: Lazy-load hookType information to avoid circular dependency issues
+    private ImmutableList<EntityHookType> hookTypes;
+    private EntityHookType primaryHookType;
+    private void computeHookTypes() {
+        this.hookTypes = Arrays.stream(EntityHookType.values())
+                .filter((hookType) -> hookType.getPetType() == PetType.this)
+                .filter(EntityHookType::isActive)
+                .collect(MoreCollectors.toImmutableList());
+        if (hookTypes.isEmpty()) {
+            this.primaryHookType = null;
+        } else {
+            this.primaryHookType = hookTypes.stream()
+                    .filter((hookType) -> hookType.getNmsName().equals(classIdentifier))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Couldn't find primary hook type for "
+                                    + this
+                                    + " in "
+                                    + hookTypes.stream()
+                                    .map(EntityHookType::toString)
+                                    .collect(Collectors.joining(",", "[", "]"))
+                    ));
+        }
+    }
+    public boolean isSupported() {
+        return !getHookTypes().isEmpty();
+    }
+
+    public EntityHookType getPrimaryHookType() {
+        if (isSupported() && primaryHookType == null) computeHookTypes();
+        return primaryHookType;
+    }
+
+    public ImmutableList<EntityHookType> getHookTypes() {
+        if (hookTypes == null) computeHookTypes();
+        return this.hookTypes;
+    }
+
+    /**
+     * Get the pet type for the specified name, properly converting legacy pet types into their new representation.
+     *
+     * This should be preferred to {@link #valueOf(String)} when loading from storage, since it handles legacy formats.
+     * However, {@link #valueOf(String)} should be preferred for the user interface as it enforces the modern representation.
+     *
+     * @param petTypeName the name of the pet's type
+     * @param petData the list of pet data, to add attributes to if needed.
+     * @return the pet's data type
+     */
+    @Nonnull
+    public static PetType fromDataString(String petTypeName, List<PetData> petData) {
+        Objects.requireNonNull(petTypeName, "Null petTypeName!");
+        Objects.requireNonNull(petData, "Null petData!");
+        final PetType petType;
+        switch (petTypeName) {
+            case "PIGZOMBIE": // Convert the old pigman type to a zombie with a pigman attribute
+                petData.add(PetData.PIGMAN);
+                return PetType.ZOMBIE;
+            default:
+                try {
+                    return PetType.valueOf(petTypeName);
+                } catch (IllegalArgumentException ignored) {
+                    throw new IllegalArgumentException("Unknown petType: " + petTypeName);
+                }
+        }
     }
 }

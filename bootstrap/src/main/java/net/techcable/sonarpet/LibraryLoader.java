@@ -98,7 +98,6 @@ public final class LibraryLoader {
          * @throws IOException if unable to download libraries
          * @throws IllegalArgumentException if any of the libraries don't exist
          */
-        @SneakyThrows
         public LibraryLoadingClassLoader(
                 ClassLoader parent,
                 Set<LibraryArtifact> libraryArtifacts,
@@ -379,6 +378,7 @@ public final class LibraryLoader {
                 );
             }
         }
+        throw new IOException("Couldn't find artifact: " + artifact);
     }
 
     //

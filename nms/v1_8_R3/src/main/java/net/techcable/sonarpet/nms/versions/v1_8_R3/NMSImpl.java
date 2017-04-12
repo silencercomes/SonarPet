@@ -3,6 +3,7 @@ package net.techcable.sonarpet.nms.versions.v1_8_R3;
 import net.minecraft.server.v1_8_R3.EntityHorse;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.techcable.sonarpet.nms.EntityRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import com.google.common.collect.ImmutableMap;
 
@@ -72,6 +73,11 @@ public class NMSImpl implements INMS {
     @SuppressWarnings("deprecation") // I know about ur stupid magic value warning mom
     public boolean isLiquid(Material block) {
         return Block.getById(block.getId()).getMaterial().isLiquid();
+    }
+
+    @Override
+    public EntityRegistry getEntityRegistry() {
+        return new NMSEntityRegistry();
     }
 
     //

@@ -129,6 +129,7 @@ public abstract class ParticleBuilder {
     //ToDo: Version Fix Here
     public static ParticleBuilder create(Particle type, float speed, int amount) {
         switch (Versioning.MAJOR_VERSION) {
+            case 11:
             case 10:
             case 9:
                 return new BukkitParticleBuilder(type, speed, amount);

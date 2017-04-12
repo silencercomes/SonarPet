@@ -10,5 +10,9 @@
         "ON_INTERACT_METHOD": "a",
         "ENTITY_PROCEDURAL_AI_METHOD": "M", // EntityLiving.updateAITasks
         "LIVING_UPDATE_METHOD": "n" // EntityLivingBase.onLivingUpdate
+    },
+    "obfuscated_fields": {
+        "ENTITY_SIDEWAYS_MOTION_FIELD": "bf",
+        "ENTITY_FORWARD_MOTION_FIELD": "bg"
     }
 }

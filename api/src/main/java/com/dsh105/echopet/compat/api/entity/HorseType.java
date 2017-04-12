@@ -18,20 +18,16 @@
 package com.dsh105.echopet.compat.api.entity;
 
 
-import net.techcable.sonarpet.utils.NmsVersion;
-import net.techcable.sonarpet.utils.Versioning;
+import net.techcable.sonarpet.utils.PrettyEnum;
 
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 
-public enum HorseType {
+public enum HorseType implements PrettyEnum {
 
     NORMAL(Horse.Variant.HORSE),
     DONKEY(Horse.Variant.DONKEY),
     MULE(Horse.Variant.MULE),
+    LLAMA(Horse.Variant.LLAMA),
     ZOMBIE(Horse.Variant.UNDEAD_HORSE),
     SKELETON(Horse.Variant.SKELETON_HORSE);
 
@@ -57,7 +53,7 @@ public enum HorseType {
     }
 
 
-    private static final HorseType[] BY_BUKKIT = new HorseType[Horse.Style.values().length];
+    private static final HorseType[] BY_BUKKIT = new HorseType[Horse.Variant.values().length];
     static {
         for (Horse.Variant bukkitVariant : Horse.Variant.values()) {
             HorseType matchingMarking = null;

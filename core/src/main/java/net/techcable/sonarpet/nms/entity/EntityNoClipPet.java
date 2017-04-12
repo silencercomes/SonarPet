@@ -3,10 +3,12 @@ package net.techcable.sonarpet.nms.entity;
 import com.dsh105.echopet.compat.api.entity.IEntityNoClipPet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 
-public abstract class EntityNoClipPet extends EntityInsentientPet implements IEntityNoClipPet {
+import net.techcable.sonarpet.EntityHookType;
+import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
-    protected EntityNoClipPet(IPet pet) {
-        super(pet);
+public abstract class EntityNoClipPet extends EntityInsentientPet implements IEntityNoClipPet {
+    protected EntityNoClipPet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
     @Override

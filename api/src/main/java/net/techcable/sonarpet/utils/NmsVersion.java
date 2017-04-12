@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import com.dsh105.commodus.StringUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -21,13 +23,6 @@ import com.google.gson.JsonParser;
 //ToDo: Version Fix Here
 @Getter
 public enum NmsVersion {
-    v1_6_R3,
-    v1_7_R1,
-    v1_7_R2,
-    v1_7_R3,
-    v1_7_R4,
-    v1_8_R1,
-    v1_8_R2,
     v1_8_R3,
     v1_9_R1,
     v1_9_R2,
@@ -36,7 +31,7 @@ public enum NmsVersion {
 
     public static final NmsVersion LATEST, EARLIEST;
     private ImmutableMap<String, Integer> metadata;
-    private ImmutableMap<String, String> obfuscatedMethods;
+    private ImmutableMap<String, String> obfuscatedMethods, obfuscatedFields;
     public int getMetadataId(String name) {
         if (metadata == null) loadData();
         Integer id = metadata.get(name);
@@ -45,11 +40,20 @@ public enum NmsVersion {
         }
         return id;
     }
+    @Nonnull
     public String getObfuscatedMethod(String id) {
         if (obfuscatedMethods == null) loadData();
         String name = obfuscatedMethods.get(id);
         if (name == null) {
             throw new IllegalArgumentException("Obfuscated method " + id + " is unknown for " + this);
+        }
+        return name;
+    }
+    public String getObfuscatedField(String id) {
+        if (obfuscatedFields == null) loadData();
+        String name = obfuscatedFields.get(id);
+        if (name == null) {
+            throw new IllegalArgumentException("Obfuscated field " + id + " is unknown for " + this);
         }
         return name;
     }
@@ -73,21 +77,30 @@ public enum NmsVersion {
                 obfuscatedMethods.put(entry.getKey(), entry.getValue().getAsString());
             }
             this.obfuscatedMethods = obfuscatedMethods.build();
+            JsonObject obfuscatedFieldsObject = base.getAsJsonObject("obfuscated_fields");
+            ImmutableMap.Builder<String, String> obfuscatedFields = ImmutableMap.builder();
+            for (Map.Entry<String, JsonElement> entry : obfuscatedFieldsObject.entrySet()) {
+                obfuscatedFields.put(entry.getKey(), entry.getValue().getAsString());
+            }
+            this.obfuscatedFields = obfuscatedFields.build();
         }
     }
 
     static {
-        NmsVersion[] sorted = values();
-        Arrays.sort(sorted, Comparator.comparing(Enum::name));
-        LATEST = sorted[sorted.length - 1];
-        EARLIEST = sorted[0];
+        LATEST = values()[values().length - 1];
+        EARLIEST = values()[0];
     }
 
-    public static NmsVersion getVersion(String s) {
-        try {
-            return valueOf(s);
-        } catch (IllegalArgumentException e) {
-            return null;
+    public static NmsVersion parse(String text) {
+        switch (text) {
+            case "EARLIEST":
+            case "LATEST":
+            default:
+                try {
+                    return valueOf(text);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid version: " + text);
+                }
         }
     }
 

@@ -17,10 +17,21 @@
 
 package com.dsh105.echopet.api.pet.type;
 
+import lombok.*;
+
+import java.lang.invoke.MethodHandle;
+
 import com.dsh105.echopet.api.pet.Pet;
 import com.dsh105.echopet.compat.api.entity.*;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IHorsePet;
+
+import net.techcable.pineapple.reflection.Reflection;
+import net.techcable.sonarpet.EntityHookType;
+import net.techcable.sonarpet.utils.NmsVersion;
+import net.techcable.sonarpet.utils.Versioning;
+
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 @EntityPetType(petType = PetType.HORSE)
@@ -38,10 +49,45 @@ public class HorsePet extends Pet implements IHorsePet {
         super(owner);
     }
 
+    // We have to do this with reflection since the API broke in 1.11 -_-
+    @SuppressWarnings("deprecation")
+    private static final MethodHandle SET_VARIANT_METHOD = Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) < 0 ?
+            Reflection.getMethod(Horse.class, "setVariant", Horse.Variant.class) : null;
     @Override
-    public void setHorseType(HorseType type) {
-        ((IEntityHorsePet) getEntityPet()).setHorseType(type);
-        this.horseType = type;
+    @SneakyThrows
+    public void setHorseType(HorseType newType) {
+        if (newType != HorseType.NORMAL) {
+            this.setArmour(HorseArmour.NONE);
+        }
+        if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
+            final EntityHookType hookType;
+            switch (newType) {
+                case NORMAL:
+                    hookType = EntityHookType.HORSE;
+                    break;
+                case DONKEY:
+                    hookType = EntityHookType.DONKEY;
+                    break;
+                case MULE:
+                    hookType = EntityHookType.MULE;
+                    break;
+                case ZOMBIE:
+                    hookType = EntityHookType.ZOMBIE_HORSE;
+                    break;
+                case SKELETON:
+                    hookType = EntityHookType.SKELETON_HORSE;
+                    break;
+                case LLAMA:
+                    hookType = EntityHookType.LLAMA;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown horse type: " + newType);
+            }
+            switchHookType(getOwner(), hookType);
+        } else {
+            SET_VARIANT_METHOD.invoke(getEntityPet().getBukkitEntity(), newType);
+        }
+        this.horseType = newType;
     }
 
     @Override

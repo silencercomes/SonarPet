@@ -26,12 +26,13 @@ import com.google.common.collect.ImmutableList;
 import net.techcable.sonarpet.item.ItemData;
 import net.techcable.sonarpet.item.SkullItemData;
 import net.techcable.sonarpet.item.SkullItemData.SkullType;
+import net.techcable.sonarpet.utils.PrettyEnum;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public enum MenuItem {
+public enum MenuItem implements PrettyEnum {
 
     HORSE_TYPE(Material.HAY_BLOCK, 1, DataMenuType.HORSE_TYPE, "Type", "Horse"),
     HORSE_VARIANT(Material.LEASH, 1, DataMenuType.HORSE_VARIANT, "Variant", "Horse"),
@@ -47,12 +48,12 @@ public enum MenuItem {
     SHIELD(Material.GLASS, 1, DataMenuType.BOOLEAN, "Shield", "Wither"),
     POWER(Material.BEACON, 1, DataMenuType.BOOLEAN, "Powered", "Creeper"),
     SIZE(Material.SLIME_BALL, 1, DataMenuType.SIZE, "Size", "Slime", "MagmaCube"),
-    BABY(Material.WHEAT, 1, DataMenuType.BOOLEAN, "Baby", "PigZombie", "Zombie", "Chicken", "Cow", "Horse", "MushroomCow", "Ocelot", "Pig", "Sheep", "Wolf", "Villager"),
+    BABY(Material.WHEAT, 1, DataMenuType.BOOLEAN, "Baby", "Zombie", "Chicken", "Cow", "Horse", "MushroomCow", "Ocelot", "Pig", "Sheep", "Wolf", "Villager"),
     CAT_TYPE(Material.RAW_FISH, 1, DataMenuType.CAT_TYPE, "Cat Type", "Ocelot"),
     ANGRY(Material.BONE, 1, DataMenuType.BOOLEAN, "Angry", "Wolf"),
     TAMED(Material.BONE, 1, DataMenuType.BOOLEAN, "Tamed", "Wolf"),
     WITHER(SkullItemData.create(SkullType.WITHER_SKELETON_SKULL), 1, DataMenuType.BOOLEAN, "Wither", "Skeleton"),
-    VILLAGER(Material.EMERALD, 1, DataMenuType.BOOLEAN, "Villager", "Zombie", "PigZombie"),
+    ZOMBIE_TYPE(Material.ROTTEN_FLESH, 1, DataMenuType.ZOMBIE_TYPE, "Zombie Type", "Zombie"),
     ELDER(Material.SEA_LANTERN, 1, DataMenuType.BOOLEAN, "Elder", "Guardian"),
     COLOR(Material.WOOL, 1, DataMenuType.COLOR, "Color", "Sheep", "Wolf"),
     PROFESSION(Material.IRON_AXE, 1, DataMenuType.PROFESSION, "Profession", "Villager"),

@@ -23,8 +23,6 @@ public interface IEntityHorsePet extends IEntityAgeablePet {
 
     public void setSaddled(boolean flag);
 
-    public void setHorseType(HorseType t);
-
     public void setVariant(HorseVariant v, HorseMarking m);
 
     public void setArmour(HorseArmour a);

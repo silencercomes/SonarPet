@@ -5,20 +5,14 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityMagmaCubePet;
 
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.entity.AbstractEntitySlimePet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
-@EntityPetType(petType = PetType.MAGMACUBE)
+@EntityHook(EntityHookType.MAGMA_CUBE)
 public class EntityMagmaCubePet extends AbstractEntitySlimePet implements IEntityMagmaCubePet {
-    private final NMSInsentientEntity entity;
-
-    protected EntityMagmaCubePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
+    protected EntityMagmaCubePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 }

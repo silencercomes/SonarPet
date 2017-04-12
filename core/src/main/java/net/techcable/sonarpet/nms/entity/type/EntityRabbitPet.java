@@ -5,18 +5,17 @@ import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityRabbitPet;
 
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.entity.EntityAgeablePet;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 
 import org.bukkit.entity.Rabbit;
 
-@EntityPetType(petType = PetType.RABBIT)
+@EntityHook(EntityHookType.RABBIT)
 public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPet {
-    private final NMSInsentientEntity entity;
-
-    protected EntityRabbitPet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = entity;
+    protected EntityRabbitPet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
 
     @Override
@@ -27,11 +26,6 @@ public class EntityRabbitPet extends EntityAgeablePet implements IEntityRabbitPe
     @Override
     public void setType(Rabbit.Type type) {
         getBukkitEntity().setRabbitType(type);
-    }
-
-    @Override
-    public NMSInsentientEntity getEntity() {
-        return entity;
     }
 
     @Override

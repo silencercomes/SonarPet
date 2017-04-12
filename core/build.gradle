@@ -14,4 +14,7 @@ dependencies {
     compile(project(':nms-v1_10_R1')) {
         exclude module: "craftbukkit"
     }
+    compile(project(':nms-v1_11_R1')) {
+        exclude module: "craftbukkit"
+    }
 }

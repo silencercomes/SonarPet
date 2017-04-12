@@ -131,10 +131,10 @@ public class PetAdminCommand implements CommandExecutor {
                         pet.getRider().setPetName(name);
                         Lang.sendTo(sender, Lang.ADMIN_NAME_RIDER.toString()
                                 .replace("%player%", target.getName())
-                                .replace("%type%", StringUtil.capitalise(pet.getPetType().toString().replace("_", " ")))
+                                .replace("%type%", pet.getPetType().toPrettyString())
                                 .replace("%name%", name));
                         Lang.sendTo(target, Lang.NAME_RIDER.toString()
-                                .replace("%type%", StringUtil.capitalise(pet.getPetType().toString().replace("_", " ")))
+                                .replace("%type%", pet.getPetType().toPrettyString())
                                 .replace("%name%", name));
                     }
                 } else {
@@ -165,10 +165,10 @@ public class PetAdminCommand implements CommandExecutor {
                         pet.setPetName(name);
                         Lang.sendTo(sender, Lang.ADMIN_NAME_PET.toString()
                                 .replace("%player%", target.getName())
-                                .replace("%type%", StringUtil.capitalise(pet.getPetType().toString().replace("_", " ")))
+                                .replace("%type%", pet.getPetType().toPrettyString())
                                 .replace("%name%", name));
                         Lang.sendTo(target, Lang.NAME_PET.toString()
-                                .replace("%type%", StringUtil.capitalise(pet.getPetType().toString().replace("_", " ")))
+                                .replace("%type%", pet.getPetType().toPrettyString())
                                 .replace("%name%", name));
                     }
                 }
@@ -196,7 +196,7 @@ public class PetAdminCommand implements CommandExecutor {
                     menu.open(false);
                     Lang.sendTo(sender, Lang.ADMIN_OPEN_MENU.toString()
                             .replace("%player%", target.getName())
-                            .replace("%type%", StringUtil.capitalise(pet.getPetType().toString())));
+                            .replace("%type%", pet.getPetType().toPrettyString()));
                     return true;
                 } else {
                     return true;
@@ -236,8 +236,8 @@ public class PetAdminCommand implements CommandExecutor {
                     }
                     Lang.sendTo(sender, Lang.ADMIN_SHOW_PET.toString()
                             .replace("%player%", target.getName())
-                            .replace("%type%", StringUtil.capitalise(pet.getPetType().toString())));
-                    Lang.sendTo(target, Lang.SHOW_PET.toString().replace("%type%", StringUtil.capitalise(pet.getPetType().toString())));
+                            .replace("%type%", pet.getPetType().toPrettyString()));
+                    Lang.sendTo(target, Lang.SHOW_PET.toString().replace("%type%", pet.getPetType().toPrettyString()));
                     return true;
                 } else {
                     return true;
@@ -456,10 +456,10 @@ public class PetAdminCommand implements CommandExecutor {
                     EchoPet.getManager().saveFileData("autosave", pet);
                     EchoPet.getSqlManager().saveToDatabase(pet, false);
                     Lang.sendTo(target, Lang.CREATE_PET.toString()
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                            .replace("%type%", petType.toPrettyString()));
                     Lang.sendTo(sender, Lang.ADMIN_CREATE_PET.toString()
                             .replace("%player%", target.getName())
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                            .replace("%type%", petType.toPrettyString()));
                     return true;
                 } else {
                     return true;
@@ -528,7 +528,7 @@ public class PetAdminCommand implements CommandExecutor {
                     if (Perm.hasTypePerm(sender, true, Perm.ADMIN_DEFAULT_SET_PETTYPE, true, petType)) {
                         EchoPet.getManager().saveFileData("default", Bukkit.getPlayer(args[1]), UPD);
                         Lang.sendTo(sender, Lang.ADMIN_SET_DEFAULT.toString()
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", "")))
+                                .replace("%type%", petType.toPrettyString())
                                 .replace("%player%", name));
                         return true;
                     } else {
@@ -562,8 +562,8 @@ public class PetAdminCommand implements CommandExecutor {
                 if (Perm.hasTypePerm(sender, true, Perm.ADMIN_DEFAULT_SET_PETTYPE, true, petType) && Perm.hasTypePerm(sender, true, Perm.ADMIN_DEFAULT_SET_PETTYPE, true, riderType)) {
                     EchoPet.getManager().saveFileData("default", Bukkit.getPlayer(args[1]), UPD, UMD);
                     Lang.sendTo(sender, Lang.ADMIN_SET_DEFAULT_WITH_RIDER.toString()
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", "")))
-                            .replace("%mtype%", StringUtil.capitalise(riderType.toString().replace("_", "")))
+                            .replace("%type%", petType.toPrettyString())
+                            .replace("%mtype%", riderType.toPrettyString())
                             .replace("%player%", name));
                     return true;
                 } else {
@@ -639,7 +639,7 @@ public class PetAdminCommand implements CommandExecutor {
 
                     if (!EchoPet.getOptions().allowRidersFor(petType)) {
                         Lang.sendTo(sender, Lang.RIDERS_DISABLED.toString()
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", " "))));
+                                .replace("%type%", petType.toPrettyString()));
                         return true;
                     }
 
@@ -663,10 +663,10 @@ public class PetAdminCommand implements CommandExecutor {
                         EchoPet.getManager().saveFileData("autosave", pet);
                         EchoPet.getSqlManager().saveToDatabase(pet, false);
                         Lang.sendTo(target, Lang.CHANGE_RIDER.toString()
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                                .replace("%type%", petType.toPrettyString()));
                         Lang.sendTo(sender, Lang.ADMIN_CHANGE_RIDER.toString()
                                 .replace("%player%", target.getName())
-                                .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", ""))));
+                                .replace("%type%", petType.toPrettyString()));
                         return true;
                     } else {
                         return true;
@@ -729,12 +729,12 @@ public class PetAdminCommand implements CommandExecutor {
                     EchoPet.getManager().saveFileData("autosave", pi);
                     EchoPet.getSqlManager().saveToDatabase(pi, false);
                     Lang.sendTo(target, Lang.CREATE_PET_WITH_RIDER.toString()
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", "")))
-                            .replace("%mtype%", StringUtil.capitalise(riderType.toString().replace("_", ""))));
+                            .replace("%type%", petType.toPrettyString())
+                            .replace("%mtype%", riderType.toPrettyString()));
                     Lang.sendTo(sender, Lang.ADMIN_CREATE_PET_WITH_RIDER.toString()
                             .replace("%player%", target.getName())
-                            .replace("%type%", StringUtil.capitalise(petType.toString().replace("_", "")))
-                            .replace("%mtype%", StringUtil.capitalise(riderType.toString().replace("_", ""))));
+                            .replace("%type%", petType.toPrettyString())
+                            .replace("%mtype%", riderType.toPrettyString()));
                     return true;
                 } else {
                     return true;

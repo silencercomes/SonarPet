@@ -1,6 +1,9 @@
 package net.techcable.sonarpet.nms;
 
+import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.SafeSound;
+import net.techcable.sonarpet.utils.Versioning;
+import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -49,9 +52,25 @@ public interface NMSLivingEntity extends NMSEntity {
 
     void setPitch(float pitch);
 
-    float getSidewaysMotion();
+    PineappleField<Object, Float> SIDEWAYS_MOTION_FIELD = PineappleField.create(
+            MinecraftReflection.getNmsClass("EntityLiving"),
+            Versioning.NMS_VERSION.getObfuscatedField("ENTITY_SIDEWAYS_MOTION_FIELD"),
+            float.class
+    );
+    default float getSidewaysMotion() {
+        Object rawEntity = MinecraftReflection.getHandle(getBukkitEntity());
+        return SIDEWAYS_MOTION_FIELD.getBoxed(rawEntity);
+    }
 
-    float getForwardsMotion();
+    PineappleField<Object, Float> FORWARD_MOTION_FIELD = PineappleField.create(
+            MinecraftReflection.getNmsClass("EntityLiving"),
+            Versioning.NMS_VERSION.getObfuscatedField("ENTITY_FORWARD_MOTION_FIELD"),
+            float.class
+    );
+    default float getForwardsMotion() {
+        Object rawEntity = MinecraftReflection.getHandle(getBukkitEntity());
+        return FORWARD_MOTION_FIELD.getBoxed(rawEntity);
+    }
 
     void setMoveSpeed(double rideSpeed);
 

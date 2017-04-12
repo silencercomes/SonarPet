@@ -4,8 +4,10 @@ import lombok.*;
 
 import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
-
+import java.util.Set;
+import java.util.function.Predicate;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import com.dsh105.echopet.compat.api.ai.PetGoalSelector;
@@ -18,17 +20,19 @@ import com.dsh105.echopet.compat.api.event.PetAttackEvent;
 import com.dsh105.echopet.compat.api.event.PetRideJumpEvent;
 import com.dsh105.echopet.compat.api.event.PetRideMoveEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-
-import net.techcable.pineapple.reflection.PineappleField;
-import net.techcable.sonarpet.nms.INMS;
 import com.dsh105.echopet.compat.api.util.Logger;
 import com.dsh105.echopet.compat.api.util.MenuUtil;
 import com.dsh105.echopet.compat.api.util.Perm;
 import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
+import net.techcable.pineapple.reflection.PineappleField;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.DamageSource;
+import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.NMSPlayer;
@@ -46,9 +50,13 @@ import org.bukkit.util.Vector;
 
 public abstract class EntityInsentientPet implements IEntityPet {
     private final IPet pet;
+    private final NMSInsentientEntity entity;
+    private final EntityHookType hookType;
 
-    protected EntityInsentientPet(IPet pet) {
+    protected EntityInsentientPet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
         this.pet = pet;
+        this.entity = entity;
+        this.hookType = hookType;
     }
 
     @Override
@@ -56,7 +64,9 @@ public abstract class EntityInsentientPet implements IEntityPet {
         return pet;
     }
 
-    public abstract NMSInsentientEntity getEntity();
+    public NMSInsentientEntity getEntity() {
+        return entity;
+    }
 
     @Override
     public LivingEntity getBukkitEntity() {
@@ -64,6 +74,11 @@ public abstract class EntityInsentientPet implements IEntityPet {
     }
 
     private double jumpHeight, rideSpeed;
+
+    @Override
+    public EntityHookType getHookType() {
+        return hookType;
+    }
 
     @OverridingMethodsMustInvokeSuper
     public void initiateEntityPet() {
@@ -246,11 +261,27 @@ public abstract class EntityInsentientPet implements IEntityPet {
 
             getBukkitEntity().setVelocity(new Vector(x, y, z).normalize().multiply(0.3F));
         }
-
-        if (getEntity().getPassengers().isEmpty()) {
+        ImmutableSet<NMSEntity> passengers = ImmutableSet.copyOf(getEntity().getPassengers());
+        if (passengers.isEmpty()) {
             petGoalSelector.updateGoals();
         }
+        // Check for mounts
+        for (NMSEntity passenger : passengers) {
+            if (!knownMountedEntities.contains(passenger)) {
+                onMounted(passenger);
+                knownMountedEntities.add(passenger);
+            }
+        }
+        // Check for dismounts
+        knownMountedEntities.removeIf((entity) -> {
+            if (!passengers.contains(entity)) {
+                onDismounted(entity);
+                return true;
+            }
+            return false;
+        });
     }
+    private Set<NMSEntity> knownMountedEntities = new HashSet<>();
 
     /**
      * Return if the pet's owner is currently riding the pet
@@ -265,6 +296,9 @@ public abstract class EntityInsentientPet implements IEntityPet {
         }
         return false;
     }
+
+    public void onMounted(NMSEntity passenger) {}
+    public void onDismounted(NMSEntity passenger) {}
 
     // EntityLiving
 

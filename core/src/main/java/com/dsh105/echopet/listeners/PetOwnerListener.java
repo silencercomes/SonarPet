@@ -17,8 +17,9 @@
 
 package com.dsh105.echopet.listeners;
 
+import java.util.Iterator;
+
 import com.dsh105.commodus.GeometryUtil;
-import com.dsh105.commodus.StringUtil;
 import com.dsh105.echopet.compat.api.config.ConfigOptions;
 import com.dsh105.echopet.compat.api.entity.IEntityPacketPet;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
@@ -29,6 +30,8 @@ import com.dsh105.echopet.compat.api.util.Lang;
 import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.WorldUtil;
 import com.dsh105.echopet.compat.api.util.menu.SelectorLayout;
+
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -37,12 +40,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Iterator;
 
 public class PetOwnerListener implements Listener {
 
@@ -106,7 +114,7 @@ public class PetOwnerListener implements Listener {
         }
         if (pi != null) {
             if (!WorldUtil.allowPets(event.getTo())) {
-                Lang.sendTo(p, Lang.PETS_DISABLED_HERE.toString().replace("%world%", StringUtil.capitalise(event.getTo().getWorld().getName())));
+                Lang.sendTo(p, Lang.PETS_DISABLED_HERE.toString().replace("%world%", WordUtils.capitalizeFully(event.getTo().getWorld().getName())));
                 EchoPet.getManager().saveFileData("autosave", pi);
                 EchoPet.getSqlManager().saveToDatabase(pi, false);
                 EchoPet.getManager().removePet(pi, false);

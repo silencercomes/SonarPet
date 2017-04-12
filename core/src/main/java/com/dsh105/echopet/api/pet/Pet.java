@@ -20,21 +20,22 @@ package com.dsh105.echopet.api.pet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.dsh105.commodus.StringUtil;
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IEntityNoClipPet;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.PetData;
 import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.event.PetTeleportEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.util.Lang;
-import net.techcable.sonarpet.nms.INMS;
 import com.dsh105.echopet.compat.api.util.PetNames;
 import com.dsh105.echopet.compat.api.util.StringSimplifier;
 
+import net.techcable.sonarpet.EntityHookType;
+import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.particles.Particle;
 
 import org.bukkit.Bukkit;
@@ -44,9 +45,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static com.google.common.base.Preconditions.*;
+
 public abstract class Pet implements IPet {
 
-    private IEntityPet entityPet;
+    protected IEntityPet hook;
     private PetType petType;
 
     private Object ownerIdentification;
@@ -65,12 +68,33 @@ public abstract class Pet implements IPet {
             this.ownerIdentification = UUIDMigration.getIdentificationFor(owner);
             this.setPetType();
             this.setPetName(this.getPetType().getDefaultName(this.getNameOfOwner()));
-            this.entityPet = EchoPet.getPlugin().getPetRegistry().spawnEntity(this, owner);
-            if (this.entityPet != null) {
-                this.applyPetName();
-                this.teleportToOwner();
+            spawnPet(owner, getPetType().getPrimaryHookType(), false);
+        }
+    }
+
+    private void spawnPet(Player owner, EntityHookType hookType, boolean forced) {
+        checkState(this.hook == null, "Pet already spawned");
+        if (!forced) {
+            PetPreSpawnEvent spawnEvent = new PetPreSpawnEvent(this, owner.getLocation());
+            EchoPet.getPlugin().getServer().getPluginManager().callEvent(spawnEvent);
+            if (spawnEvent.isCancelled()) {
+                owner.sendMessage(EchoPet.getPrefix() + ChatColor.YELLOW + "Pet spawn was cancelled externally.");
+                EchoPet.getManager().removePet(this, true);
+                return;
             }
         }
+        this.hook = EchoPet.getPlugin().getHookRegistry().spawnEntity(this, hookType, owner.getLocation());
+        this.applyPetName();
+        this.teleportToOwner();
+    }
+
+    protected void switchHookType(Player owner, EntityHookType newHookType) {
+        if (newHookType == hook.getHookType()) return;
+        checkState(this.hook != null, "Pet isn't spawned yet!");
+        this.removePet(false);
+        assert hook.getBukkitEntity().isDead();
+        this.hook = null;
+        spawnPet(owner, newHookType, true);
     }
 
     protected void setPetType() {
@@ -82,7 +106,7 @@ public abstract class Pet implements IPet {
 
     @Override
     public IEntityPet getEntityPet() {
-        return this.entityPet;
+        return this.hook;
     }
 
     @Override
@@ -219,7 +243,7 @@ public abstract class Pet implements IPet {
 
     @Override
     public void removePet(boolean makeSound) {
-        if (this.getCraftPet() != null) {
+        if (this.getCraftPet() != null && makeSound) {
             Particle.CLOUD.show(getLocation());
             Particle.LAVA_SPARK.show(getLocation());
         }
@@ -377,13 +401,13 @@ public abstract class Pet implements IPet {
     public Pet createRider(final PetType pt, boolean sendFailMessage) {
         if (pt == PetType.HUMAN) {
             if (sendFailMessage) {
-                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", StringUtil.capitalise(this.getPetType().toString())));
+                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
         if (!EchoPet.getOptions().allowRidersFor(this.getPetType())) {
             if (sendFailMessage) {
-                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", StringUtil.capitalise(this.getPetType().toString())));
+                Lang.sendTo(this.getOwner(), Lang.RIDERS_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
@@ -396,7 +420,7 @@ public abstract class Pet implements IPet {
         IPet newRider = pt.getNewPetInstance(this.getOwner());
         if (newRider == null) {
             if (sendFailMessage) {
-                Lang.sendTo(getOwner(), Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", StringUtil.capitalise(getPetType().toString())));
+                Lang.sendTo(getOwner(), Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }

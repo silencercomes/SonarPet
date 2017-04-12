@@ -17,27 +17,54 @@
 
 package com.dsh105.echopet.api;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.dsh105.commodus.GeneralUtil;
-import com.dsh105.commodus.StringUtil;
-import com.dsh105.echopet.compat.api.entity.*;
-import com.dsh105.echopet.compat.api.entity.type.pet.*;
+import com.dsh105.echopet.compat.api.entity.HorseArmour;
+import com.dsh105.echopet.compat.api.entity.HorseMarking;
+import com.dsh105.echopet.compat.api.entity.HorseType;
+import com.dsh105.echopet.compat.api.entity.HorseVariant;
+import com.dsh105.echopet.compat.api.entity.IAgeablePet;
+import com.dsh105.echopet.compat.api.entity.IPet;
+import com.dsh105.echopet.compat.api.entity.PetData;
+import com.dsh105.echopet.compat.api.entity.PetType;
+import com.dsh105.echopet.compat.api.entity.SkeletonType;
+import com.dsh105.echopet.compat.api.entity.ZombieType;
+import com.dsh105.echopet.compat.api.entity.type.pet.IBlazePet;
+import com.dsh105.echopet.compat.api.entity.type.pet.ICreeperPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IEndermanPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IGuardianPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IHorsePet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IMagmaCubePet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IOcelotPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IPigPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IRabbitPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.ISheepPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.ISkeletonPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.ISlimePet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IVillagerPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IWitherPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IWolfPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IZombiePet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.IPetManager;
 import com.dsh105.echopet.compat.api.plugin.PetStorage;
 import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
-import com.dsh105.echopet.compat.api.util.*;
+import com.dsh105.echopet.compat.api.util.Lang;
+import com.dsh105.echopet.compat.api.util.Logger;
+import com.dsh105.echopet.compat.api.util.PetUtil;
+import com.dsh105.echopet.compat.api.util.ReflectionUtil;
+import com.dsh105.echopet.compat.api.util.WorldUtil;
+import com.google.common.base.Strings;
+
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-
-import net.techcable.sonarpet.nms.switching.ZombieType;
 
 
 public class PetManager implements IPetManager {
@@ -110,20 +137,20 @@ public class PetManager implements IPetManager {
         removePets(owner, true);
         if (!WorldUtil.allowPets(owner.getLocation())) {
             if (sendMessageOnFail) {
-                Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", StringUtil.capitalise(owner.getWorld().getName())));
+                Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", WordUtils.capitalizeFully(owner.getWorld().getName())));
             }
             return null;
         }
         if (!EchoPet.getOptions().allowPetType(petType)) {
             if (sendMessageOnFail) {
-                Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+                Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
         IPet pi = petType.getNewPetInstance(owner);
         if (pi == null) {
             if (sendMessageOnFail) {
-                Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+                Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
@@ -140,16 +167,16 @@ public class PetManager implements IPetManager {
         }
         removePets(owner, true);
         if (!WorldUtil.allowPets(owner.getLocation())) {
-            Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", StringUtil.capitalise(owner.getWorld().getName())));
+            Lang.sendTo(owner, Lang.PETS_DISABLED_HERE.toString().replace("%world%", WordUtils.capitalizeFully(owner.getWorld().getName())));
             return null;
         }
         if (!EchoPet.getOptions().allowPetType(petType)) {
-            Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+            Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
         IPet pi = petType.getNewPetInstance(owner);
         if (pi == null) {
-            Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", StringUtil.capitalise(petType.toString())));
+            Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
         pi.createRider(riderType, true);
@@ -228,12 +255,12 @@ public class PetManager implements IPetManager {
         if (EchoPet.getOptions().getConfig().getBoolean("loadSavedPets", true)) {
             String path = type + "." + UUIDMigration.getIdentificationFor(p);
             if (EchoPet.getConfig(EchoPet.ConfigType.DATA).get(path) != null) {
-                PetType petType = PetType.valueOf(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".pet.type"));
+                ArrayList<PetData> data = new ArrayList<PetData>();
+                PetType petType = PetType.fromDataString(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".pet.type"), data);
                 String name = EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".pet.name");
-                if (name.equalsIgnoreCase("") || name == null) {
+                if (Strings.isNullOrEmpty(name)) {
                     name = petType.getDefaultName(p.getName());
                 }
-                if (petType == null) return null;
                 if (!EchoPet.getOptions().allowPetType(petType)) {
                     return null;
                 }
@@ -246,7 +273,6 @@ public class PetManager implements IPetManager {
 
                 pi.setPetName(name);
 
-                ArrayList<PetData> data = new ArrayList<PetData>();
                 ConfigurationSection cs = EchoPet.getConfig(EchoPet.ConfigType.DATA).getConfigurationSection(path + ".pet.data");
                 if (cs != null) {
                     for (String key : cs.getKeys(false)) {
@@ -282,17 +308,16 @@ public class PetManager implements IPetManager {
         if (pet.getOwner() != null) {
             String path = type + "." + pet.getOwnerIdentification();
             if (EchoPet.getConfig(EchoPet.ConfigType.DATA).get(path + ".rider.type") != null) {
-                PetType riderPetType = PetType.valueOf(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.type"));
+                ArrayList<PetData> riderData = new ArrayList<PetData>();
+                PetType riderPetType = PetType.fromDataString(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.type"), riderData);
                 String riderName = EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.name");
-                if (riderName.equalsIgnoreCase("") || riderName == null) {
+                if (Strings.isNullOrEmpty(riderName)) {
                     riderName = riderPetType.getDefaultName(pet.getNameOfOwner());
                 }
-                if (riderPetType == null) return;
                 if (EchoPet.getOptions().allowRidersFor(pet.getPetType())) {
                     IPet rider = pet.createRider(riderPetType, true);
                     if (rider != null && rider.getEntityPet() != null) {
                         rider.setPetName(riderName);
-                        ArrayList<PetData> riderData = new ArrayList<PetData>();
                         ConfigurationSection mcs = EchoPet.getConfig(EchoPet.ConfigType.DATA).getConfigurationSection(path + ".rider.data");
                         if (mcs != null) {
                             for (String key : mcs.getKeys(false)) {
@@ -445,8 +470,6 @@ public class PetManager implements IPetManager {
             if (pd == PetData.BABY) {
                 if (petType == PetType.ZOMBIE) {
                     ((IZombiePet) pet).setBaby(b);
-                } else if (petType == PetType.PIGZOMBIE) {
-                    ((IPigZombiePet) pet).setBaby(b);
                 } else {
                     ((IAgeablePet) pet).setBaby(b);
                 }
@@ -513,8 +536,9 @@ public class PetManager implements IPetManager {
                 }
             }
 
-            if (pd == PetData.WITHER) {
-                ((ISkeletonPet) pet).setWither(b);
+            if (pd.isType(PetData.Type.SKELETON_TYPE)) {
+                SkeletonType skeletonType = SkeletonType.valueOf(pd.toString());
+                ((ISkeletonPet) pet).setSkeletonType(skeletonType);
             }
 
             if (pd == PetData.FIRE) {
@@ -624,23 +648,20 @@ public class PetManager implements IPetManager {
             if (petType == PetType.ZOMBIE) {
                 if (pd.isType(PetData.Type.ZOMBIE_TYPE)) {
                     ZombieType zombieType = ZombieType.valueOf(pd.toString());
+                    ((IZombiePet) pet).setZombieType(zombieType);
                 }
             }
             
-            ListIterator<PetData> i = pet.getPetData().listIterator();
-            while (i.hasNext()) {
-                PetData petData = i.next();
+            pet.getPetData().removeIf(petData -> {
                 if (petData != pd) {
-                    ListIterator<PetData.Type> i2 = pd.getTypes().listIterator();
-                    while (i2.hasNext()) {
-                        PetData.Type type = i2.next();
-                        if (type != PetData.Type.BOOLEAN && petData.isType(type)) {
-                            i.remove();
-                            break;
+                    for (PetData.Type dataType : pd.getTypes()) {
+                        if (dataType != PetData.Type.BOOLEAN && petData.isType(dataType)) {
+                            return true;
                         }
                     }
                 }
-            }
+                return false;
+            });
 
             if (b) {
                 if (!pet.getPetData().contains(pd)) {

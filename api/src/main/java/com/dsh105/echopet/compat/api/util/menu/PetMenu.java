@@ -83,7 +83,7 @@ public class PetMenu {
         }
         this.pet.getOwner().openInventory(this.inv);
         if (sendMessage) {
-            Lang.sendTo(this.pet.getOwner(), Lang.OPEN_MENU.toString().replace("%type%", StringUtil.capitalise(this.pet.getPetType().toString().replace("_", " "))));
+            Lang.sendTo(this.pet.getOwner(), Lang.OPEN_MENU.toString().replace("%type%", this.pet.getPetType().toPrettyString()));
         }
     }
 }

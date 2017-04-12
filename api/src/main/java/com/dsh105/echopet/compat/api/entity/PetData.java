@@ -17,11 +17,17 @@
 
 package com.dsh105.echopet.compat.api.entity;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
-import java.util.List;
+import net.techcable.sonarpet.utils.PrettyEnum;
 
-public enum PetData {
+/**
+ * A data attribute a pet can have, stored as an on/off flag.
+ *
+ * A pet's data is stored in a bit vector, so <b>the enum must never be reordered</b>.
+ * New types can only be added at the end, not at the beginning.
+ */
+public enum PetData implements PrettyEnum {
 
     ANGRY("angry", Type.BOOLEAN),
     BABY("baby", Type.BOOLEAN),
@@ -56,7 +62,7 @@ public enum PetData {
     MULE("mule", Type.HORSE_TYPE),
     NOARMOUR("noarmour", Type.HORSE_ARMOUR),
     NONE("noMarking", Type.HORSE_MARKING),
-    NORMAL("normal", Type.HORSE_TYPE),
+    NORMAL("normal", Type.HORSE_TYPE, Type.ZOMBIE_TYPE, Type.SKELETON_TYPE),
     ORANGE("orange", Type.COLOUR),
     PINK("pink", Type.COLOUR),
     POWER("powered", Type.BOOLEAN),
@@ -75,37 +81,49 @@ public enum PetData {
     SOCKS("whiteSocks", Type.HORSE_MARKING),
     TAMED("tamed", Type.BOOLEAN),
     VILLAGER("villager", Type.ZOMBIE_TYPE),
-    HUSK("husk",Type.ZOMBIE_TYPE),
     WHITEPATCH("whitePatch", Type.HORSE_MARKING),
     WHITESPOT("whiteSpot", Type.HORSE_MARKING),
     WHITE("white", Type.COLOUR, Type.HORSE_VARIANT, Type.RABBIT_TYPE),
     WILD("wild", Type.CAT),
-    WITHER("wither", Type.BOOLEAN),
+    WITHER("wither", Type.SKELETON_TYPE),
     YELLOW("yellow", Type.COLOUR),
-    ZOMBIE("zombie", Type.HORSE_TYPE);
+    ZOMBIE("zombie", Type.HORSE_TYPE),
+    HUSK("husk", Type.ZOMBIE_TYPE),
+    PIGMAN("pigman", Type.ZOMBIE_TYPE),
+    STRAY("stray", Type.SKELETON_TYPE);
 
+    private final String configOptionString;
+    private final ImmutableSet<Type> types;
 
-    private String configOptionString;
-    private List<Type> t;
-
-    PetData(String configOptionString, Type... t) {
+    PetData(String configOptionString, Type... types) {
         this.configOptionString = configOptionString;
-        this.t = ImmutableList.copyOf(t);
+        this.types = ImmutableSet.copyOf(types);
     }
 
     public String getConfigOptionString() {
         return this.configOptionString;
     }
 
-    public List<Type> getTypes() {
-        return this.t;
+    public ImmutableSet<Type> getTypes() {
+        return this.types;
     }
 
     public boolean isType(Type t) {
-        return this.t.contains(t);
+        return this.types.contains(t);
     }
 
     public enum Type {
-        BOOLEAN, COLOUR, CAT, SIZE, PROF, HORSE_TYPE, HORSE_VARIANT, HORSE_MARKING, HORSE_ARMOUR, RABBIT_TYPE, ZOMBIE_TYPE
+        BOOLEAN,
+        COLOUR,
+        CAT,
+        SIZE,
+        PROF,
+        HORSE_TYPE,
+        HORSE_VARIANT,
+        HORSE_MARKING,
+        HORSE_ARMOUR,
+        RABBIT_TYPE,
+        ZOMBIE_TYPE,
+        SKELETON_TYPE
     }
 }

@@ -2,23 +2,23 @@ package net.techcable.sonarpet.nms.entity.type;
 
 import java.lang.invoke.MethodHandle;
 
-import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
 import com.dsh105.echopet.compat.api.entity.HorseMarking;
 import com.dsh105.echopet.compat.api.entity.HorseType;
 import com.dsh105.echopet.compat.api.entity.HorseVariant;
 import com.dsh105.echopet.compat.api.entity.IPet;
-import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
-import net.techcable.sonarpet.nms.INMS;
 
+import net.techcable.sonarpet.EntityHook;
+import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.SafeSound;
 import net.techcable.sonarpet.nms.BlockSoundData;
+import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSEntity;
+import net.techcable.sonarpet.nms.NMSEntityHorse;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.entity.EntityAgeablePet;
-import net.techcable.sonarpet.nms.NMSEntityHorse;
-import net.techcable.sonarpet.nms.switching.EntitySwitchReason;
 import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 
@@ -31,14 +31,18 @@ import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-@EntityPetType(petType = PetType.GHAST)
+@EntityHook({
+        EntityHookType.HORSE,
+        EntityHookType.MULE,
+        EntityHookType.DONKEY,
+        EntityHookType.ZOMBIE_HORSE,
+        EntityHookType.SKELETON_HORSE,
+        EntityHookType.LLAMA
+})
 public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet {
-    private NMSEntityHorse entity;
-    protected EntityHorsePet(IPet pet, NMSInsentientEntity entity) {
-        super(pet);
-        this.entity = (NMSEntityHorse) entity;
+    protected EntityHorsePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
+        super(pet, entity, hookType);
     }
-
 
     private int rearingCounter = 0;
     int stepSoundCount = 0;
@@ -51,29 +55,11 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     @Override
     public void setSaddled(boolean flag) {
-        ((HorseInventory) ((InventoryHolder) getBukkitEntity()).getInventory())
-                .setSaddle(flag ? new ItemStack(Material.SADDLE, 1) : null);
+        getEntity().setSaddled(flag);
     }
 
     public HorseType getHorseType() {
         return getEntity().getHorseType();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void setHorseType(HorseType newType) {
-        if (newType != HorseType.NORMAL) {
-            this.setArmour(HorseArmour.NONE);
-        }
-        if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
-            entity = (NMSEntityHorse) INMS.getInstance().switchType(
-                    entity,
-                    EntitySwitchReason.HORSE_SWITCH,
-                    newType
-            );
-        } else {
-            getEntity().setHorseType(newType);
-        }
     }
 
     @Override
@@ -159,6 +145,26 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
         }
     }
 
+    private boolean previouslySaddled;
+    @Override
+    public void onMounted(NMSEntity passenger) {
+        super.onMounted(passenger);
+        if (passenger.equals(getPlayerEntity())) {
+            // When the owner starts to ride, give them a saddle
+            previouslySaddled = getEntity().isSaddled();
+            setSaddled(true);
+        }
+    }
+
+    @Override
+    public void onDismounted(NMSEntity passenger) {
+        super.onDismounted(passenger);
+        if (passenger.equals(getPlayerEntity())) {
+            // Reset to our previous saddle-state once the owner dismounts
+            setSaddled(previouslySaddled);
+        }
+    }
+
     @Override
     public SizeCategory getSizeCategory() {
         if (this.isBaby()) {
@@ -185,6 +191,6 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
 
     @Override
     public NMSEntityHorse getEntity() {
-        return entity;
+        return (NMSEntityHorse) super.getEntity();
     }
 }

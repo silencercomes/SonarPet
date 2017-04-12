@@ -33,7 +33,7 @@ public class DataMenu {
     public DataMenu(MenuItem mi, IPet pet) {
         this.pet = pet;
         int size = mi == MenuItem.COLOR ? 18 : 9;
-        this.inv = Bukkit.createInventory(pet.getOwner(), size, "EchoPet DataMenu - " + StringUtil.capitalise(mi.toString().replace("_", " ")));
+        this.inv = Bukkit.createInventory(pet.getOwner(), size, "EchoPet DataMenu - " + mi.toPrettyString());
         this.setItems(mi.getMenuType(), size);
     }
 
@@ -71,6 +71,7 @@ public class DataMenu {
         HORSE_VARIANT,
         HORSE_MARKING,
         HORSE_ARMOUR,
-        RABBIT_TYPE
+        RABBIT_TYPE,
+        ZOMBIE_TYPE
     }
 }
