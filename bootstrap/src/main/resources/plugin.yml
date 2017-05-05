@@ -1,5 +1,6 @@
 name: SonarPet
-version: ${project.version}
+# NOTE: We use our 'version signature' with the git commit included in development builds
+version: ${project.versionSignature}
 description: >
   SonarPet is an advanced, easy to use plugin, designed to handle custom-tailored pets with more unique behaviours than vanilla Minecraft entities. Perfect for donation perks.
 

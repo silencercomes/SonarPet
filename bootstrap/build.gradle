@@ -30,10 +30,14 @@ shadowJar {
 processResources {
     filesMatching("plugin.yml") {
         filter {
-            it.replace("\${project.version}", project.version.toString())
+            // NOTE: We use our 'version signature' with the git commit included
+            it.replace('${project.versionSignature}', versionSignature())
         }
     }
 }
+
+// If the versionSignature changes, we must processResources again
+processResources.inputs.property("versionSignature", versionSignature())
 
 build.dependsOn(shadowJar)
 
@@ -55,6 +59,38 @@ sourceSets {
     test {
         output.dir(generatedResources, builtBy: generateResources)
     }
+}
+
+String versionSignature() {
+    def cachedValue = project.extensions.findByName("__versionSignature")
+    if (cachedValue == null) {
+        cachedValue = rawComputeVersionSignature()
+        project.extensions.__versionSignature = cachedValue
+    }
+    return cachedValue
+}
+
+def rawComputeVersionSignature() {
+    def version = project.version.toString()
+    if (!version.endsWith("-SNAPSHOT")) {
+        // If it's not a snapshot version, there's not much to do
+        return version + '-release'
+    }
+    def versionBase = version.replace("-SNAPSHOT", "")
+    // Determine the current git commit
+    // Determine if there are uncommitted changes
+    def prog = "git status --porcelain=1".execute()
+    def isClean = prog.text.allWhitespace
+    assert prog.waitFor() == 0, "Failed to execute git status!"
+    /*
+     * NOTE: Prefer the short option over manual slicing since it handles uniqueness.
+     * If we ever run into hash collisions in the first few chars, it'll still work.
+     */
+    prog = "git rev-parse --short HEAD".execute()
+    def currentCommit = prog.text.trim()
+    assert prog.waitFor() == 0, "Failed to execute git rev-parse!"
+    def statusText = isClean ? "dev" : "dirty"
+    return "$versionBase-$statusText-$currentCommit"
 }
 
 void writeDependencyInfo(Iterable<ResolvedDependency> dependencies) {
