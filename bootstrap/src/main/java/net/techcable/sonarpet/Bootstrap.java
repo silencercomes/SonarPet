@@ -1,85 +1,45 @@
 package net.techcable.sonarpet;
 
-import lombok.*;
-
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
 
 import com.dsh105.echopet.EchoPetPlugin;
-import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableSet;
 
-import net.techcable.sonarpet.LibraryLoader.LibraryArtifact;
+import net.techcable.sonarpet.maven.LocalRepository;
+import net.techcable.sonarpet.maven.MavenDependencyInfo;
+import net.techcable.sonarpet.maven.MavenException;
+import net.techcable.sonarpet.maven.ResolvedMavenArtifact;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static net.techcable.sonarpet.LibraryLoader.LibraryArtifact.*;
-
 public class Bootstrap extends JavaPlugin {
-    /**
-     * All of SonarPet's dependencies, including transitive ones
-     */
-    private static final ImmutableSet<LibraryArtifact> DEPENDENCIES = ImmutableSet.of(
-            parseJarSpecifier("com.google.code.gson:gson:2.2.4"),
-            parseJarSpecifier("net.techcable:pineapple:0.1.0-beta4"),
-            parseJarSpecifier("com.dsh105:Commodus:1.0.5"),
-            parseJarSpecifier("com.dsh105:PowerMessage:1.0.1-SNAPSHOT"),
-            // NOTE: We need to shade this in since paper uses an incompatible version of ASM
-            //parseJarSpecifier("org.ow2.asm:asm-all:5.1"),
-            parseJarSpecifier("org.slf4j:slf4j-api:1.7.5"),
-            parseJarSpecifier("org.slf4j:slf4j-jdk14:1.7.5"),
-            parseJarSpecifier("com.zaxxer:HikariCP:2.4.5"),
-            parseJarSpecifier("org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.1"),
-            parseJarSpecifier("org.jetbrains.kotlin:kotlin-stdlib:1.1.1")
-    );
-    private static final ImmutableSet<URL> REPOSITORIES = ImmutableSet.of(
-            createUrl("https://repo.techcable.net/content/groups/public/")
-    );
-    private static final MethodHandle ADD_URL_METHOD;
-    static {
-        try {
-            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            ADD_URL_METHOD = MethodHandles.lookup().unreflect(method);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError(e);
-        }
-    }
+
     private BootstrapedPlugin plugin;
-    @SneakyThrows
-    private static void injectUrl(ClassLoader classLoader, URL url) {
-        ADD_URL_METHOD.invoke((URLClassLoader) classLoader, url);
-    }
+
 
     @Override
     public void onLoad() {
         getLogger().info("Downloading SonarPet's libraries");
         try {
-            for (LibraryArtifact dependency : DEPENDENCIES) {
-                final Path path;
-                if (Files.exists(dependency.getLocalRepositoryPath())) {
-                    path = dependency.getLocalRepositoryPath();
-                    getLogger().fine(() -> "Using cached version of " + dependency + ": " + path);
-                } else {
-                    getLogger().info(() -> "Downloading " + dependency);
-                    path = LibraryLoader.downloadArtifact(dependency, REPOSITORIES);
-                    Verify.verify(Files.exists(path), "%s doesn't exist", path);
+            MavenDependencyInfo dependencyInfo = MavenDependencyInfo.parseResource("dependencies.json");
+            dependencyInfo.injectDependencies((URLClassLoader) getClass().getClassLoader(), (dependency) -> {
+                Path path;
+                if ((path = LocalRepository.standard().findPath(dependency)) != null) {
+                    getLogger().fine(() -> "Using cached version of " + dependency);
+                    return path;
                 }
-                injectUrl(getClass().getClassLoader(), path.toUri().toURL());
-            }
+                ResolvedMavenArtifact resolved = dependencyInfo.find(dependency);
+                getLogger().info(() -> "Downloading " + dependency + " from " + resolved.getRepository().getName());
+                return LocalRepository.standard().downloadFrom(resolved);
+            });
             plugin = new EchoPetPlugin(this);
-        } catch (IOException t) {
+        } catch (IOException | MavenException t) {
             getLogger().log(Level.SEVERE, "Unable to load libraries", t);
             setEnabled(false);
         }
@@ -108,14 +68,5 @@ public class Bootstrap extends JavaPlugin {
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return plugin.getDefaultWorldGenerator(worldName, id);
-    }
-
-    //
-    // Utilities
-    //
-
-    @SneakyThrows
-    private static URL createUrl(String url) {
-        return new URL(url);
     }
 }

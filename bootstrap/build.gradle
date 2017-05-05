@@ -1,25 +1,30 @@
+import groovy.json.JsonOutput
+
 apply plugin: 'com.github.johnrengelman.shadow'
 
 description = 'SonarPet'
 dependencies {
-    compile project(':core')
+    shade(project(':core'))
 }
 
 shadowJar {
     baseName = "SonarPet"
     classifier = null
     version = null
-    configurations = [project.configurations.compile]
+    // Shade only dependencies marked as 'shade', transitively
+    configurations = [project.configurations.shade]
     dependencies {
         /*
-         * Only include sonarpet and ASM in the shaded jar.
-         * All other dependencies are dynamically loaded at runtime.
-         * We can't use ASM because our (updated) version of ASM conflicts with Paper's.
+         * Since shade is transitive, gradle will usually add all sub-dependencies,
+         * even if they're not explicitly marked as shade.
+         * We override this behavior by searching shaded dependencies ourselves,
+         * and only using the ones the dependency itself specifies as 'shade'
          */
-        exclude { it.moduleGroup != "net.techcable.sonarpet" && it.moduleGroup != "org.ow2.asm" }
-        // Relocate ASM so it doesn't conflict
-        relocate 'org.objectweb.asm', 'net.techcable.sonarpet.libs.asm'
+        def shadeDependencyIds = findDeclaredDependenciesRecursively(project, "shade").collect { idOf(it) }.toSet()
+        exclude { !shadeDependencyIds.contains(idOf(it)) }
     }
+    // Relocate ASM so it doesn't conflict with Paper
+    relocate 'org.objectweb.asm', 'net.techcable.sonarpet.libs.asm'
 }
 
 processResources {
@@ -31,3 +36,73 @@ processResources {
 }
 
 build.dependsOn(shadowJar)
+
+ext.generatedResources = new File("$buildDir/main/generated-resources")
+task generateResources {
+    doLast {
+        def dependencies = findDependenciesRecursively(project.configurations.compile.resolvedConfiguration)
+        def shadeDependencyIds = findDeclaredDependenciesRecursively(project, "shade").collect { idOf(it) }.toSet()
+        // Remove any dependencies that are already shaded in
+        dependencies.removeAll { idOf(it) in shadeDependencyIds }
+        writeDependencyInfo(dependencies)
+    }
+}
+
+sourceSets {
+    main {
+        output.dir(generatedResources, builtBy: generateResources)
+    }
+    test {
+        output.dir(generatedResources, builtBy: generateResources)
+    }
+}
+
+void writeDependencyInfo(Iterable<ResolvedDependency> dependencies) {
+    def dependencyInfoFile = new File((File) ext.generatedResources, "dependencies.json")
+    dependencyInfoFile.parentFile.mkdirs()
+    dependencyInfoFile.delete() // Delete existing
+    assert dependencyInfoFile.createNewFile() // Recreate the file
+    // Write pretty-printed info
+    dependencyInfoFile.write JsonOutput.prettyPrint(JsonOutput.toJson([
+            repositories: [
+                    [ name: 'maven-central', url: repositories.mavenCentral().url.toString() ],
+                    [ name: 'techcable-repo', url: repositories.getByName('techcable-repo').url.toString() ]
+            ],
+            dependencies: dependencies.collect { it.name }.toSorted()
+    ]))
+}
+
+
+static Set<ResolvedDependency> findDependenciesRecursively(ResolvedConfiguration config) {
+    Set<ResolvedDependency> result = []
+    def toResolve = config.firstLevelModuleDependencies.toList()
+    while (!toResolve.isEmpty()) {
+        def dependency = toResolve.pop()
+        if (result.add(dependency)) {
+            toResolve.addAll(dependency.children)
+        }
+    }
+    return result
+}
+
+static Set<ResolvedDependency> findDeclaredDependenciesRecursively(Project project, String configurationType) {
+    Map<String, ResolvedDependency> result = [:]
+    def toResolve = [project]
+    while (!toResolve.isEmpty()) {
+        def proj = toResolve.pop()
+        def originalDependencies = proj.configurations[configurationType].dependencies
+        proj.configurations[configurationType]?.resolvedConfiguration?.firstLevelModuleDependencies?.each {
+            def dependencyId = idOf(it)
+            result[dependencyId] = it
+            def originalDependency = originalDependencies.find { idOf(it) == dependencyId }
+            assert originalDependency != null, "Couldn't find originalDependency for $dependencyId in $proj"
+            if (originalDependency instanceof ProjectDependency) {
+                toResolve.push(originalDependency.dependencyProject)
+            }
+        }
+    }
+    return result.values().toSet()
+}
+
+static String idOf(Dependency dep) { "${dep.group}:${dep.name}:${dep.version}" }
+static String idOf(ResolvedDependency dep) { "${dep.moduleGroup}:${dep.moduleName}:${dep.moduleVersion}" }

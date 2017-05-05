@@ -4,6 +4,7 @@ package net.techcable.sonarpet.utils
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
+import com.google.common.collect.ImmutableSetMultimap
 import com.google.common.primitives.Primitives
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -92,4 +93,7 @@ inline fun <T> buildImmutableSet(func: ImmutableSet.Builder<T>.() -> Unit): Immu
 }
 inline fun <K, V> buildImmutableMap(func: ImmutableMap.Builder<K, V>.() -> Unit): ImmutableMap<K, V> {
     return ImmutableMap.builder<K, V>().apply(func).build()
+}
+inline fun <K, V> buildImmutableSetMultimap(func: ImmutableSetMultimap.Builder<K, V>.() -> Unit): ImmutableSetMultimap<K, V> {
+    return ImmutableSetMultimap.builder<K, V>().apply(func).build()
 }
