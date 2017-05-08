@@ -16,7 +16,7 @@ public class NMSEntityRegistry implements EntityRegistry {
 
     static {
         ImmutableList<PineappleField<EntityTypes, Map>> mapFields = PineappleField.findFieldsWithType(EntityTypes.class, Map.class);
-        assert mapFields.size() == 5;
+        assert mapFields.size() == 6;
         //noinspection unchecked
         CLASS_TO_NAME_FIELD = (PineappleField) mapFields.get(1);
         //noinspection unchecked

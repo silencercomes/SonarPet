@@ -66,3 +66,22 @@ inline fun <T, R> Array<T>.mapToImmutableList(transform: (T) -> R): ImmutableLis
         else -> ImmutableList.copyOf(mapToArray<T, Any?>(transform)) as ImmutableList<R>
     }
 }
+
+inline fun <T: Any> Array<T?>.requireNoNulls() = this.requireNoNulls { "Null value at index $it" }
+
+inline fun <T: Any> Array<T?>.requireNoNulls(lazyMessage: (Int) -> String): Array<T> {
+    this.forEachIndexed { index, value ->
+        requireNotNull(value) { lazyMessage(index) }
+    }
+    @Suppress("UNCHECKED_CAST") // We just checked ;)
+    return this as Array<T>
+}
+
+/**
+ * Consider that this array may have null values,
+ * even if the compiler thinks it doesn't.
+ */
+inline fun <T: Any> Array<T>.mayHaveNulls(): Array<T?> {
+    @Suppress("UNCHECKED_CAST") // It's always safe to be careful ;)
+    return this as Array<T?>
+}

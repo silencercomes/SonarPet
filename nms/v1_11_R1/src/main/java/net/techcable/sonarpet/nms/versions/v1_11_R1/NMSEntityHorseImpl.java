@@ -1,6 +1,7 @@
 package net.techcable.sonarpet.nms.versions.v1_11_R1;
 
 import com.dsh105.echopet.compat.api.entity.HorseType;
+import com.dsh105.echopet.compat.api.entity.HorseTypeKt;
 
 import net.minecraft.server.v1_11_R1.EntityHorseAbstract;
 import net.techcable.sonarpet.nms.NMSEntityHorse;
@@ -52,7 +53,7 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
 
     @Override
     public HorseType getHorseType() {
-        return HorseType.getForBukkitVariant(getBukkitEntity().getVariant());
+        return HorseTypeKt.getSonarType(getBukkitEntity().getVariant());
     }
 
     @Override

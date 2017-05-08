@@ -15,32 +15,20 @@
  * along with EchoPet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.dsh105.echopet.compat.api.entity;
+package com.dsh105.echopet.compat.api.entity
 
-import lombok.*;
+import org.bukkit.Material
 
-import org.bukkit.Material;
-
-@RequiredArgsConstructor
-public enum HorseArmour {
-
+enum class HorseArmour constructor(
+        val material: Material?,
+        /**
+         * The internal id of the armor.
+         */
+        @Deprecated("Magic ids are version specific")
+        val id: Int
+) {
     NONE(null, 0),
     IRON(Material.IRON_BARDING, 1),
     GOLD(Material.GOLD_BARDING, 2),
-    DIAMOND(Material.DIAMOND, 3);
-
-    @Getter
-    private final Material material;
-    private final int id;
-
-    /**
-     * Get the internal id of the armor
-     *
-     * @return
-     * @deprecated please use version specific code for this
-     */
-    @Deprecated
-    public int getId() {
-        return this.id;
-    }
+    DIAMOND(Material.DIAMOND_BARDING, 3);
 }

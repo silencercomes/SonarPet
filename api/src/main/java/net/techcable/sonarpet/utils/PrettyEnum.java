@@ -1,7 +1,5 @@
 package net.techcable.sonarpet.utils;
 
-import com.dsh105.commodus.StringUtil;
-
 import org.apache.commons.lang.WordUtils;
 
 /**
