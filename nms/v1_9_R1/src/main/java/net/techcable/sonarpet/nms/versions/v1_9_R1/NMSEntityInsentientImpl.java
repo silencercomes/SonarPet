@@ -16,8 +16,8 @@ import net.minecraft.server.v1_9_R1.SoundEffect;
 import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.pineapple.reflection.Reflection;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.NMSSound;
 
-import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
@@ -113,9 +113,9 @@ public class NMSEntityInsentientImpl extends NMSLivingEntityImpl implements NMSI
 
     @Override
     @SneakyThrows
-    public Sound getDeathSound() {
+    public NMSSound getDeathSound() {
         SoundEffect soundEffect = (SoundEffect) GET_DEATH_SOUND_METHOD_HANDLE.invoke(getHandle());
-        return NMSImpl.toBukkitSound(soundEffect);
+        return soundEffect != null ? new NMSSoundImpl(soundEffect) : null;
     }
 
     public NMSEntityInsentientImpl(EntityInsentient handle) {

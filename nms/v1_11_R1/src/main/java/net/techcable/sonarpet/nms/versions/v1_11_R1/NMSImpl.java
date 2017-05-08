@@ -21,6 +21,7 @@ import net.techcable.sonarpet.nms.EntityRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.NMSSound;
 import net.techcable.sonarpet.nms.versions.v1_11_R1.data.NMSSpawnEggItemData;
 
 import org.bukkit.Location;
@@ -136,21 +137,8 @@ public class NMSImpl implements INMS {
         return new NMSEntityRegistry();
     }
 
-    //
-    // Utility methods
-    //
-    private static final ImmutableMap<SoundEffect, Sound> BUKKIT_SOUNDS;
-    static {
-        ImmutableMap.Builder<SoundEffect, Sound> soundsBuilder = ImmutableMap.builder();
-        for (Sound bukkitSound : Sound.values()) {
-            SoundEffect mojangSound = CraftSound.getSoundEffect(CraftSound.getSound(bukkitSound));
-            soundsBuilder.put(mojangSound, bukkitSound);
-        }
-        BUKKIT_SOUNDS = soundsBuilder.build();
-    }
-    public static Sound toBukkitSound(SoundEffect mojangEffect) {
-        Sound bukkitEffect = BUKKIT_SOUNDS.get(mojangEffect);
-        if (bukkitEffect == null) throw new AssertionError("No bukkit sound effect for mojang effect: " + mojangEffect);
-        return bukkitEffect;
+    @Override
+    public NMSSound getNmsSound(Sound bukkitSound) {
+        return new NMSSoundImpl(NMSSoundImplKt.getSoundEffect(bukkitSound));
     }
 }

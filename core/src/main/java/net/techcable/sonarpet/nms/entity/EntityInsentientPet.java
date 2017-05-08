@@ -36,6 +36,7 @@ import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
 import net.techcable.sonarpet.nms.NMSPlayer;
+import net.techcable.sonarpet.nms.NMSSound;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalFloat;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalFollowOwner;
 import net.techcable.sonarpet.nms.entity.goals.PetGoalLookAtPlayer;
@@ -202,8 +203,9 @@ public abstract class EntityInsentientPet implements IEntityPet {
         if (this.getEntity() != null) {
             getBukkitEntity().remove();
         }
-        if (makeSound) {
-            getEntity().playSound(getEntity().getDeathSound(), 1.0F, 1.0F);
+        NMSSound deathSound = getEntity().getDeathSound();
+        if (makeSound && deathSound != null) {
+            getEntity().playSound(deathSound, 1.0F, 1.0F);
         }
     }
 

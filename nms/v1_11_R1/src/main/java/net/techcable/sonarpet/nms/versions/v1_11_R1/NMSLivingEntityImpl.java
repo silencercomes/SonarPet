@@ -6,6 +6,7 @@ import net.minecraft.server.v1_11_R1.SoundEffect;
 import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.nms.DataWatcher;
 import net.techcable.sonarpet.nms.NMSLivingEntity;
+import net.techcable.sonarpet.nms.NMSSound;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_11_R1.CraftSound;
@@ -66,9 +67,8 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
     //
 
     @Override
-    public void playSound(Sound bukkitSound, float volume, float pitch) {
-        SoundEffect sound = CraftSound.getSoundEffect(CraftSound.getSound(bukkitSound));
-        getHandle().a(sound, volume, pitch);
+    public void playSound(NMSSound sound, float volume, float pitch) {
+        getHandle().a(((NMSSoundImpl) sound).getHandle(), volume, pitch);
     }
 
     @Override

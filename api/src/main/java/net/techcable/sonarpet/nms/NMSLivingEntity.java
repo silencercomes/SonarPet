@@ -20,10 +20,10 @@ public interface NMSLivingEntity extends NMSEntity {
     double distanceTo(Entity other);
 
     default void playSound(SafeSound sound, float volume, float pitch) {
-        playSound(sound.getBukkitSound(), volume, pitch);
+        playSound(sound.getNmsSound(), volume, pitch);
     }
 
-    void playSound(Sound bukkitSound, float volume, float pitch);
+    void playSound(NMSSound nmsSound, float volume, float pitch);
 
     boolean isInvisible();
 

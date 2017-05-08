@@ -1,5 +1,7 @@
 package net.techcable.sonarpet.nms;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -12,7 +14,8 @@ public interface NMSInsentientEntity extends NMSLivingEntity {
 
     void clearGoals();
 
-    Sound getDeathSound();
+    @Nullable
+    NMSSound getDeathSound();
 
     Navigation getNavigation();
 

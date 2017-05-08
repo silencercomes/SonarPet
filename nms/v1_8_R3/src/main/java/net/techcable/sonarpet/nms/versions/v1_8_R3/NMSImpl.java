@@ -1,5 +1,7 @@
 package net.techcable.sonarpet.nms.versions.v1_8_R3;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.server.v1_8_R3.EntityHorse;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
@@ -13,6 +15,7 @@ import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.techcable.sonarpet.nms.BlockSoundData;
 import net.techcable.sonarpet.nms.NMSEntity;
 import net.techcable.sonarpet.nms.NMSInsentientEntity;
+import net.techcable.sonarpet.nms.NMSSound;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -80,20 +83,8 @@ public class NMSImpl implements INMS {
         return new NMSEntityRegistry();
     }
 
-    //
-    // Utility methods
-    //
-    private static final ImmutableMap<String, Sound> BUKKIT_SOUNDS;
-    static {
-        ImmutableMap.Builder<String, Sound> soundsBuilder = ImmutableMap.builder();
-        for (Sound bukkitSound : Sound.values()) {
-            soundsBuilder.put(CraftSound.getSound(bukkitSound), bukkitSound);
-        }
-        BUKKIT_SOUNDS = soundsBuilder.build();
-    }
-    public static Sound toBukkitSound(String mojangSoundName) {
-        Sound bukkitEffect = BUKKIT_SOUNDS.get(mojangSoundName);
-        if (bukkitEffect == null) throw new AssertionError("No bukkit sound effect for mojang sound: " + mojangSoundName);
-        return bukkitEffect;
+    @Override
+    public NMSSound getNmsSound(Sound bukkitSound) {
+        return new NMSSoundImpl(NMSSoundImplKt.getInternalName(bukkitSound));
     }
 }

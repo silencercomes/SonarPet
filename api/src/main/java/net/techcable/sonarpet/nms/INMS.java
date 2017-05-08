@@ -30,6 +30,7 @@ import net.techcable.sonarpet.utils.Versioning;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -94,6 +95,8 @@ public interface INMS {
     boolean isLiquid(Material block);
 
     EntityRegistry getEntityRegistry();
+
+    NMSSound getNmsSound(Sound bukkitSound);
 }
 
 /**

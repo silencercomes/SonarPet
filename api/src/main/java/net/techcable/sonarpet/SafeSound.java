@@ -1,10 +1,9 @@
 package net.techcable.sonarpet;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import net.techcable.sonarpet.nms.INMS;
+import net.techcable.sonarpet.nms.NMSSound;
 
 import org.bukkit.Sound;
 
@@ -23,7 +22,7 @@ public enum SafeSound {
     DONKEY_AMBIENT("ENTITY_DONKEY_AMBIENT", "DONKEY_IDLE"),
     DONKEY_ANGRY("ENTITY_DONKEY_ANGRY", "DONKEY_ANGRY"),
     DONKEY_DEATH("ENTITY_DONKEY_DEATH", "DONKEY_DEATH"),
-    ENDERMITE_STEP("ENTITY_ENDERMITE_STEP", "SILVERFISH_WALK"), // SILVERFISH_WALK is the cloest we have on 1.8.8 :(
+    ENDERMITE_STEP("ENTITY_ENDERMITE_STEP", "SILVERFISH_WALK"), // SILVERFISH_WALK is the closest we have on 1.8.8 :(
     GHAST_AMBIENT("ENTITY_GHAST_AMBIENT", "GHAST_MOAN"),
     GHAST_DEATH("ENTITY_GHAST_DEATH", "GHAST_DEATH"),
     HORSE_AMBIENT("ENTITY_HORSE_AMBIENT", "HORSE_IDLE"),
@@ -73,7 +72,7 @@ public enum SafeSound {
                 } else {
                     sound = Sound.valueOf(name);
                 }
-            } catch (IllegalArgumentException ignroed) {}
+            } catch (IllegalArgumentException ignored) {}
         }
         if (sound == null) throw new IllegalArgumentException("No sounds named " + Arrays.toString(names) + " are found!");
         this.sound = sound;
@@ -81,5 +80,9 @@ public enum SafeSound {
 
     public Sound getBukkitSound() {
         return sound;
+    }
+
+    public NMSSound getNmsSound() {
+        return INMS.getInstance().getNmsSound(getBukkitSound());
     }
 }
