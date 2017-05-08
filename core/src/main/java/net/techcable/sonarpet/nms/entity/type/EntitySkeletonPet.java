@@ -39,10 +39,12 @@ public class EntitySkeletonPet extends EntityInsentientPet implements IEntitySke
                 switch (getSkeletonType()) {
                     case STRAY:
                     case NORMAL:
-                        getBukkitEntity().getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
+                        //noinspection deprecation - 1.8.8 compatibility
+                        getBukkitEntity().getEquipment().setItemInHand(new ItemStack(Material.BOW));
                         break;
                     case WITHER:
-                        getBukkitEntity().getEquipment().setItemInMainHand(new ItemStack(Material.STONE_SWORD));
+                        //noinspection deprecation - 1.8.8 compatibility
+                        getBukkitEntity().getEquipment().setItemInHand(new ItemStack(Material.STONE_SWORD));
                         break;
                     default:
                         throw new AssertionError("Unknown skeleton type: " + getSkeletonType());

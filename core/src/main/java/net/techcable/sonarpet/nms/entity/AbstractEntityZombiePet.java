@@ -24,7 +24,8 @@ public abstract class AbstractEntityZombiePet extends EntityInsentientPet implem
         new BukkitRunnable() {
             @Override
             public void run() {
-                getBukkitEntity().getEquipment().setItemInMainHand(new ItemStack(getInitialItemInHand()));
+                //noinspection deprecation - 1.8.8 compatibility
+                getBukkitEntity().getEquipment().setItemInHand(new ItemStack(getInitialItemInHand()));
             }
         }.runTaskLater(EchoPet.getPlugin(), 5L);
     }
