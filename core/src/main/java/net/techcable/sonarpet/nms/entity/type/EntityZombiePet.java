@@ -18,7 +18,7 @@ import org.bukkit.Material;
         EntityHookType.HUSK_ZOMBIE
 })
 @GeneratorClass(EntityUndeadPetGenerator.class)
-public class EntityZombiePet extends AbstractEntityZombiePet implements IEntityZombiePet {
+public class EntityZombiePet extends AbstractEntityZombiePet {
     public EntityZombiePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
         super(pet, entity, hookType);
     }

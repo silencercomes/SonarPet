@@ -87,7 +87,7 @@ public class ZombiePet extends Pet implements IZombiePet {
             }
             switch (newType) {
                 case PIGMAN:
-                    // Pigmen are considered a seperate entity type, even on old versions
+                    // Pigmen are considered a separate entity type, even on old versions
                     switchHookType(getOwner(), EntityHookType.PIG_ZOMBIE);
                     break;
                 case NORMAL:

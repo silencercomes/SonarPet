@@ -17,15 +17,6 @@ public class EntityPigZombiePet extends AbstractEntityZombiePet {
         super(pet, entity, hookType);
     }
 
-    @SuppressWarnings("deprecation") // We only do it when it's safe
-    public void setVillager(boolean flag) {
-        if (Versioning.NMS_VERSION.compareTo(NmsVersion.v1_11_R1) >= 0) {
-            throw new UnsupportedOperationException("TODO");
-        } else {
-            getBukkitEntity().setVillager(flag);
-        }
-    }
-
     @Override
     protected Material getInitialItemInHand() {
         return Material.GOLD_SWORD;

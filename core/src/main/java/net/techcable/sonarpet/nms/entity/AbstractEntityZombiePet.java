@@ -2,6 +2,7 @@ package net.techcable.sonarpet.nms.entity;
 
 import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.entity.SizeCategory;
+import com.dsh105.echopet.compat.api.entity.type.nms.IEntityZombiePet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 
 import net.techcable.sonarpet.EntityHookType;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public abstract class AbstractEntityZombiePet extends EntityInsentientPet {
+public abstract class AbstractEntityZombiePet extends EntityInsentientPet implements IEntityZombiePet {
     protected AbstractEntityZombiePet(IPet pet, NMSInsentientEntity entity, EntityHookType hookType) {
         super(pet, entity, hookType);
     }
