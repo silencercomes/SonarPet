@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import com.dsh105.echopet.EchoPetPlugin;
 
+import net.techcable.sonarpet.bstats.Metrics;
 import net.techcable.sonarpet.maven.LocalRepository;
 import net.techcable.sonarpet.maven.MavenDependencyInfo;
 import net.techcable.sonarpet.maven.MavenException;
@@ -20,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Bootstrap extends JavaPlugin {
 
+    private Metrics metrics;
     private BootstrapedPlugin plugin;
 
 
@@ -42,6 +44,11 @@ public class Bootstrap extends JavaPlugin {
         } catch (IOException | MavenException t) {
             getLogger().log(Level.SEVERE, "Unable to load libraries", t);
             setEnabled(false);
+            return;
+        }
+        if (metrics != null) {
+            metrics = new Metrics(this);
+            plugin.configureMetrics(metrics);
         }
     }
 
@@ -53,6 +60,7 @@ public class Bootstrap extends JavaPlugin {
     @Override
     public void onDisable() {
         plugin.onDisable();
+        metrics = null; // Free the metrics instance, in case we get reloaded
     }
 
     @Override

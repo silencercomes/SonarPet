@@ -11,6 +11,8 @@ import javax.annotation.Nonnull;
 
 import com.avaje.ebean.EbeanServer;
 
+import net.techcable.sonarpet.bstats.Metrics;
+
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -34,6 +36,8 @@ public abstract class BootstrapedPlugin implements Plugin {
 
     @Override
     public void onLoad() {}
+
+    public void configureMetrics(@Nonnull Metrics metrics) {}
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {

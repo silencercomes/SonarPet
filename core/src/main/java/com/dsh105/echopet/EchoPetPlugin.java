@@ -23,11 +23,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.dsh105.commodus.config.YAMLConfig;
 import com.dsh105.commodus.config.YAMLConfigManager;
-import com.dsh105.commodus.data.Metrics;
 import com.dsh105.echopet.api.PetManager;
 import com.dsh105.echopet.api.SqlPetManager;
 import com.dsh105.echopet.commands.CommandComplete;
@@ -37,6 +38,7 @@ import com.dsh105.echopet.commands.util.CommandManager;
 import com.dsh105.echopet.commands.util.DynamicPluginCommand;
 import com.dsh105.echopet.compat.api.config.ConfigOptions;
 import com.dsh105.echopet.compat.api.entity.IEntityPet;
+import com.dsh105.echopet.compat.api.entity.IPet;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
 import com.dsh105.echopet.compat.api.plugin.IEchoPetPlugin;
 import com.dsh105.echopet.compat.api.plugin.IPetManager;
@@ -54,6 +56,7 @@ import com.dsh105.echopet.hook.WorldGuardProvider;
 import com.dsh105.echopet.listeners.MenuListener;
 import com.dsh105.echopet.listeners.PetEntityListener;
 import com.dsh105.echopet.listeners.PetOwnerListener;
+import com.google.common.base.Preconditions;
 import com.google.common.reflect.ClassPath;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -63,14 +66,17 @@ import net.techcable.sonarpet.EntityHook;
 import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.HookRegistry;
 import net.techcable.sonarpet.HookRegistryImpl;
+import net.techcable.sonarpet.bstats.Metrics;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSPetEntity;
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -112,6 +118,27 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     public String name = "";
     public long size = 0;
     public boolean updateChecked = false;
+
+    @Override
+    public void configureMetrics(@Nonnull Metrics metrics) {
+        metrics.addCustomChart(new Metrics.AdvancedPie("Pet Type") {
+            @Override
+            public HashMap<String, Integer> getValues(HashMap<String, Integer> valueMap) {
+                Preconditions.checkState(Bukkit.isPrimaryThread(), "Can only gather stats on main thread!");
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    IPet pet = getPetManager().getPet(player);
+                    final String petTypeName;
+                    if (pet != null) {
+                        petTypeName = pet.getPetType().toPrettyString();
+                    } else {
+                        petTypeName = "None";
+                    }
+                    valueMap.put(petTypeName, valueMap.getOrDefault(petTypeName, 0) + 1);
+                }
+                return valueMap;
+            }
+        });
+    }
 
     @Override
     @SneakyThrows(IOException.class)
@@ -177,13 +204,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
         this.vanishProvider = new VanishProvider(this);
         this.worldGuardProvider = new WorldGuardProvider(this);
-
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException e) {
-            // Failed to submit the stats :(
-        }
     }
 
     @Override
@@ -311,8 +331,8 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
                 sender.sendMessage(ChatColor.GOLD + "Website: " + ChatColor.YELLOW + pdFile.getWebsite());
                 sender.sendMessage(ChatColor.GOLD + "Commands are registered at runtime to provide you with more dynamic control over the command labels.");
                 sender.sendMessage(ChatColor.GOLD + "" + ChatColor.UNDERLINE + "Command Registration:");
-                sender.sendMessage(ChatColor.GOLD + "Main: " + this.OPTIONS.getCommandString());
-                sender.sendMessage(ChatColor.GOLD + "Admin: " + this.OPTIONS.getCommandString() + "admin");
+                sender.sendMessage(ChatColor.GOLD + "Main: " + OPTIONS.getCommandString());
+                sender.sendMessage(ChatColor.GOLD + "Admin: " + OPTIONS.getCommandString() + "admin");
             } else {
                 Lang.sendTo(sender, Lang.NO_PERMISSION.toString().replace("%perm%", "echopet.petadmin"));
                 return true;
