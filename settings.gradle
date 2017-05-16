@@ -1,13 +1,20 @@
-rootProject.name = 'SonarPet'
-include ':api'
-gradle.ext.nmsVersions = ["v1_8_R3", "v1_9_R1", "v1_9_R2", "v1_10_R1", "v1_11_R1"]
-for (version in gradle.ext.nmsVersions) {
-    include ":nms-$version"
-    project(":nms-$version").projectDir = "$rootDir/nms/$version" as File
-}
-include ':core'
-include ':bootstrap'
+import org.gradle.api.reflect.TypeOf
 
-project(':api').projectDir = "$rootDir/api" as File
-project(':core').projectDir = "$rootDir/core" as File
-project(':bootstrap').projectDir = "$rootDir/bootstrap" as File
+rootProject.name = 'SonarPet'
+rootProject.buildFileName = "build.gradle.kts"
+include 'api'
+List<String> nmsVersions = ["v1_8_R3", "v1_9_R1", "v1_9_R2", "v1_10_R1", "v1_11_R1"]
+for (version in nmsVersions) {
+    include "nms-$version"
+    project(":nms-$version").projectDir = "$rootDir/nms/$version" as File
+    project(":nms-$version").buildFileName = "build.gradle.kts"
+}
+gradle.allprojects { it.extensions.add("nmsVersions", nmsVersions) }
+include 'core'
+include 'bootstrap'
+
+for (name in ["api", "core", "bootstrap"]) {
+    project(":$name").projectDir = "$rootDir/$name" as File
+    // For some reason we need to explicitly set the build file to build.gradle.kts -_-
+    project(":$name").buildFileName = "build.gradle.kts"
+}
