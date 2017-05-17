@@ -1,5 +1,9 @@
 package net.techcable.sonarpet.nms;
 
+import javax.annotation.Nullable;
+
+import com.dsh105.echopet.compat.api.util.Version;
+
 import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.SafeSound;
 import net.techcable.sonarpet.utils.Versioning;
@@ -70,6 +74,23 @@ public interface NMSLivingEntity extends NMSEntity {
     default float getForwardsMotion() {
         Object rawEntity = MinecraftReflection.getHandle(getBukkitEntity());
         return FORWARD_MOTION_FIELD.getBoxed(rawEntity);
+    }
+
+    @Nullable
+    String UPWARDS_MOTION_FIELD_NAME = Versioning.NMS_VERSION.tryGetObfuscatedField("ENTITY_UPWARDS_MOTION_FIELD");
+    @Nullable
+    PineappleField<Object, Float> UPWARDS_MOTION_FIELD = UPWARDS_MOTION_FIELD_NAME != null ? PineappleField.create(
+            MinecraftReflection.getNmsClass("EntityLiving"),
+            UPWARDS_MOTION_FIELD_NAME,
+            float.class
+    ) : null;
+    default boolean hasUpwardsMotion() {
+        return UPWARDS_MOTION_FIELD != null;
+    }
+    default float getUpwardsMotion() {
+        if (UPWARDS_MOTION_FIELD == null) throw new UnsupportedOperationException("No upwards motion for " + Versioning.NMS_VERSION);
+        Object rawEntity = MinecraftReflection.getHandle(getBukkitEntity());
+        return UPWARDS_MOTION_FIELD.getBoxed(rawEntity);
     }
 
     void setMoveSpeed(double rideSpeed);

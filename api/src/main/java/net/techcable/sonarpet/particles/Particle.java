@@ -79,7 +79,9 @@ public enum Particle {
     }
 
     public void show(Location l) {
-        this.builder().at(l).show();
+        ParticleBuilder builder =  this.builder();
+        builder.setPosition(l);
+        builder.show();
     }
 
     public int getId() {

@@ -66,7 +66,7 @@ public final class LocalRepository extends MavenRepository {
     }
 
     public static final Path STANDARD_LOCATION = Paths.get(
-            requireNonNull(System.getProperty("user.name"), "Null user.name"),
+            requireNonNull(System.getProperty("user.home"), "Null user.name"),
             ".m2", "repository"
     );
     private static final LocalRepository standardRepository = create("local", STANDARD_LOCATION);

@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.dsh105.commodus.StringUtil;
 import com.google.common.base.Charsets;
@@ -27,7 +28,8 @@ public enum NmsVersion {
     v1_9_R1,
     v1_9_R2,
     v1_10_R1,
-    v1_11_R1;
+    v1_11_R1,
+    v1_12_R1;
 
     public static final NmsVersion LATEST, EARLIEST;
     private ImmutableMap<String, Integer> metadata;
@@ -49,9 +51,15 @@ public enum NmsVersion {
         }
         return name;
     }
-    public String getObfuscatedField(String id) {
+    @Nullable
+    public String tryGetObfuscatedField(String id) {
         if (obfuscatedFields == null) loadData();
-        String name = obfuscatedFields.get(id);
+        return obfuscatedFields.get(id);
+
+    }
+    @Nonnull
+    public String getObfuscatedField(String id) {
+        String name = tryGetObfuscatedField(id);
         if (name == null) {
             throw new IllegalArgumentException("Obfuscated field " + id + " is unknown for " + this);
         }

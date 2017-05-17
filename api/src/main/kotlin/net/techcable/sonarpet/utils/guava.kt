@@ -7,8 +7,7 @@ import com.google.common.collect.ImmutableSet
 import com.google.common.collect.ImmutableSetMultimap
 import com.google.common.primitives.Primitives
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.MoreExecutors
-import java.util.*
+import net.techcable.sonarpet.utils.compat.GuavaCompatibility
 import java.util.concurrent.Executor
 
 //
@@ -16,7 +15,7 @@ import java.util.concurrent.Executor
 //
 
 inline fun <T> ListenableFuture<T>.addListener(
-        executor: Executor = MoreExecutors.sameThreadExecutor(),
+        executor: Executor = GuavaCompatibility.directExecutor(),
         crossinline listener: ListenableFuture<T>.() -> Unit
 ) {
     this.addListener(Runnable { listener(this@addListener) }, executor)

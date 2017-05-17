@@ -15,7 +15,7 @@ buildscript {
 plugins {
     id("java")
     id("maven")
-    id("org.jetbrains.kotlin.jvm").version("1.1.2")
+    id("org.jetbrains.kotlin.jvm").version("1.1.2-2")
     id("com.github.johnrengelman.shadow").version("1.2.4").apply(false)
 }
 allprojects {
@@ -99,6 +99,7 @@ subprojects {
         "shade"("org.ow2.asm:asm-commons:5.2")
         "shade"("org.ow2.asm:asm-util:5.2")
         // Provided dependencies
+        compileOnly("com.google.guava:guava:21.0") // Compile against modern guava, with emulation where necessary
         compileOnly("org.bukkit:bukkit:1.11.2-R0.1-SNAPSHOT")
         compileOnly("org.projectlombok:lombok:1.16.12")
         compileOnly("org.kitteh:VanishNoPacket:3.18.7") {

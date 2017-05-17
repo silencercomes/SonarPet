@@ -21,26 +21,38 @@ class CustomMotionPetGenerator(plugin: IEchoPetPlugin, currentType: Type, hookCl
             invokeVirtual("doTick", ENTITY_LIVING_TYPE, VOID_TYPE)
             val sidewaysMotionField = Versioning.NMS_VERSION.getObfuscatedField("ENTITY_SIDEWAYS_MOTION_FIELD")
             val forwardMotionField = Versioning.NMS_VERSION.getObfuscatedField("ENTITY_FORWARD_MOTION_FIELD")
+            val upwardsMotionField = Versioning.NMS_VERSION.tryGetObfuscatedField("ENTITY_UPWARDS_MOTION_FIELD")
             // this.moveStrafing *= 0.98
             // this.moveForward *= 0.98
-            for (fieldName in arrayOf(sidewaysMotionField, forwardMotionField)) {
+            // this.moveUpwards *= 0.9
+            val movementUpdates = mutableMapOf(
+                    sidewaysMotionField to 0.98f,
+                    forwardMotionField to 0.98f
+            )
+            // NOTE: Upwards motion is only present post 1.12 and is multiplied by 0.9 not 0.98
+            upwardsMotionField?.let { movementUpdates.put(it, 0.9f) }
+            for ((fieldName, coefficient) in movementUpdates) {
                 loadThis()
                 visitInsn(DUP)
                 getField(ENTITY_LIVING_TYPE, fieldName, FLOAT_TYPE)
-                visitLdcInsn(0.98f)
+                visitLdcInsn(coefficient)
                 visitInsn(FMUL)
                 putField(ENTITY_LIVING_TYPE, fieldName, FLOAT_TYPE)
             }
-            // this.move(this.moveStrafing, this.moveForward)
+            // this.move(this.moveStrafing, this.moveForward, this.moveUpwards), moveUpwards missing before 1.12
             loadThis()
             visitInsn(DUP)
             getField(ENTITY_LIVING_TYPE, sidewaysMotionField, FLOAT_TYPE)
             loadThis()
             getField(ENTITY_LIVING_TYPE, forwardMotionField, FLOAT_TYPE)
+            upwardsMotionField?.let {
+                loadThis()
+                getField(ENTITY_LIVING_TYPE, upwardsMotionField, FLOAT_TYPE)
+            }
             invokeVirtual(
                     name = entityMoveMethodName,
                     ownerType = ENTITY_LIVING_TYPE,
-                    parameterTypes = listOf(FLOAT_TYPE, FLOAT_TYPE)
+                    parameterTypes = entityMoveMethodParameters.toList()
             )
         }
 

@@ -17,7 +17,13 @@
 
 package com.dsh105.echopet.compat.api.event;
 
+import javax.annotation.Nullable;
+
 import com.dsh105.echopet.compat.api.entity.IPet;
+import com.google.common.base.Preconditions;
+
+import net.techcable.sonarpet.utils.Versioning;
+
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -34,11 +40,29 @@ public class PetRideMoveEvent extends Event implements Cancellable {
     private IPet pet;
     private float forwardSpeed;
     private float sidewardSpeed;
+    @Nullable
+    private Float upwardsSpeed;
 
-    public PetRideMoveEvent(IPet pet, float forwardSpeed, float sidewardSpeed) {
+    public PetRideMoveEvent(IPet pet, float forwardSpeed, float sidewardSpeed, @Nullable Float upwardsSpeed) {
         this.pet = pet;
         this.forwardSpeed = forwardSpeed;
         this.sidewardSpeed = sidewardSpeed;
+        this.upwardsSpeed = upwardsSpeed;
+    }
+
+    public boolean hasUpwardsSpeed() {
+        return upwardsSpeed != null;
+    }
+
+    public float getUpwardsSpeed() {
+        Float upwardsSpeed = this.upwardsSpeed;
+        Preconditions.checkState(upwardsSpeed != null, "No upwards speed for version %s", Versioning.NMS_VERSION);
+        return upwardsSpeed;
+    }
+
+    public void setUpwardsSpeed(float value) {
+        Preconditions.checkState(hasUpwardsSpeed(), "No upwards speed for version %s", Versioning.NMS_VERSION);
+        this.upwardsSpeed = value;
     }
 
     /**

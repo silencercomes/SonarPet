@@ -107,8 +107,8 @@ fun writeDependencyInfo(dependencies: Collection<ResolvedDependency>) {
     // Write pretty-printed info
     dependencyInfoFile.writeText(JsonOutput.prettyPrint(JsonOutput.toJson(mapOf(
             "repositories" to listOf(
-                    mapOf(name to "maven-central", "url" to repositories.mavenCentral().url.toString()),
-                    mapOf(name to "techcable-repo", "url" to (repositories.getByName("techcable-repo") as MavenArtifactRepository).url.toString())
+                    mapOf("name" to "maven-central", "url" to repositories.mavenCentral().url.toString()),
+                    mapOf("name" to "techcable-repo", "url" to (repositories.getByName("techcable-repo") as MavenArtifactRepository).url.toString())
             ),
             "dependencies" to dependencies.map { it.name }.sorted()
     ))))

@@ -37,6 +37,7 @@ import com.dsh105.echopet.compat.api.util.StringSimplifier;
 import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.particles.Particle;
+import net.techcable.sonarpet.particles.ParticleBuilder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -344,7 +345,10 @@ public abstract class Pet implements IPet {
         Particle.PORTAL.show(getLocation());
         Location l = this.getLocation().clone();
         l.setY(l.getY() - 1D);
-        Particle.BLOCK_DUST.builder().ofBlockType(l.getBlock().getType()).at(getLocation()).show();
+        ParticleBuilder builder = Particle.BLOCK_DUST.builder();
+        builder.setBlockType(l.getBlock().getType());
+        builder.setPosition(getLocation());
+        builder.show();
     }
 
     @Override

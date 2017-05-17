@@ -3,11 +3,13 @@ package net.techcable.sonarpet.nms.entity;
 import lombok.*;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
+import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import com.dsh105.echopet.compat.api.ai.PetGoalSelector;
@@ -26,7 +28,6 @@ import com.dsh105.echopet.compat.api.util.Perm;
 import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import net.techcable.pineapple.reflection.PineappleField;
@@ -309,14 +310,26 @@ public abstract class EntityInsentientPet implements IEntityPet {
     }
 
     /*
+     * NOTE: Have two different overloads, one where 'upwardsMotion' is present, and one where it's not.
+     */
+    public final void move(float sideMot, float forwMot, MethodHandle superMoveFunction) {
+        this.move(sideMot, forwMot, null, MethodHandles.dropArguments(superMoveFunction, 2));
+    }
+
+    private static final MethodType MOVE_METHOD_TYPE = MethodType.methodType(void.class, float.class, float.class, Float.class);
+    public final void move(float sideMot, float forwMot, float upwardsMotion, MethodHandle superMoveFunction) {
+        this.move(sideMot, forwMot, Float.valueOf(upwardsMotion), superMoveFunction.asType(MOVE_METHOD_TYPE));
+    }
+
+    /*
      * We need to override the move logic for special handling when the owner is riding
      */
     @SneakyThrows
-    public void move(float sideMot, float forwMot, MethodHandle superMoveFunction) {
+    public void move(float sideMot, float forwMot, @Nullable Float upwardsMotion, MethodHandle superMoveFunction) {
         Preconditions.checkNotNull(superMoveFunction, "Null superMoveFunction");
         getEntity().setStepHeight(1); // Give pets the ability to step up full blocks
         if (!isOwnerRiding()) {
-            superMoveFunction.invoke(sideMot, forwMot); // moveEntity
+            superMoveFunction.invoke(sideMot, forwMot, upwardsMotion); // moveEntity
             return;
         }
         getEntity().setYaw(getPlayerOwner().getLocation().getYaw());
@@ -326,20 +339,30 @@ public abstract class EntityInsentientPet implements IEntityPet {
 
         sideMot = getPlayerEntity().getSidewaysMotion() * 0.5F;
         forwMot = getPlayerEntity().getForwardsMotion();
+        if (getPlayerEntity().hasUpwardsMotion()) {
+            upwardsMotion = getPlayerEntity().getUpwardsMotion();
+        }
 
         if (forwMot <= 0.0F) {
             forwMot *= 0.25F; // quarter speed backwards
         }
         sideMot *= 0.75F; // 75% slower sideways
 
-        PetRideMoveEvent moveEvent = new PetRideMoveEvent(this.getPet(), forwMot, sideMot);
+        PetRideMoveEvent moveEvent = new PetRideMoveEvent(
+                this.getPet(),
+                forwMot,
+                sideMot,
+                getPlayerEntity().hasUpwardsMotion() ? getPlayerEntity().getUpwardsMotion() : null
+        );
         EchoPet.getPlugin().getServer().getPluginManager().callEvent(moveEvent);
         if (moveEvent.isCancelled()) {
             return;
         }
 
         getEntity().setMoveSpeed(rideSpeed); // set the movement speed
-        superMoveFunction.invoke(moveEvent.getSidewardMotionSpeed(), moveEvent.getForwardMotionSpeed()); // superclass movement logic, with the speed from the movement event
+        // superclass movement logic, with the speed from the movement event
+        upwardsMotion = moveEvent.hasUpwardsSpeed() ? moveEvent.getUpwardsSpeed() : 0;
+        superMoveFunction.invoke(moveEvent.getSidewardMotionSpeed(), moveEvent.getForwardMotionSpeed(), upwardsMotion);
 
         PetType pt = this.getPet().getPetType();
         if (EchoPet.getOptions().canFly(pt)) {

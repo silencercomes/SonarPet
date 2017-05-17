@@ -144,7 +144,7 @@ open class EntityPetGenerator(
                 getField(currentType, "hook", hookType)
                 invokeVirtual("onLive", hookType, VOID_TYPE)
             })
-            add(GeneratedMethod(entityMoveMethodName, parameterTypes = listOf(Float::class, Float::class)) {
+            add(GeneratedMethod(entityMoveMethodName, parameterTypes = entityMoveMethodParameters.toList()) {
                 loadThis()
                 getField(currentType, "hook", hookType)
                 loadArgs()
@@ -153,12 +153,12 @@ open class EntityPetGenerator(
                         H_INVOKESPECIAL,
                         entityType.internalName,
                         entityMoveMethodName,
-                        getMethodDescriptor(VOID_TYPE, FLOAT_TYPE, FLOAT_TYPE),
+                        getMethodDescriptor(VOID_TYPE, *entityMoveMethodParameters),
                         false
                 ))
                 loadThis()
                 invokeVirtual("bindTo", METHOD_HANDLE_TYPE, METHOD_HANDLE_TYPE, OBJECT_TYPE)
-                invokeVirtual("move", hookType, VOID_TYPE, FLOAT_TYPE, FLOAT_TYPE, METHOD_HANDLE_TYPE)
+                invokeVirtual("move", hookType, VOID_TYPE, *entityMoveMethodParameters, METHOD_HANDLE_TYPE)
             })
             add(GeneratedMethod(onStepMethodName, parameterTypes = listOf(BLOCK_POSITION_TYPE, BLOCK_TYPE)) { _ ->
                 loadThis()
@@ -229,6 +229,15 @@ open class EntityPetGenerator(
     // Obfuscated method names
     val entityTickMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_TICK_METHOD")
     val entityMoveMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_MOVE_METHOD")
+    /**
+     * Before 1.12, the entity move method accepted two floats for both sideways and forwards direction.
+     * After 1.12, it also accepts an additional float for up/down movement, giving it three paramteers in total.
+     */
+    val entityMoveMethodParameters: Array<Type>
+        get() {
+            val amount = if (Versioning.NMS_VERSION >= NmsVersion.v1_12_R1) 3 else 2
+            return Array(amount) { FLOAT_TYPE }
+        }
     val onStepMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ON_STEP_METHOD")
     val onInteractMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ON_INTERACT_METHOD")
     val proceduralAIMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_PROCEDURAL_AI_METHOD")

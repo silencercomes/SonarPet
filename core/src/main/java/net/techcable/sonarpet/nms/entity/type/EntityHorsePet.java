@@ -2,6 +2,8 @@ package net.techcable.sonarpet.nms.entity.type;
 
 import java.lang.invoke.MethodHandle;
 
+import javax.annotation.Nullable;
+
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
 import com.dsh105.echopet.compat.api.entity.HorseMarking;
 import com.dsh105.echopet.compat.api.entity.HorseType;
@@ -138,8 +140,8 @@ public class EntityHorsePet extends EntityAgeablePet implements IEntityHorsePet 
     }
 
     @Override
-    public void move(float sideMot, float forwMot, MethodHandle superMoveFunction) {
-        super.move(sideMot, forwMot, superMoveFunction);
+    public void move(float sideMot, float forwMot, @Nullable Float upwardsMotion, MethodHandle superMoveFunction) {
+        super.move(sideMot, forwMot, upwardsMotion, superMoveFunction);
         if (forwMot <= 0.0F) {
             this.stepSoundCount = 0;
         }
