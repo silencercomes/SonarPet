@@ -17,9 +17,12 @@
 
 package com.dsh105.echopet.compat.api.entity;
 
+import java.util.Arrays;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.techcable.sonarpet.utils.PrettyEnum;
+import net.techcable.sonarpet.utils.compat.GuavaCompatibility;
 
 /**
  * A data attribute a pet can have, stored as an on/off flag.
@@ -35,20 +38,20 @@ public enum PetData implements PrettyEnum {
     BLACK_AND_WHITE("blackandwhite", Type.RABBIT_TYPE),
     BLACKSMITH("blacksmith", Type.PROF),
     BLACKSPOT("blackSpot", Type.HORSE_MARKING),
-    BLUE("blue", Type.COLOUR),
+    BLUE("blue", Type.COLOUR, Type.PARROT_COLOR),
     BROWN("brown", Type.COLOUR, Type.HORSE_VARIANT, Type.RABBIT_TYPE),
     BUTCHER("butcher", Type.PROF),
     CHESTED("chested", Type.BOOLEAN),
     CHESTNUT("chestnut", Type.HORSE_VARIANT),
     CREAMY("creamy", Type.HORSE_VARIANT),
-    CYAN("cyan", Type.COLOUR),
+    CYAN("cyan", Type.COLOUR, Type.PARROT_COLOR),
     DARKBROWN("darkbrown", Type.HORSE_VARIANT),
     DIAMOND("diamond", Type.HORSE_ARMOUR),
     DONKEY("donkey", Type.HORSE_TYPE),
     ELDER("elder", Type.BOOLEAN),
     FARMER("farmer", Type.PROF),
     FIRE("fire", Type.BOOLEAN),
-    GRAY("gray", Type.COLOUR, Type.HORSE_VARIANT),
+    GRAY("gray", Type.COLOUR, Type.HORSE_VARIANT, Type.PARROT_COLOR),
     GREEN("green", Type.COLOUR),
     GOLD("gold", Type.HORSE_ARMOUR),
     IRON("iron", Type.HORSE_ARMOUR),
@@ -56,7 +59,7 @@ public enum PetData implements PrettyEnum {
     LARGE("large", Type.SIZE),
     LIBRARIAN("librarian", Type.PROF),
     LIGHTBLUE("lightBlue", Type.COLOUR),
-    LIME("lime", Type.COLOUR),
+    LIME("lime", Type.COLOUR, Type.PARROT_COLOR),
     MAGENTA("magenta", Type.COLOUR),
     MEDIUM("medium", Type.SIZE),
     MULE("mule", Type.HORSE_TYPE),
@@ -68,7 +71,7 @@ public enum PetData implements PrettyEnum {
     POWER("powered", Type.BOOLEAN),
     PRIEST("priest", Type.PROF),
     PURPLE("purple", Type.COLOUR),
-    RED("red", Type.CAT, Type.COLOUR),
+    RED("red", Type.CAT, Type.COLOUR, Type.PARROT_COLOR),
     SADDLE("saddle", Type.BOOLEAN),
     SALT_AND_PEPPER("saltandpepper", Type.RABBIT_TYPE),
     SCREAMING("screaming", Type.BOOLEAN),
@@ -124,6 +127,22 @@ public enum PetData implements PrettyEnum {
         HORSE_ARMOUR,
         RABBIT_TYPE,
         ZOMBIE_TYPE,
-        SKELETON_TYPE
+        SKELETON_TYPE,
+        PARROT_COLOR;
+
+        private ImmutableSet<PetData> values;
+        public ImmutableSet<PetData> getValues() {
+            ImmutableSet<PetData> values = this.values;
+            if (values == null) {
+                this.values = values = Arrays.stream(PetData.values())
+                        .filter((data) -> data.isType(this))
+                        .collect(GuavaCompatibility.INSTANCE.immutableSetCollector());
+            }
+            return values;
+        }
+        public PetData[] getValueArray() {
+            ImmutableSet<PetData> values = this.getValues();
+            return values.toArray(new PetData[values.size()]);
+        }
     }
 }

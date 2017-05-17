@@ -100,7 +100,7 @@ subprojects {
         "shade"("org.ow2.asm:asm-util:5.2")
         // Provided dependencies
         compileOnly("com.google.guava:guava:21.0") // Compile against modern guava, with emulation where necessary
-        compileOnly("org.bukkit:bukkit:1.11.2-R0.1-SNAPSHOT")
+        compileOnly("org.bukkit:bukkit:1.12-pre2-SNAPSHOT")
         compileOnly("org.projectlombok:lombok:1.16.12")
         compileOnly("org.kitteh:VanishNoPacket:3.18.7") {
             exclude(module = "Vault")

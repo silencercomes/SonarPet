@@ -111,6 +111,12 @@ public enum DataMenuItem {
     HUSK_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.HUSK, Material.LEATHER_HELMET, 1, "Husk", "Zombie Type"),
     PIGMAN_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.PIGMAN, Material.GOLD_NUGGET, 1, "Pigman", "Zombie Type"),
 
+    RED_PARROT(DataMenuType.PARROT_COLOR, PetData.RED, WoolItemData.create(DyeColor.RED), 1, "Red", "Parrot type"),
+    BLUE_PARROT(DataMenuType.PARROT_COLOR, PetData.BLUE, WoolItemData.create(DyeColor.BLUE), 1, "Blue", "Parrot type"),
+    GREEN_PARROT(DataMenuType.PARROT_COLOR, PetData.GREEN, WoolItemData.create(DyeColor.GREEN), 1, "Green", "Parrot type"),
+    CYAN_PARROT(DataMenuType.PARROT_COLOR, PetData.CYAN, WoolItemData.create(DyeColor.CYAN), 1, "Cyan", "Parrot type"),
+    GRAY_PARROT(DataMenuType.PARROT_COLOR, PetData.GRAY, WoolItemData.create(DyeColor.GRAY), 1, "Gray", "Parrot type"),
+
     BACK(DataMenuType.OTHER, null, Material.BOOK, 1, "Back", "Return to the main menu."),
     CLOSE(DataMenuType.OTHER, null, Material.BOOK, 1, "Close", "Close the Pet Menu");
 

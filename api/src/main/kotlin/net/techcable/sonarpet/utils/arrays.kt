@@ -77,6 +77,17 @@ inline fun <T: Any> Array<T?>.requireNoNulls(lazyMessage: (Int) -> String): Arra
     return this as Array<T>
 }
 
+fun <T> Array<T>.requireNoDuplicates() = this.requireNoDuplicates { "Duplicate value: $it" }
+inline fun <T> Array<T>.requireNoDuplicates(lazyMessage: (T) -> String): Array<T> {
+    val seen = HashSet<T>(this.size)
+    for (element in this) {
+        if (!seen.add(element)) {
+            throw IllegalArgumentException(lazyMessage(element))
+        }
+    }
+    return this
+}
+
 /**
  * Consider that this array may have null values,
  * even if the compiler thinks it doesn't.

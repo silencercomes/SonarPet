@@ -125,11 +125,6 @@ public abstract class BootstrapedPlugin implements Plugin {
     }
 
     @Override
-    public EbeanServer getDatabase() {
-        return delegate.getDatabase();
-    }
-
-    @Override
     public Logger getLogger() {
         return delegate.getLogger();
     }

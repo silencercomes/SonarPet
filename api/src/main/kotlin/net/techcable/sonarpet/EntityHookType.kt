@@ -56,7 +56,8 @@ enum class EntityHookType(
     ZOMBIE("Zombie", PetType.ZOMBIE),
     HUSK_ZOMBIE("ZombieHusk", PetType.ZOMBIE, earliestVersion = NmsVersion.v1_11_R1),
     VILLAGER_ZOMBIE("ZombieVillager", PetType.ZOMBIE, earliestVersion = NmsVersion.v1_11_R1),
-    GIANT_ZOMBIE("GiantZombie", PetType.ZOMBIE);
+    GIANT_ZOMBIE("GiantZombie", PetType.ZOMBIE),
+    PARROT("Parrot", PetType.PARROT, earliestVersion = NmsVersion.v1_12_R1);
 
     val isActive = Versioning.NMS_VERSION in earliestVersion..latestVersion
     val nmsType: Class<*>

@@ -38,6 +38,7 @@ import com.dsh105.echopet.compat.api.entity.type.pet.IGuardianPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IHorsePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IMagmaCubePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IOcelotPet;
+import com.dsh105.echopet.compat.api.entity.type.pet.IParrotPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IPigPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IRabbitPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.ISheepPet;
@@ -62,6 +63,7 @@ import org.apache.commons.lang.WordUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
@@ -467,6 +469,10 @@ public class PetManager implements IPetManager {
     public void setData(IPet pet, PetData pd, boolean b) {
         PetType petType = pet.getPetType();
         if (petType.isDataAllowed(pd)) {
+            if (pd.isType(PetData.Type.PARROT_COLOR)) {
+                Parrot.Variant color = Parrot.Variant.valueOf(pd.toString());
+                ((IParrotPet) pet).setParrotColor(color);
+            }
             if (pd == PetData.BABY) {
                 if (petType == PetType.ZOMBIE) {
                     ((IZombiePet) pet).setBaby(b);

@@ -106,6 +106,10 @@ public class MenuUtil {
             options.add(new MenuOption(i++, MenuItem.BABY));
             options.add(new MenuOption(i++, MenuItem.RABBIT_TYPE));
         }
+        if (pt == PetType.PARROT) {
+            options.add(new MenuOption(i++, MenuItem.BABY));
+            options.add(new MenuOption(i++, MenuItem.PARROT_TYPE));
+        }
         return options;
     }
 }

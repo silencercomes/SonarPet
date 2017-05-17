@@ -31,6 +31,8 @@ import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.dsh105.echopet.compat.api.util.menu.SelectorLayout;
 import com.dsh105.echopet.conversation.NameFactory;
 import com.dsh105.powermessage.core.PowerMessage;
+import com.google.common.collect.ImmutableSet;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -317,7 +319,7 @@ public class PetCommand implements CommandExecutor {
                         ChatColor highlight = access ? ChatColor.GREEN : ChatColor.RED;
                         message.then(highlight + type.toPrettyString());
 
-                        List<PetData> registeredData = type.getAllowedDataTypes();
+                        ImmutableSet<PetData> registeredData = type.getAllowedDataTypes();
                         List<String> registeredStringData = new ArrayList<String>();
 
                         StringBuilder dataBuilder = new StringBuilder();

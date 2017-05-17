@@ -1,6 +1,7 @@
 package net.techcable.sonarpet.utils.compat
 
 import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableSet
 import com.google.common.util.concurrent.MoreExecutors
 import net.techcable.sonarpet.getMethodHandle
 import java.lang.invoke.MethodHandle
@@ -18,8 +19,16 @@ object AncientGuava: GuavaVersion {
             BinaryOperator<ImmutableList.Builder<Any>> { first, second -> first.addAll(second.build()) },
             Function<ImmutableList.Builder<Any>, ImmutableList<Any>> { it.build() }
     )
+    private val immutableSetCollectorInstance = Collector.of(
+            Supplier { ImmutableSet.builder<Any>() },
+            BiConsumer<ImmutableSet.Builder<Any>, Any> { builder, element -> builder.add(element) },
+            BinaryOperator<ImmutableSet.Builder<Any>> { first, second -> first.addAll(second.build()) },
+            Function<ImmutableSet.Builder<Any>, ImmutableSet<Any>> { it.build() }
+    )
     @Suppress("UNCHECKED_CAST")
     override fun <E> immutableListCollector() = immutableListCollectorInstance as Collector<E, *, ImmutableList<E>>
+    @Suppress("UNCHECKED_CAST")
+    override fun <E> immutableSetCollector() = immutableSetCollectorInstance as Collector<E, *, ImmutableSet<E>>
 
     private val SAME_THREAD_EXECUTOR_METHOD: MethodHandle = MoreExecutors::class.getMethodHandle("sameThreadExecutor")
     override fun directExecutor() = SAME_THREAD_EXECUTOR_METHOD.invoke() as Executor

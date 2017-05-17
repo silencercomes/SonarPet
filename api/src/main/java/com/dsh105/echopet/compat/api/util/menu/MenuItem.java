@@ -48,7 +48,7 @@ public enum MenuItem implements PrettyEnum {
     SHIELD(Material.GLASS, 1, DataMenuType.BOOLEAN, "Shield", "Wither"),
     POWER(Material.BEACON, 1, DataMenuType.BOOLEAN, "Powered", "Creeper"),
     SIZE(Material.SLIME_BALL, 1, DataMenuType.SIZE, "Size", "Slime", "MagmaCube"),
-    BABY(Material.WHEAT, 1, DataMenuType.BOOLEAN, "Baby", "Zombie", "Chicken", "Cow", "Horse", "MushroomCow", "Ocelot", "Pig", "Sheep", "Wolf", "Villager"),
+    BABY(Material.WHEAT, 1, DataMenuType.BOOLEAN, "Baby", "Zombie", "Chicken", "Cow", "Horse", "MushroomCow", "Ocelot", "Pig", "Sheep", "Wolf", "Villager", "Parrot"),
     CAT_TYPE(Material.RAW_FISH, 1, DataMenuType.CAT_TYPE, "Cat Type", "Ocelot"),
     ANGRY(Material.BONE, 1, DataMenuType.BOOLEAN, "Angry", "Wolf"),
     TAMED(Material.BONE, 1, DataMenuType.BOOLEAN, "Tamed", "Wolf"),
@@ -58,7 +58,8 @@ public enum MenuItem implements PrettyEnum {
     COLOR(Material.WOOL, 1, DataMenuType.COLOR, "Color", "Sheep", "Wolf"),
     PROFESSION(Material.IRON_AXE, 1, DataMenuType.PROFESSION, "Profession", "Villager"),
     RIDE(Material.CARROT_STICK, 1, DataMenuType.BOOLEAN, "Ride Pet", "Control your pet."),
-    HAT(Material.IRON_HELMET, 1, DataMenuType.BOOLEAN, "Hat Pet", "Wear your pet on your head.");
+    HAT(Material.IRON_HELMET, 1, DataMenuType.BOOLEAN, "Hat Pet", "Wear your pet on your head."),
+    PARROT_TYPE(Material.FEATHER, 1, DataMenuType.PARROT_COLOR, "Parrot color", "Parrot");
 
     private final int amount;
     @Getter

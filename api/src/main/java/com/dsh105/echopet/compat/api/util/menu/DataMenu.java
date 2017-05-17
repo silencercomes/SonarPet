@@ -72,6 +72,7 @@ public class DataMenu {
         HORSE_MARKING,
         HORSE_ARMOUR,
         RABBIT_TYPE,
-        ZOMBIE_TYPE
+        ZOMBIE_TYPE,
+        PARROT_COLOR
     }
 }
