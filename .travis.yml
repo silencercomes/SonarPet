@@ -7,7 +7,7 @@ notifications:
   irc:
     channels:
       - "irc.spi.gt#techcable"
-script: ./gradlew clean build -PrunSlowTests=true
+script: ./gradlew clean build --stacktrace -PrunSlowTests=true
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

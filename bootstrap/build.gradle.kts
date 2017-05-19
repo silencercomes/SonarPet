@@ -85,7 +85,7 @@ fun rawComputeVersionSignature(): String {
     val versionBase = version.replace("-SNAPSHOT", "")
     // Determine the current git commit
     // Determine if there are uncommitted changes
-    var prog = ProcessBuilder("git", "status", "--porcelain=1").redirectOutput(ProcessBuilder.Redirect.PIPE).start()
+    var prog = ProcessBuilder("git", "status", "--porcelain").redirectOutput(ProcessBuilder.Redirect.PIPE).start()
     val isClean = prog.inputStream.reader().use { it.readText().isBlank() }
     check(prog.waitFor() == 0) { "Failed to execute git status!" }
     /*
