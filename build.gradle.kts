@@ -75,6 +75,12 @@ subprojects {
         maven { setUrl("http://maven.elmakers.com/repository/") }
     }
 
+    configurations.all {
+        resolutionStrategy {
+            // Force usage of old guava
+            force("com.google.guava:guava:17.0")
+        }
+    }
     dependencies {
         testCompile("junit:junit:4.12")
         testCompile("com.googlecode.junit-toolbox:junit-toolbox:2.3")
@@ -99,8 +105,13 @@ subprojects {
         "shade"("org.ow2.asm:asm-commons:5.2")
         "shade"("org.ow2.asm:asm-util:5.2")
         // Provided dependencies
-        compileOnly("com.google.guava:guava:21.0") // Compile against modern guava, with emulation where necessary
-        compileOnly("org.bukkit:bukkit:1.12-pre2-SNAPSHOT")
+        /*
+         * Compile against old guava, with emulation where necessary.
+         * Compiling against modern guava causes the source to compile against some missing bytecode.
+         * For example, a new checkArgument(boolean,String,int) overload was added for effeciency, which was missing in old versions.
+         */
+        compileOnly("com.google.guava:guava:17.0")
+        compileOnly("org.bukkit:bukkit:1.12-pre5-SNAPSHOT")
         compileOnly("org.projectlombok:lombok:1.16.12")
         compileOnly("org.kitteh:VanishNoPacket:3.18.7") {
             exclude(module = "Vault")
