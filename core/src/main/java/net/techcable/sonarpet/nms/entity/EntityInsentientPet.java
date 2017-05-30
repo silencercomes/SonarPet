@@ -28,6 +28,7 @@ import com.dsh105.echopet.compat.api.util.Perm;
 import com.dsh105.echopet.compat.api.util.menu.MenuOption;
 import com.dsh105.echopet.compat.api.util.menu.PetMenu;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 
 import net.techcable.pineapple.reflection.PineappleField;
@@ -313,7 +314,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
      * NOTE: Have two different overloads, one where 'upwardsMotion' is present, and one where it's not.
      */
     public final void move(float sideMot, float forwMot, MethodHandle superMoveFunction) {
-        this.move(sideMot, forwMot, null, MethodHandles.dropArguments(superMoveFunction, 2));
+        this.move(sideMot, forwMot, null, MethodHandles.dropArguments(superMoveFunction, 2, Float.class));
     }
 
     private static final MethodType MOVE_METHOD_TYPE = MethodType.methodType(void.class, float.class, float.class, Float.class);
@@ -352,7 +353,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
                 this.getPet(),
                 forwMot,
                 sideMot,
-                getPlayerEntity().hasUpwardsMotion() ? getPlayerEntity().getUpwardsMotion() : null
+                upwardsMotion
         );
         EchoPet.getPlugin().getServer().getPluginManager().callEvent(moveEvent);
         if (moveEvent.isCancelled()) {
@@ -361,7 +362,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
 
         getEntity().setMoveSpeed(rideSpeed); // set the movement speed
         // superclass movement logic, with the speed from the movement event
-        upwardsMotion = moveEvent.hasUpwardsSpeed() ? moveEvent.getUpwardsSpeed() : 0;
+        upwardsMotion = moveEvent.hasUpwardsSpeed() ? moveEvent.getUpwardsSpeed() : null;
         superMoveFunction.invoke(moveEvent.getSidewardMotionSpeed(), moveEvent.getForwardMotionSpeed(), upwardsMotion);
 
         PetType pt = this.getPet().getPetType();
