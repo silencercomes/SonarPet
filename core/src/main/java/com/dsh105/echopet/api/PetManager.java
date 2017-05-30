@@ -149,13 +149,13 @@ public class PetManager implements IPetManager {
             }
             return null;
         }
-        IPet pi = petType.getNewPetInstance(owner);
-        if (pi == null) {
+        if (!petType.isSupported()) {
             if (sendMessageOnFail) {
                 Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
+        IPet pi = petType.getNewPetInstance(owner);
         forceAllValidData(pi);
         pets.add(pi);
         return pi;
@@ -176,11 +176,11 @@ public class PetManager implements IPetManager {
             Lang.sendTo(owner, Lang.PET_TYPE_DISABLED.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
-        IPet pi = petType.getNewPetInstance(owner);
-        if (pi == null) {
+        if (!petType.isSupported()) {
             Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
+        IPet pi = petType.getNewPetInstance(owner);
         pi.createRider(riderType, true);
         forceAllValidData(pi);
         pets.add(pi);

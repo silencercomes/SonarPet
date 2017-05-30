@@ -421,13 +421,13 @@ public abstract class Pet implements IPet {
         if (this.rider != null) {
             this.removeRider();
         }
-        IPet newRider = pt.getNewPetInstance(this.getOwner());
-        if (newRider == null) {
+        if (!petType.isSupported()) {
             if (sendFailMessage) {
                 Lang.sendTo(getOwner(), Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             }
             return null;
         }
+        IPet newRider = pt.getNewPetInstance(this.getOwner());
         this.rider = (Pet) newRider;
         this.rider.setRider();
         new BukkitRunnable() {
