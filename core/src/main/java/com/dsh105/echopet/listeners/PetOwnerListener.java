@@ -146,10 +146,6 @@ public class PetOwnerListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player p = event.getPlayer();
         Inventory inv = p.getInventory();
-        if (EchoPet.getPlugin().isUpdateAvailable() && p.hasPermission("echopet.update")) {
-            p.sendMessage(EchoPet.getPrefix() + ChatColor.GOLD + "An update is available: " + EchoPet.getPlugin().getUpdateName() + " (" + EchoPet.getPlugin().getUpdateSize() + " bytes).");
-            p.sendMessage(EchoPet.getPrefix() + ChatColor.GOLD + "Type /ecupdate to update.");
-        }
 
         for (ItemStack item : inv.getContents()) {
             if (item != null && item.isSimilar(SelectorLayout.getSelectorItem())) {

@@ -11,15 +11,15 @@ main: net.techcable.sonarpet.Bootstrap
 softdepend: [WorldGuard, VanishNoPacket, ProtocolLib, EchoPet]
 
 commands:
-    ecupdate:
-        description: Update the SonarPet plugin
-        permission: echopet.update
     echopet:
         description: View plugin information and general help
 permissions:
-    echopet.update:
+    echopet.version:
         default: op
-        description: Update the EchoPet plugin
+        description: View version information
+    echopet.version.notify:
+        default: op
+        description: Notify on outdated versions
     echopet.pet:
         default: op
         description: View the EchoPet help menu
@@ -1036,6 +1036,8 @@ permissions:
             echopet.petadmin.ride.*: true
             echopet.petadmin.hat.*: true
             echopet.petadmin.default.*: true
+            echopet.version: true
+            echopet.version.notify: true
     echopet.petadmin.type.*:
         default: op
         description: 'All pet type permissions for PetAdmin commands'

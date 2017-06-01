@@ -70,6 +70,8 @@ import net.techcable.sonarpet.bstats.Metrics;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSPetEntity;
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
+import net.techcable.sonarpet.versioning.PluginVersioning;
+import net.techcable.sonarpet.versioning.VersionNotificationListener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -112,12 +114,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
     public String cmdString = "pet";
     public String adminCmdString = "petadmin";
-
-    // Update data
-    public boolean update = false;
-    public String name = "";
-    public long size = 0;
-    public boolean updateChecked = false;
 
     @Override
     public void configureMetrics(@Nonnull Metrics metrics) {
@@ -200,6 +196,10 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
         manager.registerEvents(new MenuListener(), this);
         manager.registerEvents(new PetEntityListener(this), this);
         manager.registerEvents(new PetOwnerListener(), this);
+        if (VersionNotificationListener.isNeeded()) {
+            manager.registerEvents(new VersionNotificationListener(), this);
+            PluginVersioning.INSTANCE.sendOutdatedVersionNotification(Bukkit.getConsoleSender());
+        }
         //manager.registerEvents(new ChunkListener(), this);
 
         this.vanishProvider = new VanishProvider(this);
@@ -424,21 +424,6 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     @Override
     public boolean isUsingNetty() {
         return isUsingNetty;
-    }
-
-    @Override
-    public boolean isUpdateAvailable() {
-        return update;
-    }
-
-    @Override
-    public String getUpdateName() {
-        return name;
-    }
-
-    @Override
-    public long getUpdateSize() {
-        return size;
     }
 
     @Nullable

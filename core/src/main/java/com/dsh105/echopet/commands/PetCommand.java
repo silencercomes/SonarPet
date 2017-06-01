@@ -42,6 +42,8 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.techcable.sonarpet.versioning.PluginVersioning;
+
 public class PetCommand implements CommandExecutor {
 
     private String cmdLabel;
@@ -120,7 +122,10 @@ public class PetCommand implements CommandExecutor {
                 return true;
             }
         } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("select")) {
+            if (args[0].equalsIgnoreCase("version")) {
+                PluginVersioning.INSTANCE.runVersionCommand(sender);
+                return true;
+            } if (args[0].equalsIgnoreCase("select")) {
                 if (sender instanceof Player) {
                     // We can exempt the player from having the appropriate permission here
                     Player p = (Player) sender;

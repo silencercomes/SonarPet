@@ -1,14 +1,36 @@
-@file:Suppress("NOTHING_TO_INLINE")
 package net.techcable.sonarpet.test
 
 import org.junit.AssumptionViolatedException
+import org.junit.ComparisonFailure
 import kotlin.AssertionError
 
-inline fun assertThat(condition: Boolean) = assertThat(condition) { "Assertion failed!" }
+fun assertThat(condition: Boolean) = assertThat(condition) { "Assertion failed!" }
 
 inline fun assertThat(condition: Boolean, lazyMessage: () -> String) {
     if (!condition) {
         fail(lazyMessage())
+    }
+}
+
+fun assertMatches(pattern: Regex, value: String) {
+    assertMatches(pattern, value) { "'$value' doesn't match $pattern" }
+}
+inline fun assertMatches(pattern: Regex, value: String, lazyMessage: () -> String) {
+    assertNotNull(pattern.matchEntire(value), lazyMessage = lazyMessage)
+}
+
+fun assertEqual(expected: Any?, actual: Any?) {
+    assertEqual(expected, actual) { "Expected $expected, but got $actual" }
+}
+inline fun assertEqual(expected: Any?, actual: Any?, lazyMessage: (actual: Any?) -> String) {
+    if (expected != actual) {
+        // NOTE: Only invoke lazyMessage once to avoid code bloat
+        val message = lazyMessage(actual)
+        if (expected is String && actual is String) {
+            throw ComparisonFailure(message, expected, actual)
+        } else {
+            throw AssertionError(message)
+        }
     }
 }
 
@@ -26,6 +48,13 @@ inline fun <T> assertNotNull(value: T?, lazyMessage: () -> String): T {
     }
 }
 
+fun assumeThat(condition: Boolean) {
+    assumeThat(condition) { "Assumption violated!" }
+}
+inline fun assumeThat(condition: Boolean, lazyMessage: () -> String) {
+    if (!condition) throw AssumptionViolatedException(lazyMessage())
+}
+
 inline fun <reified T: Throwable> assumeNoError(block: () -> Unit) {
     try {
         block()
@@ -39,6 +68,8 @@ inline fun <reified T: Throwable> assumeNoError(block: () -> Unit) {
     }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun fail(message: String): Nothing = throw AssertionError(message)
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun assumptionViolated(message: String): Nothing = throw AssumptionViolatedException(message)

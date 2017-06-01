@@ -64,12 +64,6 @@ public interface IEchoPetPlugin extends Plugin {
 
     public boolean isUsingNetty();
 
-    public boolean isUpdateAvailable();
-
-    public String getUpdateName();
-
-    public long getUpdateSize();
-
     default boolean isPet(Entity e) {
         return getPetEntity(e) != null;
     }

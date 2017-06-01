@@ -15,7 +15,7 @@ apply {
     plugin("com.github.johnrengelman.shadow")
 }
 
-val versionSignature: String by lazy { rawComputeVersionSignature() }
+val versionSignature: String by rootProject.extra
 description = "SonarPet"
 dependencies {
     add("shade", project(":core"))
@@ -73,30 +73,6 @@ task("generateResources") {
 
 for (sourceSet in listOf("main", "test").map { java.sourceSets[it] }) {
     sourceSet.output.dir(mapOf("builtBy" to tasks["generateResources"]), generatedResources)
-}
-
-
-fun rawComputeVersionSignature(): String {
-    val version = project.version.toString()
-    if (!version.endsWith("-SNAPSHOT")) {
-        // If it's not a snapshot version, there's not much to do
-        return version + "-release"
-    }
-    val versionBase = version.replace("-SNAPSHOT", "")
-    // Determine the current git commit
-    // Determine if there are uncommitted changes
-    var prog = ProcessBuilder("git", "status", "--porcelain").redirectOutput(ProcessBuilder.Redirect.PIPE).start()
-    val isClean = prog.inputStream.reader().use { it.readText().isBlank() }
-    check(prog.waitFor() == 0) { "Failed to execute git status!" }
-    /*
-     * NOTE: Prefer the short option over manual slicing since it handles uniqueness.
-     * If we ever run into hash collisions in the first few chars, it'll still work.
-     */
-    prog     = ProcessBuilder("git", "rev-parse", "--short", "HEAD").redirectOutput(ProcessBuilder.Redirect.PIPE).start()
-    val currentCommit = prog.inputStream.reader().use { it.readText().trim() }
-    check(prog.waitFor() == 0) { "Failed to execute git rev-parse!" }
-    val statusText = if (isClean) "dev" else "dirty"
-    return "$versionBase-$statusText-$currentCommit"
 }
 
 fun writeDependencyInfo(dependencies: Collection<ResolvedDependency>) {
