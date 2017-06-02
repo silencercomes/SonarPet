@@ -8,7 +8,8 @@ authors: [Techcable, DSH105]
 website: "https://www.spigotmc.org/resources/sonarpets.20523/"
 main: net.techcable.sonarpet.Bootstrap
 # If EchoPet is installed we want to be loaded after them so we can error
-softdepend: [WorldGuard, VanishNoPacket, ProtocolLib, EchoPet]
+# We also need to load after Citizens, so we can do terrible compatibility hacks
+softdepend: [WorldGuard, VanishNoPacket, ProtocolLib, EchoPet, Citizens]
 
 commands:
     echopet:

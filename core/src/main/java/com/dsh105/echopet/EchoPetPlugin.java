@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -67,6 +68,8 @@ import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.HookRegistry;
 import net.techcable.sonarpet.HookRegistryImpl;
 import net.techcable.sonarpet.bstats.Metrics;
+import net.techcable.sonarpet.compat.CitizensEntityRegistryHack;
+import net.techcable.sonarpet.nms.EntityRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSPetEntity;
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
@@ -114,6 +117,8 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
 
     public String cmdString = "pet";
     public String adminCmdString = "petadmin";
+    @Nullable
+    private EntityRegistry entityRegistry;
 
     @Override
     public void configureMetrics(@Nonnull Metrics metrics) {
@@ -160,6 +165,16 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
             COMMAND_MANAGER.register(cmd);
             return;
         }
+        EntityRegistry entityRegistry;
+        if (CitizensEntityRegistryHack.isNeeded()) {
+            getLogger().warning("Attempting to inject citizens compatibility hack....");
+            entityRegistry = CitizensEntityRegistryHack.createInstance();
+            getLogger().warning("Successfully injected citizens compatibility hack!");
+        } else {
+            //noinspection deprecation // We check for citizens first ;)
+            entityRegistry = INMS.getInstance().createDefaultEntityRegistry();
+        }
+        this.entityRegistry = Objects.requireNonNull(entityRegistry);
 
         this.loadConfiguration();
 
@@ -424,6 +439,14 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
     @Override
     public boolean isUsingNetty() {
         return isUsingNetty;
+    }
+
+    @Nonnull
+    @Override
+    public EntityRegistry getEntityRegistry() {
+        EntityRegistry entityRegistry = this.entityRegistry;
+        if (entityRegistry == null) throw new IllegalStateException();
+        return entityRegistry;
     }
 
     @Nullable

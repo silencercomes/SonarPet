@@ -17,6 +17,7 @@
 
 package com.dsh105.echopet.compat.api.plugin;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.dsh105.commodus.config.YAMLConfig;
@@ -26,6 +27,7 @@ import com.dsh105.echopet.compat.api.plugin.hook.IVanishProvider;
 import com.dsh105.echopet.compat.api.plugin.hook.IWorldGuardProvider;
 
 import net.techcable.sonarpet.HookRegistry;
+import net.techcable.sonarpet.nms.EntityRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -67,6 +69,9 @@ public interface IEchoPetPlugin extends Plugin {
     default boolean isPet(Entity e) {
         return getPetEntity(e) != null;
     }
+
+    @Nonnull
+    EntityRegistry getEntityRegistry();
 
     @Nullable
     public IEntityPet getPetEntity(Entity e);

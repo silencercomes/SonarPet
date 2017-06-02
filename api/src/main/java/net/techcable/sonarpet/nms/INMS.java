@@ -21,6 +21,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
+import com.dsh105.echopet.compat.api.plugin.IEchoPetPlugin;
 import com.google.common.base.Preconditions;
 
 import net.techcable.pineapple.reflection.PineappleField;
@@ -94,7 +95,14 @@ public interface INMS {
 
     boolean isLiquid(Material block);
 
-    EntityRegistry getEntityRegistry();
+    /**
+     * Get the default entity registry for this nms version.
+     *
+     * @return the default registry
+     * @deprecated use {@link IEchoPetPlugin#getEntityRegistry()}
+     */
+    @Deprecated()
+    EntityRegistry createDefaultEntityRegistry();
 
     NMSSound getNmsSound(Sound bukkitSound);
 }

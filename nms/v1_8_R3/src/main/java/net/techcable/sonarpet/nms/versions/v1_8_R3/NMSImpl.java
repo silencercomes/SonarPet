@@ -79,7 +79,7 @@ public class NMSImpl implements INMS {
     }
 
     @Override
-    public EntityRegistry getEntityRegistry() {
+    public EntityRegistry createDefaultEntityRegistry() {
         return new NMSEntityRegistry();
     }
 

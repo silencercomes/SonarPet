@@ -245,10 +245,10 @@ open class EntityPetGenerator(
 
 // Type constants
 val NMS_INSENTIENT_ENTITY_TYPE = NMSInsentientEntity::class.asmType
-val BLOCK_POSITION_TYPE = MinecraftReflection.getNmsClass("BlockPosition").asmType
-val BLOCK_TYPE = MinecraftReflection.getNmsClass("Block").asmType
-val ENTITY_TYPE = MinecraftReflection.getNmsClass("Entity").asmType
-val ENTITY_HUMAN_TYPE = MinecraftReflection.getNmsClass("EntityHuman").asmType
-val CRAFT_HUMAN_ENTITY_TYPE = MinecraftReflection.getObcClass("entity.CraftHumanEntity").asmType
-val WORLD_TYPE = MinecraftReflection.getNmsClass("World").asmType
-val ENTITY_LIVING_TYPE = MinecraftReflection.getNmsClass("EntityLiving").asmType
+val BLOCK_POSITION_TYPE = MinecraftReflection.findNmsClass("BlockPosition").asmType
+val BLOCK_TYPE = MinecraftReflection.findNmsClass("Block").asmType
+val ENTITY_TYPE = MinecraftReflection.findNmsClass("Entity").asmType
+val ENTITY_HUMAN_TYPE = MinecraftReflection.findNmsClass("EntityHuman").asmType
+val CRAFT_HUMAN_ENTITY_TYPE = MinecraftReflection.findObcClass("entity.CraftHumanEntity").asmType
+val WORLD_TYPE = MinecraftReflection.findNmsClass("World").asmType
+val ENTITY_LIVING_TYPE = MinecraftReflection.findNmsClass("EntityLiving").asmType

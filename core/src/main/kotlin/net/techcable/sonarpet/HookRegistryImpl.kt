@@ -27,7 +27,7 @@ class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
         if (type in registeredHooks) {
             throw IllegalArgumentException("Can't register hook class $hookClass for $type, as it's already registered to ${registeredHooks[type]!!.hookClass}")
         }
-        val entityRegistry = INMS.getInstance().entityRegistry
+        val entityRegistry = plugin.entityRegistry
         val entityClass = generateEntityClass(type, hookClass)
         val hookInfo = HookRegistrationInfo(type, hookClass, entityClass)
         registeredHooks.put(type, hookInfo)
@@ -39,7 +39,7 @@ class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
     }
 
     override fun shutdown() {
-        val entityRegistry = INMS.getInstance().entityRegistry
+        val entityRegistry = plugin.entityRegistry
         registeredHooks.forEach { _, hookInfo ->
             entityRegistry.unregisterEntityClass(
                     hookInfo.entityClass,
@@ -77,40 +77,40 @@ class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
             throw RuntimeException("Unable to generate class for " + type, e)
         }
     }
-}
 
-private class HookRegistrationInfo(
-        val hookType: EntityHookType,
-        val hookClass: Class<out IEntityPet>,
-        val entityClass: Class<*>
-) {
-    private val hookConstructor = hookClass.getDeclaredConstructor(IPet::class, NMSInsentientEntity::class, EntityHookType::class).apply {
-        isAccessible = true
+    private inner class HookRegistrationInfo(
+            val hookType: EntityHookType,
+            val hookClass: Class<out IEntityPet>,
+            val entityClass: Class<*>
+    ) {
+        private val hookConstructor = hookClass.getDeclaredConstructor(IPet::class, NMSInsentientEntity::class, EntityHookType::class).apply {
+            isAccessible = true
+        }
+        private val entityConstructor = entityClass.getDeclaredConstructor(MinecraftReflection.getNmsClass("World")).apply {
+            isAccessible = true
+        }
+        private val entityHookField = PineappleField.create(entityClass, "hook", IEntityPet::class.java)
+        fun createEntity(world: World): Entity {
+            val worldHandle = WORLD_GET_HANDLE_METHOD(world)
+            val rawEntity = entityConstructor(worldHandle)
+            return ENTITY_GET_BUKKIT_ENTITY_METHOD(rawEntity) as Entity
+        }
+        fun createHook(pet: IPet, entity: NMSInsentientEntity): IEntityPet {
+            return hookConstructor(pet, entity, hookType)
+        }
+        fun injectHook(entity: Entity, hook: IEntityPet) {
+            val rawEntity = MinecraftReflection.getHandle(entity)
+            entityHookField.put(rawEntity, hook) // Inject the hook
+        }
+        val id = plugin.entityRegistry.getEntityId(hookType.nmsType)
+        val name = "Sonar${plugin.entityRegistry.getEntityName(hookType.nmsType)!!}"
     }
-    private val entityConstructor = entityClass.getDeclaredConstructor(MinecraftReflection.getNmsClass("World")).apply {
-        isAccessible = true
-    }
-    private val entityHookField = PineappleField.create(entityClass, "hook", IEntityPet::class.java)
-    fun createEntity(world: World): Entity {
-        val worldHandle = WORLD_GET_HANDLE_METHOD(world)
-        val rawEntity = entityConstructor(worldHandle)
-        return ENTITY_GET_BUKKIT_ENTITY_METHOD(rawEntity) as Entity
-    }
-    fun createHook(pet: IPet, entity: NMSInsentientEntity): IEntityPet {
-        return hookConstructor(pet, entity, hookType)
-    }
-    fun injectHook(entity: Entity, hook: IEntityPet) {
-        val rawEntity = MinecraftReflection.getHandle(entity)
-        entityHookField.put(rawEntity, hook) // Inject the hook
-    }
-    val id = INMS.getInstance().entityRegistry.getEntityId(hookType.nmsType)
-    val name = "Sonar${INMS.getInstance().entityRegistry.getEntityName(hookType.nmsType)!!}"
 }
 
 // Reflection
-private val WORLD_GET_HANDLE_METHOD = MinecraftReflection.getObcClass("CraftWorld").getDeclaredMethod("getHandle")!!.apply {
+private val WORLD_GET_HANDLE_METHOD = MinecraftReflection.findObcClass("CraftWorld").getDeclaredMethod("getHandle")!!.apply {
     isAccessible = true
 }
-private val ENTITY_GET_BUKKIT_ENTITY_METHOD = MinecraftReflection.getNmsClass("Entity").getDeclaredMethod("getBukkitEntity").apply {
+private val ENTITY_GET_BUKKIT_ENTITY_METHOD = MinecraftReflection.findNmsClass("Entity").getDeclaredMethod("getBukkitEntity").apply {
     isAccessible = true
 }

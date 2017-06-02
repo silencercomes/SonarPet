@@ -1,7 +1,7 @@
 package net.techcable.sonarpet
 
 import com.dsh105.echopet.compat.api.entity.PetType
-import net.techcable.sonarpet.nms.INMS
+import com.dsh105.echopet.compat.api.plugin.EchoPet
 import net.techcable.sonarpet.utils.NmsVersion
 import net.techcable.sonarpet.utils.Versioning
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection
@@ -68,11 +68,11 @@ enum class EntityHookType(
     val entityId: Int
         get() {
             check(isActive)
-            return INMS.getInstance().entityRegistry.getEntityId(nmsType)
+            return EchoPet.getPlugin().entityRegistry.getEntityId(nmsType)
         }
     val entityName: String
         get() {
             check(isActive)
-            return INMS.getInstance().entityRegistry.getEntityName(nmsType)
+            return EchoPet.getPlugin().entityRegistry.getEntityName(nmsType)
         }
 }

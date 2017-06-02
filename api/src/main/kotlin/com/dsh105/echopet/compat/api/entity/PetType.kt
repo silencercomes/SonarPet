@@ -54,7 +54,7 @@ enum class PetType(
     GHAST("Ghast", 56, "Ghast Pet", 10.0, 7.0, "GHAST"),
     GIANT("Giant", 53, "Giant Pet", 100.0, 0.0, "GIANT") {
         override val nmsClass: Class<*>
-            get() = MinecraftReflection.getNmsClass("EntityGiantZombie")
+            get() = MinecraftReflection.findNmsClass("EntityGiantZombie")
     },
     GUARDIAN("Guardian", 68, "Guardian Pet", 20.0, 10.0, "GUARDIAN", PetData.ELDER),
     MAGMACUBE("MagmaCube", 62, "Magma Cube Pet", 20.0, 5.0, "MAGMA_CUBE", PetData.Type.SIZE.values),
@@ -142,7 +142,7 @@ enum class PetType(
     }
 
     open val nmsClass: Class<*>
-        get() = MinecraftReflection.getNmsClass("Entity" + classIdentifier)
+        get() = MinecraftReflection.findNmsClass("Entity$classIdentifier")
     // NOTE: Lazy-load hookType information to avoid circular dependency issues
     val hookTypes: ImmutableList<EntityHookType> by lazy {
         EntityHookType.values()
