@@ -55,7 +55,7 @@ subprojects {
         maxParallelForks = 4
         useJUnit {
             this as JUnitOptions
-            if (!hasProperty("runSlowTests") && System.getProperty("user.name") != "jenkins") {
+            if (!project.hasProperty("runSlowTests") && System.getProperty("user.name") != "jenkins") {
                 excludeCategories("net.techcable.sonarpet.test.SlowTest")
             }
             systemProperty("sonarpet.versionSignature", versionSignature)

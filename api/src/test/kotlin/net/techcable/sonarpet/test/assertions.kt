@@ -3,6 +3,7 @@ package net.techcable.sonarpet.test
 import org.junit.AssumptionViolatedException
 import org.junit.ComparisonFailure
 import kotlin.AssertionError
+import kotlin.reflect.KClass
 
 fun assertThat(condition: Boolean) = assertThat(condition) { "Assertion failed!" }
 
@@ -55,17 +56,21 @@ inline fun assumeThat(condition: Boolean, lazyMessage: () -> String) {
     if (!condition) throw AssumptionViolatedException(lazyMessage())
 }
 
-inline fun <reified T: Throwable> assumeNoError(block: () -> Unit) {
+inline fun assumeNoErrors(vararg errorTypes: KClass<out Throwable>, block: () -> Unit) {
     try {
         block()
     } catch (e: Throwable) {
-        if (e is T) {
-            assumptionViolated("${T::class.java.simpleName}: ${e.message}")
+        val matchedType = errorTypes.find { it.java.isInstance(e) }
+        if (matchedType != null) {
+            assumptionViolated("${matchedType.java.simpleName}: ${e.message}")
         } else {
             // Continue to propagate unexpected exception
             throw e
         }
     }
+}
+inline fun <reified T: Throwable> assumeNoError(block: () -> Unit) {
+    assumeNoErrors(T::class, block = block)
 }
 
 @Suppress("NOTHING_TO_INLINE")

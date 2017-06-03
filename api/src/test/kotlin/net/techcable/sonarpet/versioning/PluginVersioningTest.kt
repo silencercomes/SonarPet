@@ -7,6 +7,7 @@ import org.junit.Test
 import org.junit.experimental.categories.Category
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.IOException
 
 @RunWith(Parameterized::class)
 class PluginVersioningTest(private val version: PluginVersionInfo, private val expected: PluginVersionInfo?) {
@@ -36,10 +37,12 @@ class PluginVersioningTest(private val version: PluginVersionInfo, private val e
     @Category(SlowTest::class) // Don't worry, gradle disables this even though we don't use the Category runner
     fun testVersionComparison() {
         assumeThat(version.isDevelopment)
-        version.compareToRepo(
-                repo = PluginVersioning.REPO,
-                branch = PluginVersioning.BRANCH
-        )
+        assumeNoErrors(UnknownVersionException::class, IOException::class) {
+            version.compareToRepo(
+                    repo = PluginVersioning.REPO,
+                    branch = PluginVersioning.BRANCH
+            )
+        }
     }
 
     companion object {
