@@ -16,6 +16,8 @@ import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 import javax.annotation.Nullable;
 
+import net.techcable.sonarpet.utils.SSLUtils;
+
 import static java.util.Objects.*;
 
 public class ResolvedMavenArtifact extends MavenArtifact {
@@ -83,7 +85,8 @@ public class ResolvedMavenArtifact extends MavenArtifact {
             Files.copy(fileLocation, dest);
         } else {
             try (OutputStream out = Files.newOutputStream(dest, StandardOpenOption.CREATE_NEW)) {
-                HttpURLConnection connection = (HttpURLConnection) location.openConnection();
+                // NOTE: Use SSLUtils in order to trust letsencrypt
+                HttpURLConnection connection = (HttpURLConnection) SSLUtils.openConnection(location);
                 connection.addRequestProperty("User-Agent", USER_AGENT);
                 connection.addRequestProperty("Accept-Encoding", "gzip, deflate");
                 connection.connect();
@@ -137,7 +140,8 @@ public class ResolvedMavenArtifact extends MavenArtifact {
         if (fileLocation != null) {
             return Files.exists(fileLocation);
         } else {
-            HttpURLConnection connection = (HttpURLConnection) location.openConnection();
+            // NOTE: Use SSLUtils in order to trust letsencrypt
+            HttpURLConnection connection = (HttpURLConnection) SSLUtils.openConnection(location);
             connection.addRequestProperty("User-Agent", USER_AGENT);
             connection.setRequestMethod("HEAD");
             connection.connect();
