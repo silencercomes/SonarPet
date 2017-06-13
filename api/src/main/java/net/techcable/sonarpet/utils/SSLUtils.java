@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -88,11 +90,13 @@ public class SSLUtils {
         }
         throw new RuntimeException("Unable to find delegate X509TrustManager!");
     }
-    @SneakyThrows(NoSuchAlgorithmException.class) // The default should always be supported ^_^
+    @SneakyThrows({NoSuchAlgorithmException.class, KeyStoreException.class})
     private static TrustManagerFactory getTrustFactory() {
-        return TrustManagerFactory.getInstance(
+        TrustManagerFactory factory = TrustManagerFactory.getInstance(
                 TrustManagerFactory.getDefaultAlgorithm()
         );
+        factory.init((KeyStore) null);
+        return factory;
     }
 
     static class ImprovedTrustManager implements X509TrustManager {
