@@ -2,12 +2,18 @@ package net.techcable.sonarpet;
 
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.logging.Level;
 
 import com.dsh105.echopet.EchoPetPlugin;
+import com.google.common.base.Verify;
 
+import net.sf.cglib.core.Local;
 import net.techcable.sonarpet.bstats.Metrics;
 import net.techcable.sonarpet.maven.LocalRepository;
 import net.techcable.sonarpet.maven.MavenDependencyInfo;
@@ -29,10 +35,24 @@ public class Bootstrap extends JavaPlugin {
     public void onLoad() {
         getLogger().info("Downloading SonarPet's libraries");
         try {
+            boolean accessDenied = false;
+            try {
+                Files.createDirectories(LocalRepository.standard().getLocation());
+                Verify.verify(Files.isDirectory(LocalRepository.standard().getLocation()));
+            } catch (AccessDeniedException e) {
+                accessDenied = true;
+            }
+            final LocalRepository localRepo;
+            if (accessDenied || !Files.isWritable(LocalRepository.standard().getLocation())) {
+                getLogger().warning("Using fallback local repo since the standard one isn't writable");
+                localRepo = LocalRepository.create("fallback-repo", getFile().toPath().resolve("maven"));
+            } else {
+                localRepo = LocalRepository.standard();
+            }
             MavenDependencyInfo dependencyInfo = MavenDependencyInfo.parseResource("dependencies.json");
             dependencyInfo.injectDependencies((URLClassLoader) getClass().getClassLoader(), (dependency) -> {
                 Path path;
-                if ((path = LocalRepository.standard().findPath(dependency)) != null) {
+                if ((path = localRepo.findPath(dependency)) != null) {
                     getLogger().fine(() -> "Using cached version of " + dependency);
                     return path;
                 }

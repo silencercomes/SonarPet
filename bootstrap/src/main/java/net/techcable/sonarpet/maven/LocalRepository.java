@@ -5,6 +5,7 @@ import lombok.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +21,10 @@ public final class LocalRepository extends MavenRepository {
     /* package */ LocalRepository(String name, Path location) throws MalformedURLException, URISyntaxException {
         super(requireNonNull(name, "Null name"), location.toUri());
         this.location = location.normalize();
+    }
+
+    public Path getLocation() {
+        return location;
     }
 
     @NonNull
@@ -69,9 +74,8 @@ public final class LocalRepository extends MavenRepository {
     public String toString() {
         return getName() + "@" + location.normalize().toString();
     }
-
     public static final Path STANDARD_LOCATION = Paths.get(
-            requireNonNull(System.getProperty("user.home"), "Null user.name"),
+            requireNonNull(System.getProperty("user.home"), "Null user.home"),
             ".m2", "repository"
     );
     private static final LocalRepository standardRepository = create("local", STANDARD_LOCATION);
