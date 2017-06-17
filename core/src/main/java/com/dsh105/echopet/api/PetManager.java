@@ -590,7 +590,7 @@ public class PetManager implements IPetManager {
     public void setData(IPet pet, PetData pd, boolean b) {
         PetType petType = pet.getPetType();
         if (petType.isDataAllowed(pd)) {
-            if (pd.isType(PetData.Type.PARROT_COLOR)) {
+            if (petType == PetType.PARROT && pd.isType(PetData.Type.PARROT_COLOR)) {
                 Parrot.Variant color = Parrot.Variant.valueOf(pd.toString());
                 ((IParrotPet) pet).setParrotColor(color);
             }
