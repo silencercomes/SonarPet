@@ -38,6 +38,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class EchoPetAPI {
 
@@ -124,7 +125,7 @@ public class EchoPetAPI {
      */
 
     public IPet[] getAllPets() {
-        ArrayList<IPet> pets = EchoPet.getManager().getPets();
+        Set<IPet> pets = EchoPet.getManager().getPets();
         return pets.toArray(new IPet[pets.size()]);
     }
 

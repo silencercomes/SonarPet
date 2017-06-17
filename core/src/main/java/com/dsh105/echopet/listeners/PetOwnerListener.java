@@ -125,6 +125,7 @@ public class PetOwnerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
+        // NOTE: Remove all pets
         IPet pi = EchoPet.getManager().getPet(p);
         if (pi != null) {
             //ec.PH.saveFileData("autosave", pi);

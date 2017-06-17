@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
 import lombok.SneakyThrows
 import net.techcable.pineapple.reflection.Reflection
+import net.techcable.sonarpet.CancelledSpawnException
 import net.techcable.sonarpet.EntityHookType
 import net.techcable.sonarpet.utils.PrettyEnum
 import net.techcable.sonarpet.utils.Versioning
@@ -135,7 +136,7 @@ enum class PetType(
         return allowedDataTypes.contains(data)
     }
 
-    @SneakyThrows
+    @Throws(CancelledSpawnException::class)
     fun getNewPetInstance(owner: Player): IPet {
         require(isSupported) { "$this is not supported on ${Versioning.NMS_VERSION}" }
         return petConstructor.invokeWithArguments(owner) as IPet

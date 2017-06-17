@@ -23,6 +23,7 @@ import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityOcelotPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IOcelotPet;
+
 import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.entity.Player;
 

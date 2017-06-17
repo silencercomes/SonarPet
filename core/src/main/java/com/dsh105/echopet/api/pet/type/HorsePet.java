@@ -22,7 +22,12 @@ import lombok.*;
 import java.lang.invoke.MethodHandle;
 
 import com.dsh105.echopet.api.pet.Pet;
-import com.dsh105.echopet.compat.api.entity.*;
+import com.dsh105.echopet.compat.api.entity.EntityPetType;
+import com.dsh105.echopet.compat.api.entity.HorseArmour;
+import com.dsh105.echopet.compat.api.entity.HorseMarking;
+import com.dsh105.echopet.compat.api.entity.HorseType;
+import com.dsh105.echopet.compat.api.entity.HorseVariant;
+import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityHorsePet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IHorsePet;
 

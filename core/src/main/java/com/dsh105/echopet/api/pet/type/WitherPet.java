@@ -22,6 +22,7 @@ import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityWitherPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IWitherPet;
+
 import org.bukkit.entity.Player;
 
 @EntityPetType(petType = PetType.WITHER)

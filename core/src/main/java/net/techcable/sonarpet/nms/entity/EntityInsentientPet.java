@@ -203,6 +203,13 @@ public abstract class EntityInsentientPet implements IEntityPet {
     @Override
     public void remove(boolean makeSound) {
         if (this.getEntity() != null) {
+            // Apparently, entities can't be removed while they are riding or have riders
+            if (!getEntity().getPassengers().isEmpty()) {
+                getBukkitEntity().eject();
+            }
+            if (getBukkitEntity().getVehicle() != null) {
+                INMS.getInstance().mount(getBukkitEntity(), null);
+            }
             getBukkitEntity().remove();
         }
         NMSSound deathSound = getEntity().getDeathSound();

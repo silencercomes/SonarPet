@@ -17,8 +17,13 @@
 
 package com.dsh105.echopet.api.pet;
 
+import lombok.*;
+
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.IEntityNoClipPet;
@@ -29,11 +34,12 @@ import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.event.PetPreSpawnEvent;
 import com.dsh105.echopet.compat.api.event.PetTeleportEvent;
 import com.dsh105.echopet.compat.api.plugin.EchoPet;
-import com.dsh105.echopet.compat.api.plugin.uuid.UUIDMigration;
 import com.dsh105.echopet.compat.api.util.Lang;
 import com.dsh105.echopet.compat.api.util.PetNames;
 import com.dsh105.echopet.compat.api.util.StringSimplifier;
+import com.google.common.base.Preconditions;
 
+import net.techcable.sonarpet.CancelledSpawnException;
 import net.techcable.sonarpet.EntityHookType;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.particles.Particle;
@@ -45,43 +51,48 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import static com.google.common.base.Preconditions.*;
 
 public abstract class Pet implements IPet {
 
+    @Nullable
     protected IEntityPet hook;
-    private PetType petType;
+    @Nonnull
+    private final PetType petType;
 
-    private Object ownerIdentification;
+    @Nonnull
+    private final UUID ownerId;
     private Pet rider;
     private String name;
-    private ArrayList<PetData> petData = new ArrayList<PetData>();
+    private ArrayList<PetData> petData = new ArrayList<>();
 
     private boolean isRider = false;
 
     public boolean ownerIsMounting = false;
     private boolean ownerRiding = false;
     private boolean isHat = false;
+    private boolean destroyed = false;
 
-    public Pet(Player owner) {
-        if (owner != null) {
-            this.ownerIdentification = UUIDMigration.getIdentificationFor(owner);
-            this.setPetType();
-            this.setPetName(this.getPetType().getDefaultName(this.getNameOfOwner()));
-            spawnPet(owner, getPetType().getPrimaryHookType(), false);
-        }
+    // This is hidden behind reflection and ignored by kotlin, so there's no point making the subclasses declare it
+    @SneakyThrows(CancelledSpawnException.class)
+    public Pet(Player owner)  {
+        Objects.requireNonNull(owner, "Null owner");
+        this.ownerId = Objects.requireNonNull(owner.getUniqueId());
+        this.petType = this.determinePetType();
+        this.setPetName(petType.getDefaultName(owner.getName()));
+        spawnPet(getOwner(), getPetType().getPrimaryHookType(), false);
     }
 
-    private void spawnPet(Player owner, EntityHookType hookType, boolean forced) {
-        checkState(this.hook == null, "Pet already spawned");
+    private void spawnPet(Player owner, EntityHookType hookType, boolean forced) throws CancelledSpawnException {
+        checkState(this.hook == null, "%s already spawned", this);
+        checkState(!this.destroyed, "%s has already been destroyed", this);
         if (!forced) {
             PetPreSpawnEvent spawnEvent = new PetPreSpawnEvent(this, owner.getLocation());
             EchoPet.getPlugin().getServer().getPluginManager().callEvent(spawnEvent);
             if (spawnEvent.isCancelled()) {
-                owner.sendMessage(EchoPet.getPrefix() + ChatColor.YELLOW + "Pet spawn was cancelled externally.");
-                EchoPet.getManager().removePet(this, true);
-                return;
+                throw new CancelledSpawnException(owner, petType);
             }
         }
         this.hook = EchoPet.getPlugin().getHookRegistry().spawnEntity(this, hookType, owner.getLocation());
@@ -89,28 +100,46 @@ public abstract class Pet implements IPet {
         this.teleportToOwner();
     }
 
+    @SneakyThrows(CancelledSpawnException.class) // May never occur
     protected void switchHookType(Player owner, EntityHookType newHookType) {
-        if (newHookType == hook.getHookType()) return;
         checkState(this.hook != null, "Pet isn't spawned yet!");
+        checkState(this.isRegistered(), "%s isn't registered", this);
+        if (newHookType == hook.getHookType()) return;
         this.removePet(false);
         assert hook.getBukkitEntity().isDead();
         this.hook = null;
         spawnPet(owner, newHookType, true);
     }
 
-    protected void setPetType() {
-        EntityPetType entityPetType = this.getClass().getAnnotation(EntityPetType.class);
-        if (entityPetType != null) {
-            this.petType = entityPetType.petType();
+    @Nonnull
+    protected PetType determinePetType() {
+        Class<? extends Pet> petClass = this.getClass();
+        EntityPetType entityPetType = petClass.getAnnotation(EntityPetType.class);
+        if (entityPetType == null) {
+            throw new IllegalStateException("Pet class " + petClass.getName() + " doesn't have @EntityPetType annotation!");
         }
+        return entityPetType.petType();
     }
 
+    @Override
+    public boolean isSpawned() {
+        return this.hook != null;
+    }
+
+    @Nonnull
     @Override
     public IEntityPet getEntityPet() {
-        return this.hook;
+        IEntityPet result = this.hook;
+        if (result == null) {
+            throw new IllegalStateException(
+                    "Expected " + this + " to be spawned!"
+            );
+        }
+        return result;
     }
 
     @Override
+    @Nonnull
     public LivingEntity getCraftPet() {
         return this.getEntityPet().getBukkitEntity();
     }
@@ -121,40 +150,31 @@ public abstract class Pet implements IPet {
     }
 
     @Override
+    @Nonnull
     public Player getOwner() {
-        if (this.ownerIdentification == null) {
-            return null;
-        }
-        if (this.ownerIdentification instanceof UUID) {
-            return Bukkit.getPlayer((UUID) ownerIdentification);
-        } else {
-            return Bukkit.getPlayerExact((String) this.ownerIdentification);
-        }
+        Player result = Bukkit.getPlayer(ownerId);
+        checkState(result != null, "Player not online: %s", ownerId);
+        return result;
     }
 
     @Override
+    @Nonnull
     public String getNameOfOwner() {
-        if (this.ownerIdentification instanceof String) {
-            return (String) this.ownerIdentification;
-        } else {
-            return this.getOwner() == null ? "" : this.getOwner().getName();
-        }
+        return getOwner().getName();
     }
 
     @Override
+    @Nonnull
     public UUID getOwnerUUID() {
-        if (this.ownerIdentification instanceof UUID) {
-            return (UUID) this.ownerIdentification;
-        } else {
-            return this.getOwner() == null ? null : this.getOwner().getUniqueId();
-        }
+        return this.ownerId;
     }
 
     @Override
     public Object getOwnerIdentification() {
-        return ownerIdentification;
+        return ownerId;
     }
 
+    @NotNull
     @Override
     public PetType getPetType() {
         return this.petType;
@@ -209,23 +229,22 @@ public abstract class Pet implements IPet {
             if (this.name == null || this.name.equalsIgnoreCase("")) {
                 this.name = this.petType.getDefaultName(this.getNameOfOwner());
             }
-            this.applyPetName();
+            if (this.isSpawned()) {
+                this.applyPetName();
+            }
             return true;
         } else {
             if (sendFailMessage) {
-                if (this.getOwner() != null) {
-                    Lang.sendTo(this.getOwner(), Lang.NAME_NOT_ALLOWED.toString().replace("%name%", name));
-                }
+                Lang.sendTo(this.getOwner(), Lang.NAME_NOT_ALLOWED.toString().replace("%name%", name));
             }
             return false;
         }
     }
 
     private void applyPetName() {
-        if (this.getEntityPet() != null && this.getCraftPet() != null) {
-            this.getCraftPet().setCustomName(this.name);
-            this.getCraftPet().setCustomNameVisible(EchoPet.getConfig().getBoolean("pets." + this.getPetType().toString().toLowerCase().replace("_", " ") + ".tagVisible", true));
-        }
+        Preconditions.checkState(this.isSpawned(), "Pet isn't spawned: %s", this);
+        this.getCraftPet().setCustomName(this.name);
+        this.getCraftPet().setCustomNameVisible(EchoPet.getConfig().getBoolean("pets." + this.getPetType().toString().toLowerCase().replace("_", " ") + ".tagVisible", true));
     }
 
     @Override
@@ -244,28 +263,29 @@ public abstract class Pet implements IPet {
 
     @Override
     public void removePet(boolean makeSound) {
-        if (this.getCraftPet() != null && makeSound) {
+        if (destroyed) return; // Don't double-free!
+        checkState(isSpawned(), "%s isn't currently spawned", this);
+        if (makeSound) {
             Particle.CLOUD.show(getLocation());
             Particle.LAVA_SPARK.show(getLocation());
         }
         removeRider();
-        if (this.getEntityPet() != null) {
-            this.getEntityPet().remove(makeSound);
-        }
+        this.getEntityPet().remove(makeSound);
+        this.hook = null;
+        this.destroyed = true;
+        // NOTE: Violates encapsulation, but that's the lesser of two evils for now
+        EchoPet.getManager().internalOnRemove(this);
     }
 
     @Override
     public boolean teleportToOwner() {
-        if (this.getOwner() == null || this.getOwner().getLocation() == null) {
-            this.removePet(false);
-            return false;
-        }
+        Preconditions.checkState(this.getOwner().getLocation() != null, "Owner has null location: %s", this);
         return this.teleport(this.getOwner().getLocation());
     }
 
     @Override
     public boolean teleport(Location to) {
-        if (this.getEntityPet() == null || this.getEntityPet().isDead()) {
+        if (!this.isSpawned() || this.getEntityPet().isDead()) {
             EchoPet.getManager().saveFileData("autosave", this);
             EchoPet.getSqlManager().saveToDatabase(this, false);
             EchoPet.getManager().removePet(this, false);
@@ -285,7 +305,8 @@ public abstract class Pet implements IPet {
             }
             this.getCraftPet().teleport(l);
             if (this.getRider() != null) {
-                this.getCraftPet().setPassenger(this.getRider().getCraftPet());
+                getCraftPet().eject();
+                getCraftPet().addPassenger(this.getRider().getCraftPet());
             }
             return true;
         }
@@ -399,6 +420,7 @@ public abstract class Pet implements IPet {
         Location l = this.getLocation().clone();
         l.setY(l.getY() - 1D);
         Particle.PORTAL.show(getLocation());
+        checkState(this.isRegistered(), "%s is no longer registered!", this);
     }
 
     @Override
@@ -427,13 +449,22 @@ public abstract class Pet implements IPet {
             }
             return null;
         }
-        IPet newRider = pt.getNewPetInstance(this.getOwner());
+        IPet newRider;
+        try {
+            newRider = pt.getNewPetInstance(this.getOwner());
+        } catch (CancelledSpawnException e) {
+            if (sendFailMessage) {
+                e.sendMessage();
+            }
+            return null;
+        }
+        EchoPet.getManager().addSecondaryPet(newRider);
         this.rider = (Pet) newRider;
         this.rider.setRider();
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (getCraftPet() != null) {
+                if (isSpawned()) {
                     INMS.getInstance().mount(Pet.this.getRider().getCraftPet(), getCraftPet());
                 }
                 EchoPet.getSqlManager().saveToDatabase(Pet.this.rider, true);
@@ -441,5 +472,24 @@ public abstract class Pet implements IPet {
         }.runTaskLater(EchoPet.getPlugin(), 5L);
 
         return this.rider;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("Pet(");
+        Player player = Bukkit.getPlayer(ownerId);
+        if (player != null) {
+            builder.append("owner=");
+            builder.append(player.getName());
+            builder.append(", ");
+        }
+        builder.append("type=");
+        builder.append(getPetType().name());
+        builder.append(")");
+        return builder.toString();
+    }
+
+    public boolean isRegistered() {
+        return EchoPet.getPlugin().getPetManager().getPets().contains(this);
     }
 }

@@ -18,7 +18,11 @@
 package com.dsh105.echopet.api;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import com.dsh105.commodus.GeneralUtil;
 import com.dsh105.echopet.compat.api.entity.HorseArmour;
@@ -58,8 +62,16 @@ import com.dsh105.echopet.compat.api.util.PetUtil;
 import com.dsh105.echopet.compat.api.util.ReflectionUtil;
 import com.dsh105.echopet.compat.api.util.WorldUtil;
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.SetMultimap;
+
+import net.techcable.sonarpet.CancelledSpawnException;
 
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -68,14 +80,85 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Villager.Profession;
 
+import static com.google.common.base.Preconditions.*;
+
 
 public class PetManager implements IPetManager {
 
-    private ArrayList<IPet> pets = new ArrayList<IPet>();
+    // NOTE: The reverse mapping is never used, but is present to force consistency
+    private final BiMap<UUID, IPet> primaryPets = HashBiMap.create();
+    private final SetMultimap<UUID, IPet> pets = HashMultimap.create();
+    private void addPet(IPet pet) {
+        UUID ownerId = pet.getOwnerUUID();
+        if (pets.containsEntry(ownerId, pet)) {
+            throw new IllegalStateException("Pet already present: " + pet);
+        }
+        IPet oldPrimaryPet = primaryPets.putIfAbsent(ownerId, pet);
+        if (oldPrimaryPet != null) {
+            throw new IllegalStateException(
+                    "Can't add pet " + pet
+                            + " since player already has "
+                            + oldPrimaryPet
+            );
+        }
+        checkState(pets.put(ownerId, pet));
+    }
+    @Override
+    public void addSecondaryPet(IPet pet) {
+        UUID playerId = pet.getOwnerUUID();
+        IPet primaryPet = primaryPets.get(playerId);
+        if (primaryPet == null) {
+            throw new IllegalStateException(
+                    "Can't add pet " + pet
+                        + " since player doesn't already have primary pet!"
+            );
+        }
+        if (!pets.put(playerId, pet)) {
+            throw new IllegalStateException("Pet already present: " + pet);
+        }
+    }
+    private boolean properlyRemoving = false;
+    private boolean removePets(boolean makeSound, @Nullable UUID playerId, @Nullable Predicate<? super IPet> filter) {
+        checkState(Bukkit.isPrimaryThread());
+        final Set<IPet> targetPets;
+
+        if (playerId != null) {
+            targetPets = ImmutableSet.copyOf(pets.get(playerId));
+            IPet primaryPet = primaryPets.get(playerId);
+            if (!targetPets.isEmpty()) {
+                checkState(primaryPet != null, "Player doesn't have primary pet: %s", playerId);
+            } else {
+                checkState(primaryPet == null, "Unknown primary pet: %s", primaryPet);
+            }
+        } else {
+            targetPets = ImmutableSet.copyOf(pets.values());
+        }
+        properlyRemoving = true;
+        try {
+            boolean didRemove = false;
+            if (!targetPets.isEmpty()) {
+                for (IPet pet : targetPets) {
+                    if (filter == null || filter.test(pet)) {
+                        UUID ownerId = pet.getOwnerUUID();
+                        checkState(playerId == null || playerId.equals(ownerId));
+                        pet.removePet(makeSound);
+                        primaryPets.remove(ownerId, pet);
+                        checkState(pets.remove(ownerId, pet));
+                        didRemove = true;
+                    }
+                }
+            }
+            return didRemove;
+        } finally {
+            properlyRemoving = false;
+        }
+    }
 
     @Override
-    public ArrayList<IPet> getPets() {
-        return pets;
+    public Set<IPet> getPets() {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Pet access must be done on the main thread!");
+        // NOTE: Perform copy to avoid CME
+        return ImmutableSet.copyOf(pets.values());
     }
 
     @Override
@@ -118,17 +201,15 @@ public class PetManager implements IPetManager {
 
     @Override
     public void removeAllPets() {
-        Iterator<IPet> i = pets.listIterator();
-        while (i.hasNext()) {
-            IPet p = i.next();
+        removePets(true, null, (p) -> {
             saveFileData("autosave", p);
             EchoPet.getSqlManager().saveToDatabase(p, false);
-            p.removePet(true);
-            i.remove();
-        }
+            return true;
+        });
     }
 
     @Override
+    @Nullable
     public IPet createPet(Player owner, PetType petType, boolean sendMessageOnFail) {
         if (ReflectionUtil.BUKKIT_VERSION_NUMERIC == 178 && petType == PetType.HUMAN) {
             if (sendMessageOnFail) {
@@ -155,10 +236,36 @@ public class PetManager implements IPetManager {
             }
             return null;
         }
-        IPet pi = petType.getNewPetInstance(owner);
+        IPet pi;
+        try {
+            pi = petType.getNewPetInstance(owner);
+        } catch (CancelledSpawnException e) {
+            if (sendMessageOnFail) {
+                e.sendMessage();
+            }
+            return null;
+        }
+        addPet(pi);
         forceAllValidData(pi);
-        pets.add(pi);
         return pi;
+    }
+
+    @Override
+    public void internalOnRemove(IPet pet) {
+        checkState(!pet.isSpawned(), "Pet currently spawned: %s", pet);
+        Set<IPet> secondaryPets = pets.get(pet.getOwnerUUID());
+        checkState(secondaryPets.contains(pet), "Unregistered pet: %s", pet);
+        if (!properlyRemoving) {
+            IPet primaryPet = primaryPets.get(pet.getOwnerUUID());
+            if (primaryPet == null) {
+                throw new IllegalStateException(noPrimaryPetErrorMessage(pet.getOwnerUUID(), secondaryPets));
+            }
+            checkState(pets.remove(pet.getOwnerUUID(), pet));
+            if (primaryPet.equals(pet)) {
+                // Remove all pets when the primary goes!
+                removePets(false, pet.getOwnerUUID(), null);
+            }
+        }
     }
 
     @Override
@@ -180,26 +287,46 @@ public class PetManager implements IPetManager {
             Lang.sendTo(owner, Lang.PET_TYPE_NOT_COMPATIBLE.toString().replace("%type%", petType.toPrettyString()));
             return null;
         }
-        IPet pi = petType.getNewPetInstance(owner);
+        IPet pi;
+        try {
+            pi = petType.getNewPetInstance(owner);
+        } catch (CancelledSpawnException e) {
+            e.sendMessage();
+            return null;
+        }
+        addPet(pi);
         pi.createRider(riderType, true);
         forceAllValidData(pi);
-        pets.add(pi);
         return pi;
     }
 
     @Override
     public IPet getPet(Player player) {
-        for (IPet pi : pets) {
-            if (UUIDMigration.getIdentificationFor(player).equals(pi.getOwnerIdentification())) {
-                return pi;
+        return getPet(player.getUniqueId());
+    }
+    public IPet getPet(UUID playerId) {
+        IPet result = primaryPets.get(playerId);
+        if (result == null) {
+            Set<IPet> secondaryPets = pets.get(playerId);
+            if (!secondaryPets.isEmpty()) {
+                throw new IllegalStateException(noPrimaryPetErrorMessage(playerId, secondaryPets));
             }
         }
-        return null;
+        return result;
+    }
+    private static String noPrimaryPetErrorMessage(UUID playerId, Set<IPet> secondaryPets) {
+        Player player = Bukkit.getPlayer(playerId);
+        String playerStr = player != null ? player.getName() : playerId.toString();
+        return playerStr +
+                " has no primary pet, but has secondary pets: " +
+                secondaryPets.stream()
+                        .map(IPet::toString)
+                        .collect(Collectors.joining(",", "{", "}"));
     }
 
     @Override
     public IPet getPet(Entity pet) {
-        for (IPet pi : pets) {
+        for (IPet pi : getPets()) {
             IPet rider = pi.getRider();
             if (pi.getEntityPet().equals(pet) || (rider != null && rider.getEntityPet().equals(pet))) {
                 return pi;
@@ -214,7 +341,7 @@ public class PetManager implements IPetManager {
     // Force all data specified in config file and notify player.
     @Override
     public void forceAllValidData(IPet pi) {
-        ArrayList<PetData> tempData = new ArrayList<PetData>();
+        ArrayList<PetData> tempData = new ArrayList<>();
         for (PetData data : PetData.values()) {
             if (EchoPet.getOptions().forceData(pi.getPetType(), data)) {
                 tempData.add(data);
@@ -222,7 +349,7 @@ public class PetManager implements IPetManager {
         }
         setData(pi, tempData.toArray(new PetData[tempData.size()]), true);
 
-        ArrayList<PetData> tempRiderData = new ArrayList<PetData>();
+        ArrayList<PetData> tempRiderData = new ArrayList<>();
         if (pi.getRider() != null) {
             for (PetData data : PetData.values()) {
                 if (EchoPet.getOptions().forceData(pi.getPetType(), data)) {
@@ -234,7 +361,6 @@ public class PetManager implements IPetManager {
 
         if (EchoPet.getOptions().getConfig().getBoolean("sendForceMessage", true)) {
             String dataToString = tempRiderData.isEmpty() ? PetUtil.dataToString(tempData, tempRiderData) : PetUtil.dataToString(tempData);
-            ;
             if (dataToString != null) {
                 Lang.sendTo(pi.getOwner(), Lang.DATA_FORCE_MESSAGE.toString().replace("%data%", dataToString));
             }
@@ -245,7 +371,7 @@ public class PetManager implements IPetManager {
     public void updateFileData(String type, IPet pet, ArrayList<PetData> list, boolean b) {
         EchoPet.getSqlManager().saveToDatabase(pet, pet.isRider());
         String w = pet.getOwner().getWorld().getName();
-        String path = type + "." + w + "." + pet.getOwnerIdentification();
+        String path = type + "." + w + "." + pet.getOwnerUUID();
         for (PetData pd : list) {
             EchoPet.getConfig(EchoPet.ConfigType.DATA).set(path + ".pet.data." + pd.toString().toLowerCase(), b);
         }
@@ -257,7 +383,7 @@ public class PetManager implements IPetManager {
         if (EchoPet.getOptions().getConfig().getBoolean("loadSavedPets", true)) {
             String path = type + "." + UUIDMigration.getIdentificationFor(p);
             if (EchoPet.getConfig(EchoPet.ConfigType.DATA).get(path) != null) {
-                ArrayList<PetData> data = new ArrayList<PetData>();
+                ArrayList<PetData> data = new ArrayList<>();
                 PetType petType = PetType.fromDataString(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".pet.type"), data);
                 String name = EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".pet.name");
                 if (Strings.isNullOrEmpty(name)) {
@@ -307,33 +433,31 @@ public class PetManager implements IPetManager {
 
     @Override
     public void loadRiderFromFile(String type, IPet pet) {
-        if (pet.getOwner() != null) {
-            String path = type + "." + pet.getOwnerIdentification();
-            if (EchoPet.getConfig(EchoPet.ConfigType.DATA).get(path + ".rider.type") != null) {
-                ArrayList<PetData> riderData = new ArrayList<PetData>();
-                PetType riderPetType = PetType.fromDataString(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.type"), riderData);
-                String riderName = EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.name");
-                if (Strings.isNullOrEmpty(riderName)) {
-                    riderName = riderPetType.getDefaultName(pet.getNameOfOwner());
-                }
-                if (EchoPet.getOptions().allowRidersFor(pet.getPetType())) {
-                    IPet rider = pet.createRider(riderPetType, true);
-                    if (rider != null && rider.getEntityPet() != null) {
-                        rider.setPetName(riderName);
-                        ConfigurationSection mcs = EchoPet.getConfig(EchoPet.ConfigType.DATA).getConfigurationSection(path + ".rider.data");
-                        if (mcs != null) {
-                            for (String key : mcs.getKeys(false)) {
-                                if (GeneralUtil.isEnumType(PetData.class, key.toUpperCase())) {
-                                    PetData pd = PetData.valueOf(key.toUpperCase());
-                                    riderData.add(pd);
-                                } else {
-                                    Logger.log(Logger.LogLevel.WARNING, "Error whilst loading data Pet Rider Save Data for " + pet.getNameOfOwner() + ". Unknown enum type: " + key + ".", true);
-                                }
+        String path = type + "." + pet.getOwnerUUID();
+        if (EchoPet.getConfig(EchoPet.ConfigType.DATA).get(path + ".rider.type") != null) {
+            ArrayList<PetData> riderData = new ArrayList<>();
+            PetType riderPetType = PetType.fromDataString(EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.type"), riderData);
+            String riderName = EchoPet.getConfig(EchoPet.ConfigType.DATA).getString(path + ".rider.name");
+            if (Strings.isNullOrEmpty(riderName)) {
+                riderName = riderPetType.getDefaultName(pet.getNameOfOwner());
+            }
+            if (EchoPet.getOptions().allowRidersFor(pet.getPetType())) {
+                IPet rider = pet.createRider(riderPetType, true);
+                if (rider != null && rider.isSpawned()) {
+                    rider.setPetName(riderName);
+                    ConfigurationSection mcs = EchoPet.getConfig(EchoPet.ConfigType.DATA).getConfigurationSection(path + ".rider.data");
+                    if (mcs != null) {
+                        for (String key : mcs.getKeys(false)) {
+                            if (GeneralUtil.isEnumType(PetData.class, key.toUpperCase())) {
+                                PetData pd = PetData.valueOf(key.toUpperCase());
+                                riderData.add(pd);
+                            } else {
+                                Logger.log(Logger.LogLevel.WARNING, "Error whilst loading data Pet Rider Save Data for " + pet.getNameOfOwner() + ". Unknown enum type: " + key + ".", true);
                             }
                         }
-                        if (!riderData.isEmpty()) {
-                            setData(pet, riderData.toArray(new PetData[riderData.size()]), true);
-                        }
+                    }
+                    if (!riderData.isEmpty()) {
+                        setData(pet, riderData.toArray(new PetData[riderData.size()]), true);
                     }
                 }
             }
@@ -342,27 +466,23 @@ public class PetManager implements IPetManager {
 
     @Override
     public void removePets(Player player, boolean makeDeathSound) {
-        Iterator<IPet> i = pets.listIterator();
-        while (i.hasNext()) {
-            IPet p = i.next();
-            if (UUIDMigration.getIdentificationFor(player).equals(p.getOwnerIdentification())) {
-                p.removePet(makeDeathSound);
-                i.remove();
-            }
-        }
+        removePets(makeDeathSound, player.getUniqueId(), null);
     }
 
     @Override
     public void removePet(IPet pi, boolean makeDeathSound) {
-        pi.removePet(makeDeathSound);
-        pets.remove(pi);
+        UUID ownerId = pi.getOwnerUUID();
+        checkState(pets.containsEntry(ownerId, pi), "Unregistered pet: %s", pi);
+        // Removing the primary pet implies removing all pets
+        boolean removeAll = getPet(ownerId).equals(pi);
+        removePets(makeDeathSound, ownerId, removeAll ? null : Predicate.isEqual(pi));
     }
 
     @Override
     public void saveFileData(String type, IPet pet) {
         clearFileData(type, pet);
 
-        String path = type + "." + pet.getOwnerIdentification();
+        String path = type + "." + pet.getOwnerUUID();
         PetType petType = pet.getPetType();
 
         EchoPet.getConfig(EchoPet.ConfigType.DATA).set(path + ".pet.type", petType.toString());
@@ -408,7 +528,7 @@ public class PetManager implements IPetManager {
             EchoPet.getConfig(EchoPet.ConfigType.DATA).set(path + ".pet.data." + pd.toString().toLowerCase(), true);
         }
 
-        if (riderData != null && riderType != null) {
+        if (riderType != null) {
             EchoPet.getConfig(EchoPet.ConfigType.DATA).set(path + ".rider.type", riderType.toString());
             EchoPet.getConfig(EchoPet.ConfigType.DATA).set(path + ".rider.name", riderName);
             for (PetData pd : riderData) {
@@ -448,7 +568,7 @@ public class PetManager implements IPetManager {
 
     @Override
     public void clearFileData(String type, IPet pi) {
-        EchoPet.getConfig(EchoPet.ConfigType.DATA).set(type + "." + pi.getOwnerIdentification(), null);
+        EchoPet.getConfig(EchoPet.ConfigType.DATA).set(type + "." + pi.getOwnerUUID(), null);
         EchoPet.getConfig(EchoPet.ConfigType.DATA).saveConfig();
     }
 
@@ -465,6 +585,7 @@ public class PetManager implements IPetManager {
         }
     }
 
+    @SuppressWarnings("ConstantConditions") // Too lazy to get rid of this crap
     @Override
     public void setData(IPet pet, PetData pd, boolean b) {
         PetType petType = pet.getPetType();

@@ -22,6 +22,7 @@ import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityRabbitPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IRabbitPet;
+
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 

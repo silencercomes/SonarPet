@@ -22,6 +22,7 @@ import com.dsh105.echopet.compat.api.entity.EntityPetType;
 import com.dsh105.echopet.compat.api.entity.PetType;
 import com.dsh105.echopet.compat.api.entity.type.nms.IEntityMushroomCowPet;
 import com.dsh105.echopet.compat.api.entity.type.pet.IMushroomCowPet;
+
 import org.bukkit.entity.Player;
 
 @EntityPetType(petType = PetType.MUSHROOMCOW)

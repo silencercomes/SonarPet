@@ -17,30 +17,40 @@
 
 package com.dsh105.echopet.compat.api.entity;
 
+import java.util.ArrayList;
+import java.util.UUID;
+import javax.annotation.Nonnull;
+
 import org.bukkit.Location;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 public interface IPet {
+    boolean isSpawned();
 
+    @Nonnull
     public IEntityPet getEntityPet();
 
     public LivingEntity getCraftPet();
 
     public Location getLocation();
 
+    @Nonnull
     public Player getOwner();
 
+    @Nonnull
     public String getNameOfOwner();
 
+    @Nonnull
     public UUID getOwnerUUID();
 
+    /**
+     * @deprecated Use {@link #getOwnerUUID()}
+     */
+    @Deprecated
     public Object getOwnerIdentification();
 
+    @Nonnull
     public PetType getPetType();
 
     public boolean isRider();
@@ -78,4 +88,6 @@ public interface IPet {
     public void setAsHat(boolean flag);
 
     public IPet createRider(final PetType pt, boolean sendFailMessage);
+
+    boolean isRegistered();
 }

@@ -24,15 +24,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Set;
+import javax.annotation.Nullable;
 
 public interface IPetManager {
 
-    public ArrayList<IPet> getPets();
+    void addSecondaryPet(IPet pet);
+
+    public Set<IPet> getPets();
 
     public IPet loadPets(Player p, boolean findDefault, boolean sendMessage, boolean checkWorldOverride);
 
     public void removeAllPets();
 
+    @Nullable
     public IPet createPet(Player owner, PetType petType, boolean sendMessageOnFail);
 
     public IPet createPet(Player owner, PetType petType, PetType riderType);
@@ -70,4 +75,6 @@ public interface IPetManager {
     public void setData(IPet pet, PetData[] data, boolean b);
 
     public void setData(IPet pet, PetData pd, boolean b);
+
+    public void internalOnRemove(IPet pet);
 }
