@@ -27,7 +27,7 @@ public class NMSEntityHorseImpl extends NMSEntityInsentientImpl implements NMSEn
 
     @Override
     public boolean isSaddled() {
-        return getHandle().dE(); // AbstractHorse.isHorseSaddled
+        return getHandle().dG(); // AbstractHorse.isHorseSaddled
     }
 
     // Deobfuscated methods

@@ -52,7 +52,7 @@ public class NMSLivingEntityImpl extends NMSEntityImpl implements NMSLivingEntit
 
     @Override
     public void setMoveSpeed(double rideSpeed) {
-        getHandle().m((float) rideSpeed);
+        getHandle().k((float) rideSpeed); // setAIMoveSpeed
     }
 
     @Override
