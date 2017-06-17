@@ -45,6 +45,11 @@ public final class LocalRepository extends MavenRepository {
         }
     }
 
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
     @Nullable
     @Override
     public ResolvedMavenArtifact find(MavenArtifact artifact) throws IOException, MavenException {

@@ -47,12 +47,17 @@ public class MavenRepository {
         return find(artifact) != null;
     }
 
+    public boolean isRemote() {
+        String scheme = uri.getScheme();
+        return scheme.equals("http") || scheme.equals("https");
+    }
+
     @Nullable
     public ResolvedMavenArtifact find(MavenArtifact artifact) throws IOException, MavenException {
         // Make sure we have that '/' at the end, or it'll strip the directory name
         URI dir = uri.resolve(artifact.getRelativeDirectoryPath() + "/");
         final MavenMetadata.SnapshotInfo snapshotInfo;
-        if (artifact.isSnapshot()) {
+        if (artifact.isSnapshot() && isRemote()) {
             // Try and fetch the metadata
             URL metadataUrl = dir.resolve("maven-metadata.xml").toURL();
             MavenMetadata metadata = MavenMetadata.parse(metadataUrl);
