@@ -72,6 +72,7 @@ import net.techcable.sonarpet.compat.CitizensEntityRegistryHack;
 import net.techcable.sonarpet.nms.EntityRegistry;
 import net.techcable.sonarpet.nms.INMS;
 import net.techcable.sonarpet.nms.NMSPetEntity;
+import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 import net.techcable.sonarpet.versioning.PluginVersioning;
 import net.techcable.sonarpet.versioning.VersionNotificationListener;
@@ -151,7 +152,7 @@ public class EchoPetPlugin extends BootstrapedPlugin implements IEchoPetPlugin {
         COMMAND_MANAGER = new CommandManager(this);
         // Make sure that the plugin is running under the correct version to prevent errors
 
-        if (!INMS.isSupported()) {
+        if (NmsVersion.current() == null || !INMS.isSupported()) {
             EchoPet.LOG.log(ChatColor.RED + "SonarPet " + ChatColor.GOLD
                     + this.getDescription().getVersion() + ChatColor.RED
                     + " is not compatible with this version of CraftBukkit");

@@ -117,7 +117,7 @@ public abstract class EntityInsentientPet implements IEntityPet {
         return getPet().getLocation();
     }
 
-    private static final Class<?> NMS_ENTITY_CLASS = MinecraftReflection.getNmsClass("Entity");
+    private static final Class<?> NMS_ENTITY_CLASS = MinecraftReflection.findNmsClass("Entity");
     private static final PineappleField<Object, Random> RANDOM_SONAR_FIELD = PineappleField.create(NMS_ENTITY_CLASS, "random", Random.class);
     public Random random() {
         return RANDOM_SONAR_FIELD.get(MinecraftReflection.getHandle(getBukkitEntity()));

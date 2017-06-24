@@ -1,15 +1,14 @@
 package net.techcable.sonarpet.nms;
 
+import java.util.Objects;
 import javax.annotation.Nullable;
-
-import com.dsh105.echopet.compat.api.util.Version;
 
 import net.techcable.pineapple.reflection.PineappleField;
 import net.techcable.sonarpet.SafeSound;
+import net.techcable.sonarpet.utils.NmsVersion;
 import net.techcable.sonarpet.utils.Versioning;
 import net.techcable.sonarpet.utils.reflection.MinecraftReflection;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -57,8 +56,8 @@ public interface NMSLivingEntity extends NMSEntity {
     void setPitch(float pitch);
 
     PineappleField<Object, Float> SIDEWAYS_MOTION_FIELD = PineappleField.create(
-            MinecraftReflection.getNmsClass("EntityLiving"),
-            Versioning.NMS_VERSION.getObfuscatedField("ENTITY_SIDEWAYS_MOTION_FIELD"),
+            MinecraftReflection.findNmsClass("EntityLiving"),
+            ObfuscationKt.getSidewaysMotionField(Versioning.NMS_VERSION),
             float.class
     );
     default float getSidewaysMotion() {
@@ -67,8 +66,8 @@ public interface NMSLivingEntity extends NMSEntity {
     }
 
     PineappleField<Object, Float> FORWARD_MOTION_FIELD = PineappleField.create(
-            MinecraftReflection.getNmsClass("EntityLiving"),
-            Versioning.NMS_VERSION.getObfuscatedField("ENTITY_FORWARD_MOTION_FIELD"),
+            MinecraftReflection.findNmsClass("EntityLiving"),
+            ObfuscationKt.getForwardMotionField(Versioning.NMS_VERSION),
             float.class
     );
     default float getForwardsMotion() {
@@ -77,10 +76,10 @@ public interface NMSLivingEntity extends NMSEntity {
     }
 
     @Nullable
-    String UPWARDS_MOTION_FIELD_NAME = Versioning.NMS_VERSION.tryGetObfuscatedField("ENTITY_UPWARDS_MOTION_FIELD");
+    String UPWARDS_MOTION_FIELD_NAME = ObfuscationKt.getUpwardsMotionField(Versioning.NMS_VERSION);
     @Nullable
     PineappleField<Object, Float> UPWARDS_MOTION_FIELD = UPWARDS_MOTION_FIELD_NAME != null ? PineappleField.create(
-            MinecraftReflection.getNmsClass("EntityLiving"),
+            MinecraftReflection.findNmsClass("EntityLiving"),
             UPWARDS_MOTION_FIELD_NAME,
             float.class
     ) : null;

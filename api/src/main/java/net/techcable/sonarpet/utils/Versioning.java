@@ -1,9 +1,12 @@
 package net.techcable.sonarpet.utils;
 
+import javax.annotation.Nonnull;
+
 import org.bukkit.Bukkit;
 
 public class Versioning {
     public static final String NMS_VERSION_STRING;
+    @Nonnull
     public static final NmsVersion NMS_VERSION;
     public static final int MAJOR_VERSION;
     public static final String NMS_PACKAGE;
@@ -27,11 +30,6 @@ public class Versioning {
             throw new IllegalStateException("Unknown version: " + NMS_VERSION_STRING);
         }
         MAJOR_VERSION = NMS_VERSION.getMajorVersion();
-    }
-
-
-    public static boolean isSupported() {
-        return NMS_VERSION != null;
     }
 
 }

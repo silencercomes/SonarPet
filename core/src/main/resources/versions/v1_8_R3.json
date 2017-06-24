@@ -9,7 +9,8 @@
         "ON_STEP_METHOD": "a",
         "ON_INTERACT_METHOD": "a",
         "ENTITY_PROCEDURAL_AI_METHOD": "E", // EntityLiving.updateAITasks
-        "LIVING_UPDATE_METHOD": "m" // EntityLivingBase.onLivingUpdate
+        "LIVING_UPDATE_METHOD": "m", // EntityLivingBase.onLivingUpdate
+        "RABBIT_SET_MOVEMENT_SPEED": "b" // EntityRabbit.setMovementSpeed
     },
     "obfuscated_fields": {
         "ENTITY_SIDEWAYS_MOTION_FIELD": "aZ",

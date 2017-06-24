@@ -72,13 +72,15 @@ class GeneratedMethod(
                 methodName: String,
                 returnType: Type = VOID_TYPE,
                 access: Int = ACC_PUBLIC,
-                parameterTypes: List<Type> = listOf()
+                parameterTypes: List<Type> = listOf(),
+                invokeCheckSanity: Boolean = true
         ): GeneratedMethod {
             return GeneratedMethod(
                     name = methodName,
                     returnType = returnType,
                     parameterTypes = parameterTypes,
                     access = access,
+                    invokeCheckSanity = invokeCheckSanity,
                     generator = {}
             )
         }

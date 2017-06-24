@@ -116,4 +116,8 @@ public enum NmsVersion {
     private static int parseMajorVersion(String s) {
         return Integer.parseInt(s.split("_")[1]);
     }
+
+    public static NmsVersion current() {
+        return Versioning.NMS_VERSION;
+    }
 }

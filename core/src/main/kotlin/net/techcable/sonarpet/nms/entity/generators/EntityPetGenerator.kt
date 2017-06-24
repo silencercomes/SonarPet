@@ -7,7 +7,9 @@ import net.techcable.sonarpet.nms.DismountingBlocked
 import net.techcable.sonarpet.nms.NMSInsentientEntity
 import net.techcable.sonarpet.nms.NMSPetEntity
 import net.techcable.sonarpet.nms.entity.generators.GeneratedMethod.Companion.createGetter
+import net.techcable.sonarpet.nms.*
 import net.techcable.sonarpet.utils.*
+import net.techcable.sonarpet.utils.Versioning.*
 import net.techcable.sonarpet.utils.bytecode.ClassGenerator
 import net.techcable.sonarpet.utils.bytecode.MethodGenerator
 import net.techcable.sonarpet.utils.bytecode.MethodGenerator.*
@@ -79,7 +81,7 @@ open class EntityPetGenerator(
     }
 
     val isNeedDismountingBlocked
-        get() = Versioning.NMS_VERSION >= NmsVersion.v1_9_R1
+        get() = NMS_VERSION >= NmsVersion.v1_9_R1
 
 
     private fun generate(): ByteArray {
@@ -137,14 +139,14 @@ open class EntityPetGenerator(
     protected open val generatedMethods: ImmutableList<GeneratedMethod>
         get() = buildImmutableList {
             add(createGetter("hook", hookType, returnType = IEntityPet::class.asmType))
-            add(GeneratedMethod(entityTickMethodName) {
+            add(GeneratedMethod(NMS_VERSION.entityTickMethodName) {
                 loadThis()
-                invokeSpecial(entityTickMethodName, entityType, VOID_TYPE)
+                invokeSpecial(NMS_VERSION.entityTickMethodName, entityType, VOID_TYPE)
                 loadThis()
                 getField(currentType, "hook", hookType)
                 invokeVirtual("onLive", hookType, VOID_TYPE)
             })
-            add(GeneratedMethod(entityMoveMethodName, parameterTypes = entityMoveMethodParameters.toList()) {
+            add(GeneratedMethod(NMS_VERSION.entityMoveMethodName, parameterTypes = NMS_VERSION.entityMoveMethodParameters.toList()) {
                 loadThis()
                 getField(currentType, "hook", hookType)
                 loadArgs()
@@ -152,18 +154,18 @@ open class EntityPetGenerator(
                 visitLdcInsn(Handle(
                         H_INVOKESPECIAL,
                         entityType.internalName,
-                        entityMoveMethodName,
-                        getMethodDescriptor(VOID_TYPE, *entityMoveMethodParameters),
+                        NMS_VERSION.entityMoveMethodName,
+                        getMethodDescriptor(VOID_TYPE, *NMS_VERSION.entityMoveMethodParameters),
                         false
                 ))
                 loadThis()
                 invokeVirtual("bindTo", METHOD_HANDLE_TYPE, METHOD_HANDLE_TYPE, OBJECT_TYPE)
-                invokeVirtual("move", hookType, VOID_TYPE, *entityMoveMethodParameters, METHOD_HANDLE_TYPE)
+                invokeVirtual("move", hookType, VOID_TYPE, *NMS_VERSION.entityMoveMethodParameters, METHOD_HANDLE_TYPE)
             })
-            add(GeneratedMethod(onStepMethodName, parameterTypes = listOf(BLOCK_POSITION_TYPE, BLOCK_TYPE)) { _ ->
+            add(GeneratedMethod(NMS_VERSION.onStepMethodName, parameterTypes = listOf(BLOCK_POSITION_TYPE, BLOCK_TYPE)) { _ ->
                 loadThis()
                 loadArgs()
-                invokeSpecial(onStepMethodName, entityType, VOID_TYPE, BLOCK_POSITION_TYPE, BLOCK_TYPE)
+                invokeSpecial(NMS_VERSION.onStepMethodName, entityType, VOID_TYPE, BLOCK_POSITION_TYPE, BLOCK_TYPE)
                 loadThis()
                 getField(currentType, "hook", hookType)
                 for (coord in arrayOf("X", "Y", "Z")) {
@@ -172,7 +174,7 @@ open class EntityPetGenerator(
                 }
                 invokeVirtual("onStep", hookType, VOID_TYPE, INT_TYPE, INT_TYPE, INT_TYPE)
             })
-            add(GeneratedMethod(onInteractMethodName, parameterTypes = listOf(ENTITY_HUMAN_TYPE)) { _ ->
+            add(GeneratedMethod(NMS_VERSION.onInteractMethodName, parameterTypes = listOf(ENTITY_HUMAN_TYPE)) { _ ->
                 loadThis()
                 getField(currentType, "hook", hookType)
                 loadArg(0)
@@ -184,7 +186,7 @@ open class EntityPetGenerator(
              * Block the 'procedural' AI system too, which is different from the usual API.
              * This prevents stuff like bat flying, villager trading, and wither chaos.
              */
-            add(GeneratedMethod.noOp(proceduralAIMethodName))
+            add(GeneratedMethod.noOp(NMS_VERSION.proceduralAIMethodName))
             if (isNeedDismountingBlocked) {
                 // Pets are being secretly dismounted, so we have to block it here
                 add(GeneratedMethod.noOp("stopRiding"))
@@ -227,20 +229,7 @@ open class EntityPetGenerator(
         }
 
     // Obfuscated method names
-    val entityTickMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_TICK_METHOD")
-    val entityMoveMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_MOVE_METHOD")
-    /**
-     * Before 1.12, the entity move method accepted two floats for both sideways and forwards direction.
-     * After 1.12, it also accepts an additional float for up/down movement, giving it three paramteers in total.
-     */
-    val entityMoveMethodParameters: Array<Type>
-        get() {
-            val amount = if (Versioning.NMS_VERSION >= NmsVersion.v1_12_R1) 3 else 2
-            return Array(amount) { FLOAT_TYPE }
-        }
-    val onStepMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ON_STEP_METHOD")
-    val onInteractMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ON_INTERACT_METHOD")
-    val proceduralAIMethodName = Versioning.NMS_VERSION.getObfuscatedMethod("ENTITY_PROCEDURAL_AI_METHOD")
+
 }
 
 // Type constants
