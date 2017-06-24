@@ -20,6 +20,7 @@ import java.util.*
 
 class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
     private val registeredHooks: MutableMap<EntityHookType, HookRegistrationInfo> = EnumMap(EntityHookType::class.java)
+    private var shutdown = false
     override fun registerHookClass(type: EntityHookType, hookClass: Class<out IEntityPet>) {
         require(type.isActive) {
             "HookType $type isn't active on ${Versioning.NMS_VERSION}"
@@ -48,9 +49,11 @@ class HookRegistryImpl(private val plugin: IEchoPetPlugin) : HookRegistry {
             )
         }
         registeredHooks.clear()
+        shutdown = true
     }
 
     override fun spawnEntity(pet: IPet, hookType: EntityHookType, location: Location): IEntityPet {
+        check(!shutdown) { "Already shutdown!" }
         val hookInfo = registeredHooks[hookType] ?: throw IllegalArgumentException("Unknown class for hook type $hookType")
         val entity = hookInfo.createEntity(location.world)
         val nmsEntity = INMS.getInstance().wrapEntity(entity) as NMSInsentientEntity
