@@ -58,7 +58,7 @@ public class Bootstrap extends JavaPlugin {
                 }
                 ResolvedMavenArtifact resolved = dependencyInfo.find(dependency);
                 getLogger().info(() -> "Downloading " + dependency + " from " + resolved.getRepository().getName());
-                return LocalRepository.standard().downloadFrom(resolved);
+                return localRepo.downloadFrom(resolved);
             });
             plugin = new EchoPetPlugin(this);
         } catch (IOException | MavenException t) {
