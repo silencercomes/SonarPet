@@ -2,6 +2,10 @@ SonarPet [![Build Status](https://travis-ci.org/TechzoneMC/SonarPet.svg?branch=m
 ========
 A fork of [EchoPet](https://github.com/DSH105/EchoPet) updated to 1.11
 
+## **NOTE**: Unmaintained
+I'm no longer willing to be the primary maintainer of SonarPet,
+contact me on IRC if you're willing to take over this job.
+
 ## Features
 - All mobs can be pets (even enderdragons)
 - An awesome donator perk that is _EULA compliant_
