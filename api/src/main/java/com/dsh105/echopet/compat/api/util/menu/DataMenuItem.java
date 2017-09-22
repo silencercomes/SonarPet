@@ -42,10 +42,10 @@ public enum DataMenuItem {
     BOOLEAN_TRUE(DataMenuType.BOOLEAN, null, Material.REDSTONE_TORCH_ON, 1, "True", "Turns the feature on."),
     BOOLEAN_FALSE(DataMenuType.BOOLEAN, null, Material.REDSTONE_TORCH_OFF, 1, "False", "Turns the feature off."),
 
+    WILD_CAT(DataMenuType.CAT_TYPE, PetData.WILD, DyeItemData.create(DyeColor.ORANGE), 1, "Wild", "Cat Type"),
     BLACK_CAT(DataMenuType.CAT_TYPE, PetData.BLACK, DyeItemData.create(DyeColor.BLACK), 1, "Black", "Cat Type"),
     RED_CAT(DataMenuType.CAT_TYPE, PetData.RED, DyeItemData.create(DyeColor.RED), 1, "Red", "Cat Type"),
     SIAMESE_CAT(DataMenuType.CAT_TYPE, PetData.SIAMESE, DyeItemData.create(DyeColor.SILVER), 1, "Siamese", "Cat Type"),
-    WILD_CAT(DataMenuType.CAT_TYPE, PetData.WILD, DyeItemData.create(DyeColor.ORANGE), 1, "Wild", "Cat Type"),
 
     SMALL(DataMenuType.SIZE, PetData.SMALL, Material.SLIME_BALL, 1, "Small", "Slime Size"),
     MEDIUM(DataMenuType.SIZE, PetData.MEDIUM, Material.SLIME_BALL, 2, "Medium", "Slime Size"),
@@ -98,13 +98,14 @@ public enum DataMenuItem {
     IRON(DataMenuType.HORSE_ARMOUR, PetData.IRON, Material.IRON_BARDING, 1, "Iron", "Armour"),
     GOLD(DataMenuType.HORSE_ARMOUR, PetData.GOLD, Material.GOLD_BARDING, 1, "Gold", "Armour"),
     DIAMOND(DataMenuType.HORSE_ARMOUR, PetData.DIAMOND, Material.DIAMOND_BARDING, 1, "Diamond", "Armour"),
-
-    BROWN_RABBIT(DataMenuType.RABBIT_TYPE, PetData.BROWN, WoolItemData.create(DyeColor.BROWN), 1, "Brown", "Bunny type"),
-    WHITE_RABBIT(DataMenuType.RABBIT_TYPE, PetData.WHITE, WoolItemData.create(DyeColor.WHITE), 1, "White", "Bunny type"),
-    BLACK_RABBIT(DataMenuType.HORSE_ARMOUR, PetData.BLACK, WoolItemData.create(DyeColor.BLACK), 1, "Black", "Bunny type"),
+    
+    BLACK_RABBIT(DataMenuType.RABBIT_TYPE, PetData.BLACK, WoolItemData.create(DyeColor.BLACK), 1, "Black", "Bunny type"),
     BLACK_AND_WHITE_RABBIT(DataMenuType.RABBIT_TYPE, PetData.BLACK_AND_WHITE, WoolItemData.create(DyeColor.GRAY), 1, "Black and White", "Bunny type"),
+    BROWN_RABBIT(DataMenuType.RABBIT_TYPE, PetData.BROWN, WoolItemData.create(DyeColor.BROWN), 1, "Brown", "Bunny type"),
+    GOLD_RABBIT(DataMenuType.RABBIT_TYPE, PetData.GOLD, WoolItemData.create(DyeColor.ORANGE), 1, "Gold", "Bunny type"),
     SALT_AND_PEPPER_RABBIT(DataMenuType.RABBIT_TYPE, PetData.SALT_AND_PEPPER, WoolItemData.create(DyeColor.YELLOW), 1, "Salt and Pepper", "Bunny type"),
     KILLER_BUNNY(DataMenuType.RABBIT_TYPE, PetData.THE_KILLER_BUNNY, WoolItemData.create(DyeColor.RED), 1, "Killer Bunny", "Bunny type"),
+    WHITE_RABBIT(DataMenuType.RABBIT_TYPE, PetData.WHITE, WoolItemData.create(DyeColor.WHITE), 1, "White", "Bunny type"),
 
     REGULAR_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.ZOMBIE, Material.ROTTEN_FLESH, 1, "Regular", "Zombie Type"),
     VILLAGER_ZOMBIE(DataMenuType.ZOMBIE_TYPE, PetData.VILLAGER, Material.EMERALD, 1, "Villager", "Zombie Type"),

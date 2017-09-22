@@ -53,7 +53,7 @@ public enum PetData implements PrettyEnum {
     FIRE("fire", Type.BOOLEAN),
     GRAY("gray", Type.COLOUR, Type.HORSE_VARIANT, Type.PARROT_COLOR),
     GREEN("green", Type.COLOUR, Type.PARROT_COLOR),
-    GOLD("gold", Type.HORSE_ARMOUR),
+    GOLD("gold", Type.HORSE_ARMOUR, Type.RABBIT_TYPE),
     IRON("iron", Type.HORSE_ARMOUR),
     THE_KILLER_BUNNY("killerbunny", Type.RABBIT_TYPE),
     LARGE("large", Type.SIZE),
