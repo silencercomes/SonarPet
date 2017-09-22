@@ -21,4 +21,10 @@ public class DataWatcherImpl implements net.techcable.sonarpet.nms.DataWatcher {
     public void setInteger(int id, int value) {
         dataWatcher.watch(id, value);
     }
+
+    @Override
+    public void setByte(int id, byte value) {
+        dataWatcher.watch(id, value);
+    }
+
 }

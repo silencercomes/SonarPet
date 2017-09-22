@@ -691,7 +691,7 @@ public class PetManager implements IPetManager {
             if (pd == PetData.SHIELD) {
                 ((IWitherPet) pet).setShielded(b);
             }
-            
+
             if (pd == PetData.ELDER) {
                 ((IGuardianPet) pet).setElder(b);
             }
@@ -771,14 +771,14 @@ public class PetManager implements IPetManager {
                     }
                 }
             }
-            
+
             if (petType == PetType.ZOMBIE) {
                 if (pd.isType(PetData.Type.ZOMBIE_TYPE)) {
                     ZombieType zombieType = ZombieType.valueOf(pd.toString());
                     ((IZombiePet) pet).setZombieType(zombieType);
                 }
             }
-            
+
             pet.getPetData().removeIf(petData -> {
                 if (petData != pd) {
                     for (PetData.Type dataType : pd.getTypes()) {

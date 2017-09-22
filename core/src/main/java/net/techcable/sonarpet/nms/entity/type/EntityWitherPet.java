@@ -19,7 +19,7 @@ public class EntityWitherPet extends EntityInsentientPet implements IEntityWithe
     public static final int SHIELDED_METADATA_ID = Versioning.NMS_VERSION.getMetadataId("WITHER_SHIELDED_METADATA_ID");
 
     public void setShielded(boolean flag) {
-        getEntity().getDataWatcher().setInteger(SHIELDED_METADATA_ID, Integer.MAX_VALUE);
+        getEntity().getDataWatcher().setInteger(SHIELDED_METADATA_ID, (flag?0:1));
         getBukkitEntity().setHealth((float) (flag ? 150 : 300));
     }
 

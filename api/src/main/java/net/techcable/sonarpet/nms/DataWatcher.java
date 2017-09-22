@@ -4,4 +4,7 @@ public interface DataWatcher {
     void setBoolean(int id, boolean value);
 
     void setInteger(int id, int value);
+
+    void setByte(int id, byte value);
+
 }
