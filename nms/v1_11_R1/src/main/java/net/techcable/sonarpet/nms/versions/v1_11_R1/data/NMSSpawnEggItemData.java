@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_11_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 
 public class NMSSpawnEggItemData extends SpawnEggItemData {
     public NMSSpawnEggItemData(byte rawData, ItemMeta meta) {
@@ -56,14 +57,18 @@ public class NMSSpawnEggItemData extends SpawnEggItemData {
     }
 
     public static ItemMeta createMetaWithEntityType(ItemMeta meta, EntityType entityType) {
-        NBTTagCompound entityTag = new NBTTagCompound();
+        /*NBTTagCompound entityTag = new NBTTagCompound();
         String internalName = EntityTypes.getName(EntityTypes.b.getId(entityType.getTypeId())).b();
         if (internalName == null) throw new AssertionError("Couldn't find internal name for type: " + entityType);
         entityTag.setString("id", internalName);
         NBTTagCompound tag = getTagFromMeta(Material.MONSTER_EGG, Preconditions.checkNotNull(meta, "Null meta"));
         if (tag == null) tag = new NBTTagCompound();
         tag.set("EntityTag", entityTag);
-        return createMetaFromTag(Material.MONSTER_EGG, tag);
+        return createMetaFromTag(Material.MONSTER_EGG, tag);//*/
+        //1.11 can use SpawnEggMeta
+        SpawnEggMeta eggmeta = (SpawnEggMeta)meta;
+        eggmeta.setSpawnedType(entityType);
+        return eggmeta;
     }
 
 
