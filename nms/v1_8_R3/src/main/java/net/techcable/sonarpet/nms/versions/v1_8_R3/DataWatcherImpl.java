@@ -6,25 +6,35 @@ import net.minecraft.server.v1_8_R3.DataWatcher;
 
 @RequiredArgsConstructor
 public class DataWatcherImpl implements net.techcable.sonarpet.nms.DataWatcher {
-    private final DataWatcher dataWatcher;
+        private final DataWatcher dataWatcher;
 
-    //
-    // Deobfuscated methods
-    //
+        //
+        // Deobfuscated methods
+        //
 
-    @Override
-    public void setBoolean(int id, boolean value) {
-        dataWatcher.watch(id, (byte) (value ? 1 : 0));
-    }
+        @Override
+        public void setBoolean(int id, boolean value) {
+                dataWatcher.watch(id, (byte) (value ? 1 : 0));
+        }
 
-    @Override
-    public void setInteger(int id, int value) {
-        dataWatcher.watch(id, value);
-    }
+        @Override
+        public void setInteger(int id, int value) {
+                dataWatcher.watch(id, value);
+        }
 
-    @Override
-    public void setByte(int id, byte value) {
-        dataWatcher.watch(id, value);
-    }
+        @Override
+        public void setByte(int id, byte value) {
+                dataWatcher.watch(id, value);
+        }
 
+        @Override
+        public void setByte(int id, int bit, boolean flag) {
+                byte b = dataWatcher.getByte( id);
+                if (flag == true) {
+                        b |= (1 << bit);
+                } else {
+                        b &= ~(1 << bit);
+                }
+                dataWatcher.watch(id, b);
+        }
 }

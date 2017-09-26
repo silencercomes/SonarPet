@@ -115,7 +115,7 @@ subprojects {
          * For example, a new checkArgument(boolean,String,int) overload was added for effeciency, which was missing in old versions.
          */
         compileOnly("com.google.guava:guava:17.0")
-        compileOnly("org.bukkit:bukkit:1.12-pre5-SNAPSHOT")
+        compileOnly("org.bukkit:bukkit:1.12-R0.1-SNAPSHOT")
         compileOnly("org.projectlombok:lombok:1.16.12")
         compileOnly("org.kitteh:VanishNoPacket:3.18.7") {
             exclude(module = "Vault")

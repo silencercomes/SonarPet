@@ -18,6 +18,7 @@ public class EntityCreeperPet extends EntityInsentientPet implements IEntityCree
 
     @Override
     public void setIgnited(boolean flag) {
+        // TODO: Add Creeper setIgnited...
         getBukkitEntity().setPowered(flag);
     }
 

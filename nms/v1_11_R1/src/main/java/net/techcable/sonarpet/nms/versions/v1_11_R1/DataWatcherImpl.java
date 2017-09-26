@@ -39,4 +39,16 @@ public class DataWatcherImpl implements net.techcable.sonarpet.nms.DataWatcher {
 	//byte b = (new Integer(value)).byteValue();
         dataWatcher.set(new DataWatcherObject<>(id, BYTE_SERIALIZER), value);
     }
+
+    @Override
+    public void setByte(int id, int bit, boolean flag) {
+            DataWatcherObject<Byte> dw = new DataWatcherObject<>(id, BYTE_SERIALIZER);
+            byte b = dataWatcher.get( dw);
+            if (flag == true) {
+                    b |= (1 << bit);
+            } else {
+                    b &= ~(1 << bit);
+            }
+            dataWatcher.set(new DataWatcherObject<>(id, BYTE_SERIALIZER), b);
+    }
 }

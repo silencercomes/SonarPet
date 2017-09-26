@@ -1,20 +1,22 @@
 {
-    "metadata": {
-        "BLAZE_ONFIRE_METADATA_ID": 12,
-        "ENDERMAN_SCREAMING_METADATA_ID": 13,
-        "WITHER_SHIELDED_METADATA_ID": 15
-    },
-    "obfuscated_methods": {
-        "ENTITY_TICK_METHOD": "A_", // Entity.onUpdate
-        "ENTITY_MOVE_METHOD": "g",
-        "ON_STEP_METHOD": "a",
-        "ON_INTERACT_METHOD": "a",
-        "ENTITY_PROCEDURAL_AI_METHOD": "M", // EntityLiving.updateAITasks
-        "LIVING_UPDATE_METHOD": "n", // EntityLivingBase.onLivingUpdate
-        "RABBIT_SET_MOVEMENT_SPEED": "c" // EntityRabbit.setMovementSpeed
-    },
-    "obfuscated_fields": {
-        "ENTITY_SIDEWAYS_MOTION_FIELD": "be", // EntityLivingBase.moveStrafing
-        "ENTITY_FORWARD_MOTION_FIELD": "bf" // EntityLivingBase.moveForward
-    }
+        "metadata": {
+                "ANGRY_METADATA_ID": 13,
+                "ANGRY_METADATA_ID_BIT": 1,  // Bits counted from 0, so 1 means 2nd bit
+                "BLAZE_ONFIRE_METADATA_ID": 12,
+                "ENDERMAN_SCREAMING_METADATA_ID": 13,
+                "WITHER_SHIELDED_METADATA_ID": 15
+        },
+        "obfuscated_methods": {
+                "ENTITY_TICK_METHOD": "A_", // Entity.onUpdate
+                "ENTITY_MOVE_METHOD": "g",
+                "ON_STEP_METHOD": "a",
+                "ON_INTERACT_METHOD": "a",
+                "ENTITY_PROCEDURAL_AI_METHOD": "M", // EntityLiving.updateAITasks
+                "LIVING_UPDATE_METHOD": "n", // EntityLivingBase.onLivingUpdate
+                "RABBIT_SET_MOVEMENT_SPEED": "c" // EntityRabbit.setMovementSpeed
+        },
+        "obfuscated_fields": {
+                "ENTITY_SIDEWAYS_MOTION_FIELD": "be", // EntityLivingBase.moveStrafing
+                "ENTITY_FORWARD_MOTION_FIELD": "bf" // EntityLivingBase.moveForward
+        }
 }
